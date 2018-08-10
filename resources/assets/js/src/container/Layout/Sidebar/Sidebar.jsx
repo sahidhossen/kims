@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { USERS, DASHBOARD } from '../../../constants'
+import { USERS, DASHBOARD, CREATE_USERS } from '../../../constants'
 
 export const Sidebar = () => (
     <div className="sidebar sidebar-dark sidebar-main sidebar-expand-md">
@@ -50,13 +50,17 @@ export const Sidebar = () => (
                             <span>Dashboard</span>
                         </Link>
                     </li>
+
                     <li className="nav-item">
                         <Link className="nav-link" to={USERS}> Users </Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" to={CREATE_USERS}> Create Users </Link>
                     </li>
                     <li className="nav-item nav-item-submenu">
                         <a href="#" className="nav-link"><i className="icon-copy"></i> <span>Layouts</span></a>
 
-                        <ul className="nav nav-group-sub">
+                        <ul className="nav nav-group-sub" style={{ display: 'block'}}>
                             <li className="nav-item"><a href="index.html" className="nav-link active">Default layout</a></li>
                             <li className="nav-item"><a href="#" className="nav-link">Layout 2</a></li>
                             <li className="nav-item"><a href="#" className="nav-link">Layout 3</a></li>

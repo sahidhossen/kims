@@ -4,6 +4,7 @@ import AuthDashboard from '../container/Layout/AuthDashboard'
 import Home from './Home'
 import DefaultHome from './DefaultHome'
 import User from './Users'
+import CreateUser from './CreateUser'
 import Login from './Login'
 import Register from './Register'
 import NotFound from './NotFound'
@@ -42,6 +43,11 @@ const routes = [{
                     path: route.USERS,
                     exact: true,
                     component: User
+                },
+                {
+                    path: route.CREATE_USERS,
+                    exact: true,
+                    component: CreateUser
                 },
                 {
                     path: "/*",

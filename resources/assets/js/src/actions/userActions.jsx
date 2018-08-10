@@ -1,6 +1,11 @@
 import * as constants from '../actionType'
+import axios from 'axios'
+
+import { CLIENT_SECRET, CLIENT_ID, GRANT_TYPE } from '../constants';
+
 
 export const UserLogin = data => dispatch => {
+
     dispatch({
         type: constants.USER_LOGGING_IN
     })
@@ -11,4 +16,25 @@ export const UserLogin = data => dispatch => {
             payload: true
         })
     }, 2000)
+}
+
+
+export const fetchOauthToken = user  => dispatch => {
+    user.client_id = CLIENT_ID;
+    user.client_secret = CLIENT_SECRET;
+    user.grant_type = GRANT_TYPE;
+
+    dispatch({
+        type: constants.FETCH_OAUTH_FETCHING
+    })
+
+    axios.post('/oauth/token', user)
+        .then(function (response) {
+            localStorage.setItem('kim_auth', JSON.stringify(response.data) )
+            dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload:response.data });
+        })
+        .catch(function (error) {
+            console.log(error);
+            dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
 }

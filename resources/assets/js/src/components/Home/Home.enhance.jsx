@@ -5,14 +5,19 @@ import { userIsAuthenticated } from '../../utils/services'
 
 export default compose(
     connect(store => {
-        return { users: store.users }
+        return { oauth: store.oauth }
     }),
     userIsAuthenticated,
     withState('state', 'setState', {}),
     lifecycle({
         componentDidMount() {
 
+        },
+        componentWillReceiveProps(nextProps){
+
+
         }
+
     }),
     pure
 )

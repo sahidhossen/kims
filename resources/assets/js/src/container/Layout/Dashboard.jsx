@@ -13,13 +13,13 @@ import Sidebar from './Sidebar'
 
 const auth = true
 
-export const Dashboard = ({ route, location, users}) =>(
+export const Dashboard = ({ route, location }) =>(
     <div className="main-body">
         {/*navbar*/}
         <Navbar/>
         <div className="page-content">
             {/*sidebar*/}
-            <Sidebar/>
+            <Sidebar location={location}/>
             <div className="content-wrapper">
                 {renderRoutes(route.routes)}
             </div>
@@ -34,7 +34,7 @@ Dashboard.propTypes = {
 
 const enhance = compose(
     connect(store => {
-        return { users: store.users }
+        return { oauth: store.oauth }
     }),
     lifecycle({
         componentDidMount() {
@@ -43,9 +43,6 @@ const enhance = compose(
         componentDidUpdate(nextProps) {
             if( this.props.location !== nextProps.location )
                 window.scrollTo(0, 0)
-        },
-        componentWillReceiveProps(nextProps){
-            console.log("dashboard: ", nextProps)
         }
     })
 )

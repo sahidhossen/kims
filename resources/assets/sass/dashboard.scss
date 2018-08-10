@@ -1,3 +1,28 @@
 .navbar {
   padding:0;
 }
+.navbar-collapse {
+  margin-right:0;
+}
+.kit-modal-box-shadow {
+  position: fixed;
+  height:100%;
+  width:100%;
+  left:0;
+  right:0;
+  bottom:0;
+  background: rgba(0, 0, 0, 0.2);
+  z-index:99;
+  display: flex;
+  justify-content:center;
+}
+
+.kit-modal-box { 
+  position: fixed;
+  width: 500px;
+  height:auto;
+  padding:10px;
+  background: #ffffff;
+  top:100px;
+  z-index:999;
+}

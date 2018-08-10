@@ -1,4 +1,5 @@
 import React from 'react'
+import Modal from './Modal'
 
 export const User = () => (
     <div className="Homepage">
@@ -12,7 +13,71 @@ export const User = () => (
         </div>
         <div className="content">
             <div className="row">
-                <h1> User Page </h1>
+                <div className="content">
+                    <div className="card">
+                        <div className="card-header header-elements-inline">
+                            <h5 className="card-title"> Add User </h5>
+                            <div className="header-elements">
+                                <div className="btn btn-primary"> Add User </div>
+                            </div>
+                        </div>
+                        <div className="card-body">
+                            <div className="d-flex flex-column bg-light border rounded p-2">
+                                <div className="bg-slate py-2 px-3 rounded-top  border-top-1 ">
+                                    <div className="flex-row d-flex align-items-center">
+                                        <div className="flex-1">
+                                            User Name
+                                        </div>
+                                        <div className="operation-area">
+                                            <div className="btn btn-info"> Edit User </div>
+                                            &nbsp;
+                                            <div className="btn btn-danger"> Delete </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="bg-slate py-2 px-3 rounded-top  border-top-1 ">
+                                    <div className="flex-row d-flex align-items-center">
+                                        <div className="flex-1">
+                                            User Name
+                                        </div>
+                                        <div className="operation-area">
+                                            <div className="btn btn-info"> Edit User </div>
+                                            &nbsp;
+                                            <div className="btn btn-danger"> Delete </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="bg-slate py-2 px-3 rounded-top  border-top-1 ">
+                                    <div className="flex-row d-flex align-items-center">
+                                        <div className="flex-1">
+                                            User Name
+                                        </div>
+                                        <div className="operation-area">
+                                            <div className="btn btn-info"> Edit User </div>
+                                            &nbsp;
+                                            <div className="btn btn-danger"> Delete </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="bg-slate py-2 px-3 rounded-top  border-top-1 ">
+                                    <div className="flex-row d-flex align-items-center">
+                                        <div className="flex-1">
+                                            User Name
+                                        </div>
+                                        <div className="operation-area">
+                                            <div className="btn btn-info"> Edit User </div>
+                                            &nbsp;
+                                            <div className="btn btn-danger"> Delete </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Modal/>
+
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
