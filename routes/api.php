@@ -70,3 +70,21 @@ Route::middleware('auth:api')->get('/companies', 'CompanyController@getAllCompan
 Route::middleware('auth:api')->get('/company', 'CompanyController@getCompanyById');
 
 
+/*
+ * Add kit item types
+ */
+
+Route::middleware('auth:api')->post('/add_item_type', 'ItemTypeController@store');
+Route::middleware('auth:api')->post('/update_item_type', 'ItemTypeController@update');
+Route::middleware('auth:api')->get('/item_types', 'ItemTypeController@fetchAll');
+Route::middleware('auth:api')->get('/item_type', 'ItemTypeController@itemById');
+
+/*
+ * Item Kits
+ */
+
+Route::middleware('auth:api')->post('/add_kit_item', 'KitItemController@store');
+Route::middleware('auth:api')->post('/update_kit_item', 'KitItemController@update');
+Route::middleware('auth:api')->get('/kit_items_by_central_office', 'KitItemController@kitItemsByQuery');
+Route::middleware('auth:api')->get('/kit_item', 'KitItemController@itemById');
+Route::middleware('auth:api')->post('/delete_kit_item', 'KitItemController@delete');

@@ -28,7 +28,7 @@ class DistrictController extends Controller
     public function getDistrictOfficeById( Request $request ){
         try{
             if( !$request->input('district_id'))
-                throw  new Exception("district Id required for retrive district office");
+                throw  new Exception("District Id required for retrive district office");
 
             $districtOffice = DistrictOffice::find($request->input('district_id'));
             if( !$districtOffice )

@@ -16,7 +16,8 @@ class CreateKitItems extends Migration
         Schema::create('kit_items', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('condemnation_id')->unsigned()->nullable();
-            $table->string('kit_name');
+            $table->integer('central_office_id')->unsigned()->nullable();
+            $table->integer('item_type_id')->unsigned()->nullable();
             $table->string('image')->nullable();
             $table->integer('status')->default(0);
             $table->timestamps();
