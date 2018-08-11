@@ -1,2 +1,3 @@
 import UserModal from './UserModal'
-export default UserModal
+import enhance from './UserModal.enhance'
+export default enhance(UserModal)

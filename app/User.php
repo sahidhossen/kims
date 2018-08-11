@@ -44,12 +44,9 @@ class User extends Authenticatable
      * Add user solder role
      */
     public function setRole( $roleName ){
-        try{
-            $newRole = Role::where('name','=',$roleName)->first();
-            return $this->attachRole($newRole);
-        }catch(Exception $e ){
-            return false;
-        }
+        
+        $newRole = Role::where('name','=',$roleName)->first();
+        $this->attachRole($newRole); 
     }
 
     /*
@@ -62,8 +59,8 @@ class User extends Authenticatable
                 $this->roles()->detach($userRole);
             }
             // attach the new role using the `EntrustUserTrait` `attachRole()`
-            return $this->setRole($new_role);
-
+           $this->setRole($new_role);
+            return true;
         }catch (Exception $e){
             return false;
         }

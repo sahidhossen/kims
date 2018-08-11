@@ -27,6 +27,22 @@ class UserController extends Controller
         }
     }
 
+
+    public function userById(Request $request){
+        try{
+            $user = User::find( $request->input('user_id') );
+            if(!$user)
+                throw new Exception("User not found!");
+
+            $user->whoami = $user->roles->first()->name;
+                if( $user->whoami == null )
+                    throw new Exception("User don't have any role");
+
+            return ['success'=>true, 'data'=>$user, 'message'=>"User found!"];
+        }catch(Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
     /*
      * Register User
      */
@@ -64,10 +80,11 @@ class UserController extends Controller
             if(!$user->save())
                 throw new Exception('Critical error when want to user save!');
 
-            if(!$user->setRole( $user, $request->input('role')))
+            $setRole = $user->setRole( $request->input('role'));
+            if( $setRole === false )
                 throw new Exception('Critical error on add user role!');
 
-            return [ 'success' => true, 'data' => $user, 'message'=>'Add user successfully!'];
+            return [ 'success' => true, 'data' => $user, 's'=>$setRole, 'message'=>'Add user successfully!'];
         }catch(Exception $e){
             return ['success'=>false, 'message'=> $e->getMessage()];
         }

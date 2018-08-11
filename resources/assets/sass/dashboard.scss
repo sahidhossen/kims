@@ -16,7 +16,6 @@
   display: flex;
   justify-content:center;
 }
-
 .kit-modal-box { 
   position: fixed;
   width: 500px;
@@ -25,4 +24,34 @@
   background: #ffffff;
   top:100px;
   z-index:999;
+  border-radius: 4px;
+  transition: all .5s;
+
+  span.close-modal i{
+    display: inline-block;
+    cursor: pointer;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    color: #fff;
+    line-height: 30px;
+    font-size: 18px;
+    background: $theme-color;
+    border-radius: 50%;
+  }  
+  .modal-body{
+    .form-group{
+      margin-bottom: 10px;
+    }
+    .button-submit-area{
+      .btn{
+        margin-left: 10px;
+        margin-top: 10px;
+      }
+    }
+  }
 }
+.modal-header{
+  padding: 1.25em 1.25em 0 1.25em;
+}
+
