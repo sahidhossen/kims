@@ -7,6 +7,9 @@ const users = function reducer(
         fetched: false,
         fetchingLogin: false,
         isLoggedIn: false,
+        roles:[],
+        fetchingRole: false,
+        fetchedRole: false,
         error: null
     },
     action
@@ -19,6 +22,15 @@ const users = function reducer(
                 error: null,
                 fetched: true,
                 users: action.payload
+            }
+        }
+        case 'FETCH_USER_ROLE': {
+            return {
+                ...state,
+                fetchingRole: true,
+                error: null,
+                fetchedRole: true,
+                roles: action.payload
             }
         }
         case constants.USER_LOGGING_IN : {

@@ -7,6 +7,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
+use App\Role;
 
 class UserController extends Controller
 {
@@ -28,6 +29,14 @@ class UserController extends Controller
         }
     }
 
+    public function getRoles(){
+        try{
+            $roles = Role::all(); 
+            return ['success'=>true, 'data'=>$roles, 'message'=>"All role fetched!"];
+        }catch(Exception $e){
+            return ['success'=>false, 'message'=> $e->getMessage()];
+        }
+    }
 
     public function userById(Request $request){
         try{
@@ -49,8 +58,6 @@ class UserController extends Controller
      */
     public function userRegister(Request $request){
         try {
-
-
             $currentUser = $request->user();
             $currentUser->whoami = $currentUser->roles->first()->name;
             if( $currentUser->whoami == null )

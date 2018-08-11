@@ -27,6 +27,7 @@ Route::middleware('auth:api')->get('/kit_user_by_id', 'UserController@userById')
 Route::middleware('auth:api')->post('/kit_user_update', 'UserController@updateUser');
 Route::middleware('auth:api')->post('/update_user_role', 'UserController@updateOrAddRole');
 
+Route::middleware('auth:api')->get('/get_roles', 'UserController@getRoles');
 
 /*
  * Central Office API

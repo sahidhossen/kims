@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Modal from './Modal'
 
-export const User = ({ toggleModal, userEditAction, all_user, state }) => (
+export const User = ({ toggleModal, userEditAction, userDeleteAction, state }) => (
     <div className="Homepage">
         <div className="page-header page-header-light">
             <div className="page-header-content header-elements-md-inline">
@@ -24,7 +24,7 @@ export const User = ({ toggleModal, userEditAction, all_user, state }) => (
                         </div>
                         <div className="card-body">
                             <div className="d-flex flex-column bg-light border rounded p-2">
-                                { all_user.map( (user, index) => (
+                                { state.all_user.map( (user, index) => (
                                     <div className="bg-slate py-2 px-3 rounded-top  border-top-1 " key={index}>
                                         <div className="flex-row d-flex align-items-center">
                                             <div className="flex-1">
@@ -33,47 +33,12 @@ export const User = ({ toggleModal, userEditAction, all_user, state }) => (
                                             <div className="operation-area">
                                                 <div className="btn btn-info" onClick={(e)=> {userEditAction(e, index)}}> Edit User </div>
                                                 &nbsp;
-                                                <div className="btn btn-danger"> Delete </div>
+                                                <div className="btn btn-danger" onClick={(e)=> {userDeleteAction(e, index)}}> Delete </div>
                                             </div>
                                         </div>
                                     </div>
                                 ))}
-                                <div className="bg-slate py-2 px-3 rounded-top  border-top-1 ">
-                                    <div className="flex-row d-flex align-items-center">
-                                        <div className="flex-1">
-                                            User Name
-                                        </div>
-                                        <div className="operation-area">
-                                            <div className="btn btn-info"> Edit User </div>
-                                            &nbsp;
-                                            <div className="btn btn-danger"> Delete </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="bg-slate py-2 px-3 rounded-top  border-top-1 ">
-                                    <div className="flex-row d-flex align-items-center">
-                                        <div className="flex-1">
-                                            User Name
-                                        </div>
-                                        <div className="operation-area">
-                                            <div className="btn btn-info"> Edit User </div>
-                                            &nbsp;
-                                            <div className="btn btn-danger"> Delete </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="bg-slate py-2 px-3 rounded-top  border-top-1 ">
-                                    <div className="flex-row d-flex align-items-center">
-                                        <div className="flex-1">
-                                            Karim
-                                        </div>
-                                        <div className="operation-area">
-                                            <div className="btn btn-info" onClick={(e)=> {userEditAction(e)}}> Edit User </div>
-                                            &nbsp;
-                                            <div className="btn btn-danger"> Delete </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                
                             </div>
 
                             {state.isModalOn && 
@@ -94,8 +59,8 @@ export const User = ({ toggleModal, userEditAction, all_user, state }) => (
 User.propTypes = {
     toggleModal: PropTypes.func,
     userEditAction: PropTypes.func,
-    state: PropTypes.object,
-    all_user: PropTypes.array
+    userDeleteAction : PropTypes.func,
+    state: PropTypes.object
 }
 
 
