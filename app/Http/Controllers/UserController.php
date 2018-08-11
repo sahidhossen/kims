@@ -7,6 +7,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
+use App\Role;
 
 class UserController extends Controller
 {
@@ -28,13 +29,35 @@ class UserController extends Controller
         }
     }
 
+    public function getRoles(){
+        try{
+            $roles = Role::all(); 
+            return ['success'=>true, 'data'=>$roles, 'message'=>"All role fetched!"];
+        }catch(Exception $e){
+            return ['success'=>false, 'message'=> $e->getMessage()];
+        }
+    }
+
+    public function userById(Request $request){
+        try{
+            $user = User::find( $request->input('user_id') );
+            if(!$user)
+                throw new Exception("User not found!");
+
+            $user->whoami = $user->roles->first()->name;
+                if( $user->whoami == null )
+                    throw new Exception("User don't have any role");
+
+            return ['success'=>true, 'data'=>$user, 'message'=>"User found!"];
+        }catch(Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
     /*
      * Register User
      */
     public function userRegister(Request $request){
         try {
-
-
             $currentUser = $request->user();
             $currentUser->whoami = $currentUser->roles->first()->name;
             if( $currentUser->whoami == null )
@@ -67,7 +90,8 @@ class UserController extends Controller
             if(!$user->save())
                 throw new Exception('Critical error when want to user save!');
 
-            if(!$user->setRole( $user, $request->input('role')))
+            $setRole = $user->setRole( $request->input('role'));
+            if( $setRole === false )
                 throw new Exception('Critical error on add user role!');
 
             if(TermRelation::isRelativeExists($user->id, 0 ) === false ){

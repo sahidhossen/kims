@@ -65,5 +65,34 @@
   background: #ffffff;
   top: 100px;
   z-index: 999;
+  border-radius: 4px;
+  -webkit-transition: all .5s;
+  transition: all .5s;
+}
+
+.kit-modal-box span.close-modal i {
+  display: inline-block;
+  cursor: pointer;
+  height: 30px;
+  width: 30px;
+  text-align: center;
+  color: #fff;
+  line-height: 30px;
+  font-size: 18px;
+  background: #2196f3;
+  border-radius: 50%;
+}
+
+.kit-modal-box .modal-body .form-group {
+  margin-bottom: 10px;
+}
+
+.kit-modal-box .modal-body .button-submit-area .btn {
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.modal-header {
+  padding: 1.25em 1.25em 0 1.25em;
 }
 

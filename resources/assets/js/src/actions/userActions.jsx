@@ -19,6 +19,18 @@ export const UserLogin = data => dispatch => {
 }
 
 
+export const getUserRole = () => dispatch => {
+    console.log("axios: ", window.axios.defaults.headers)
+    axios.get('/api/get_roles')
+    .then(function (response) {
+         console.log("res: ", response)
+        // dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload:response.data });
+    })
+    .catch(function (error) {
+        console.log(error);
+        // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+    });
+}
 
 export const fetchOauthToken = user  => dispatch => {
     user.client_id = CLIENT_ID;
