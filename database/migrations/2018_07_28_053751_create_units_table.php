@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDistrictOfficeTable extends Migration
+class CreateUnitsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateDistrictOfficeTable extends Migration
      */
     public function up()
     {
-        Schema::create('district_offices', function (Blueprint $table) {
+        Schema::create('units', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('central_office_id')->unsigned();
-            $table->string('district_name');
-            $table->string('district_details')->nullable();
+            $table->integer('district_office_id')->unsigned();
+            $table->string('unit_name');
+            $table->string('unit_details')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateDistrictOfficeTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('district_offices');
+        Schema::dropIfExists('units');
     }
 }

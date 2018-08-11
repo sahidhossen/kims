@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUnitsTable extends Migration
+class CreateKitItemNameTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateUnitsTable extends Migration
      */
     public function up()
     {
-        Schema::create('units', function (Blueprint $table) {
+        Schema::create('kit_items_name', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('unit_name');
-            $table->string('unit_details')->nullable();
+            $table->string('kit_item_name');
+            $table->string('kit_item_name_slug');
+            $table->string('name_details')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class CreateUnitsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('units');
+        Schema::dropIfExists('kit_items_name');
     }
 }

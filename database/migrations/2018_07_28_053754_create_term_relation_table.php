@@ -17,8 +17,8 @@ class CreateTermRelationTable extends Migration
             $table->increments('id');
             $table->integer('term_type')->default(0)->comment('0=solder, 1=condemnation');
             $table->integer('user_id')->unsigned()->nullable();
-            $table->integer('central_id')->unsigned()->nullable();
-            $table->integer('district_id')->unsigned()->nullable();
+            $table->integer('central_office_id')->unsigned()->nullable();
+            $table->integer('district_office_id')->unsigned()->nullable();
             $table->integer('unit_id')->unsigned()->nullable();
             $table->integer('company_id')->unsigned()->nullable();
             $table->string('comments')->nullable();

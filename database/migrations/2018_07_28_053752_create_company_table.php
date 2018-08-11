@@ -15,6 +15,9 @@ class CreateCompanyTable extends Migration
     {
         Schema::create('company', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('central_office_id')->unsigned();
+            $table->integer('district_office_id')->unsigned();
+            $table->integer('unit_id')->unsigned();
             $table->string('company_name');
             $table->string('company_details')->nullable();
             $table->timestamps();

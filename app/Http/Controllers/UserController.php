@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\TermRelation;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -32,6 +33,8 @@ class UserController extends Controller
      */
     public function userRegister(Request $request){
         try {
+
+
             $currentUser = $request->user();
             $currentUser->whoami = $currentUser->roles->first()->name;
             if( $currentUser->whoami == null )
@@ -66,6 +69,16 @@ class UserController extends Controller
 
             if(!$user->setRole( $user, $request->input('role')))
                 throw new Exception('Critical error on add user role!');
+
+            $relationTableData = [];
+            $relationTableData['central_office_id'] = $request->input('central_id');
+            $relationTableData['district_office_id'] = $request->input('district_id');
+            $relationTableData['unit_id'] = $request->input('unit_id');
+            $relationTableData['user_id'] = $user->id;
+
+            TermRelation::saveRelation( $relationTableData );
+
+//            $this->createUserRelation( $request, $user );
 
             return [ 'success' => true, 'data' => $user, 'message'=>'Add user successfully!'];
         }catch(Exception $e){

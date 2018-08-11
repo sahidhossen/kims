@@ -46,7 +46,8 @@ class User extends Authenticatable
     public function setRole( $roleName ){
         try{
             $newRole = Role::where('name','=',$roleName)->first();
-            return $this->attachRole($newRole);
+            $this->attachRole($newRole);
+            return true;
         }catch(Exception $e ){
             return false;
         }
@@ -62,8 +63,8 @@ class User extends Authenticatable
                 $this->roles()->detach($userRole);
             }
             // attach the new role using the `EntrustUserTrait` `attachRole()`
-            return $this->setRole($new_role);
-
+            $this->setRole($new_role);
+            return true;
         }catch (Exception $e){
             return false;
         }
