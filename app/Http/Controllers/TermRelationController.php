@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\TermRelation;
-use Illuminate\Http\Request;
 use League\Flysystem\Exception;
 
 class TermRelationController extends Controller
 {
-    public function createRelation($data){
+    public static function createRelation($data){
         try{
             $newRelation = new TermRelation();
             if( isset($data['user_id']) && $data['user_id']){
@@ -26,8 +25,8 @@ class TermRelationController extends Controller
             if( isset($data['company_id']) && $data['company_id']){
                 $newRelation->company_id = $data['company_id'];
             }
-            if( isset($data['status']) && $data['status']){
-                $newRelation->status = $data['status'];
+            if( isset($data['comments']) && $data['comments']){
+                $newRelation->comments = $data['comments'];
             }
             $newRelation->save();
         }catch(Exception $e){

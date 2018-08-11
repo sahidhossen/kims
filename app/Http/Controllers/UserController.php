@@ -70,16 +70,15 @@ class UserController extends Controller
             if(!$user->setRole( $user, $request->input('role')))
                 throw new Exception('Critical error on add user role!');
 
-            $relationTableData = [];
-            $relationTableData['central_office_id'] = $request->input('central_id');
-            $relationTableData['district_office_id'] = $request->input('district_id');
-            $relationTableData['unit_id'] = $request->input('unit_id');
-            $relationTableData['user_id'] = $user->id;
-
-            TermRelation::saveRelation( $relationTableData );
-
-//            $this->createUserRelation( $request, $user );
-
+            if(TermRelation::isRelativeExists($user->id, 0 ) === false ){
+                $relationTableData = [];
+                $relationTableData['central_office_id'] = $request->input('central_office_id');
+                $relationTableData['district_office_id'] = $request->input('district_office_id');
+                $relationTableData['unit_id'] = $request->input('unit_id');
+                $relationTableData['company_id'] = $request->input('company_id');
+                $relationTableData['user_id'] = $user->id;
+                TermRelation::createRelation( $relationTableData );
+            }
             return [ 'success' => true, 'data' => $user, 'message'=>'Add user successfully!'];
         }catch(Exception $e){
             return ['success'=>false, 'message'=> $e->getMessage()];
@@ -97,7 +96,6 @@ class UserController extends Controller
                 'user_id' => 'required',
                 'new_role' => 'required'
             ]);
-
             if( $validator->fails()){
                 $validatorErrors = [];
                 foreach($validator->messages()->getMessages() as $fieldName => $messages) {
