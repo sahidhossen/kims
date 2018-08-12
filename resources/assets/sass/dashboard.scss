@@ -57,3 +57,21 @@
   padding: 1.25em 1.25em 0 1.25em;
 }
 
+.loginPage {
+  width: 450px;
+  margin: 30px auto;
+    .login_url {
+      text-align: center;
+      font-size:18px;
+      margin-bottom:30px;
+      margin-top:10px;
+      display: block;
+    }
+    .note {
+      font-size:12px;
+      margin:5px 0;
+      padding:0;
+      color: #a9a9a9;
+      font-style: italic;
+    }
+}

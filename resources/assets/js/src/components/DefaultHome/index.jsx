@@ -1,2 +1,3 @@
 import DefaultHome from './DefaultHome'
-export default DefaultHome
+import enhance from './DefaultHome.enhance'
+export default enhance(DefaultHome)
