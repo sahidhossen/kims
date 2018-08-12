@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DistrictOffice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
 
 class DistrictController extends Controller
@@ -45,10 +46,24 @@ class DistrictController extends Controller
      */
     public function store(Request $request){
         try{
-            if(!$request->input('district_name') )
-                throw new Exception("district name is required!");
+            $validator = Validator::make($request->all(), [
+                'district_name' => 'required',
+                'central_office_id' => 'required',
+            ]);
+
+            if( $validator->fails()){
+                $validatorErrors = [];
+                foreach($validator->messages()->getMessages() as $fieldName => $messages) {
+                    foreach( $messages as $message){
+                        $validatorErrors[$fieldName] = $message;
+                    }
+                }
+                throw new Exception(implode(' ',$validatorErrors));
+            }
+
             $districtOffice = new DistrictOffice();
             $districtOffice->district_name = $request->input('district_name');
+            $districtOffice->central_office_id = $request->input('central_office_id');
             $districtOffice->district_details = $request->input('district_details');
             if(!$districtOffice->save())
                 throw new Exception("Critical error when save district office data!");

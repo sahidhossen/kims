@@ -18,7 +18,7 @@ class TermRelation extends Model
     ];
 
     public static function isRelativeExists($user_id, $status ){
-        $relative = self::where(['user_id'=>$user_id,'status'=>$status])->first();
+        $relative = self::where(['user_id'=>$user_id,'term_type'=>$status])->first();
         if($relative )
             return true;
         return false;

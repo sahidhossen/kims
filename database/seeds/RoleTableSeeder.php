@@ -25,8 +25,8 @@ class RoleTableSeeder extends Seeder
         $rhq->save();
 
         $bojso = new Role();
-        $bojso->name         = 'district';
-        $bojso->display_name = 'DISTRICT Level'; // optional
+        $bojso->name         = 'formation';
+        $bojso->display_name = 'FORMATION Level'; // optional
         $bojso->description  = 'Upper then BQMS'; // optional
         $bojso->save();
 

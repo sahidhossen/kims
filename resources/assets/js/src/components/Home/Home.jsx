@@ -21,7 +21,16 @@ export const Home = () => (
         </div>
         <div className="content">
             <div className="row">
-                <h1> Dashboard </h1>
+                <div className="content">
+                    <div className="card">
+                        <div className="card-header header-elements-inline">
+
+                        </div>
+                        <div className="card-body">
+                            <h1> We Will Take Care Of It Later! </h1>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

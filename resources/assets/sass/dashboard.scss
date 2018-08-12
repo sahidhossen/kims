@@ -15,10 +15,11 @@
   z-index:99;
   display: flex;
   justify-content:center;
+  overflow-y: scroll;
 }
 
 .kit-modal-box { 
-  position: fixed;
+  position: absolute;
   width: 500px;
   height:auto;
   padding:10px;

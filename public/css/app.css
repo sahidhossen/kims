@@ -55,10 +55,11 @@
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+  overflow-y: scroll;
 }
 
 .kit-modal-box {
-  position: fixed;
+  position: absolute;
   width: 500px;
   height: auto;
   padding: 10px;

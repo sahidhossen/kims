@@ -1,11 +1,15 @@
 import { combineReducers } from 'redux'
 import locationReducer from './location'
 import users from './userReducer'
+import roles from './roleReducer'
 import oauth from './oauthReducer'
+import kitControllers from './kitControllerReducer'
 export const makeRootReducer = asyncReducers => {
     return combineReducers({
         // Add sync reducers here
+        kitControllers,
         users,
+        roles,
         oauth,
         location: locationReducer,
         ...asyncReducers

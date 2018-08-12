@@ -3275,6 +3275,17 @@ var FETCH_OAUTH_REJECTED = exports.FETCH_OAUTH_REJECTED = "FETCH_OAUTH_REJECTED"
 var FETCH_OAUTH_FETCHING = exports.FETCH_OAUTH_FETCHING = "FETCH_OAUTH_FETCHING";
 var FETCH_OAUTH_EXPIRED = exports.FETCH_OAUTH_EXPIRED = "FETCH_OAUTH_EXPIRED";
 
+var FETCH_USER = exports.FETCH_USER = 'FETCH_USER';
+var FETCHING_USER = exports.FETCHING_USER = 'FETCHING_USER';
+var REJECT_USER = exports.REJECT_USER = 'REJECT_USER';
+
+var FETCH_USER_ROLE = exports.FETCH_USER_ROLE = 'FETCH_USER_ROLE';
+var FETCHING_USER_ROLE = exports.FETCHING_USER_ROLE = 'FETCHING_USER_ROLE';
+
+var FETCH_KIT_CONTROLLER = exports.FETCH_KIT_CONTROLLER = 'FETCH_KIT_CONTROLLER';
+var FETCHING_KIT_CONTROLLER = exports.FETCHING_KIT_CONTROLLER = 'FETCHING_KIT_CONTROLLER';
+var REJECT_KIT_CONTROLLER = exports.REJECT_KIT_CONTROLLER = 'REJECT_KIT_CONTROLLER';
+
 /***/ }),
 /* 41 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -3293,6 +3304,12 @@ var _actionType = __webpack_require__(40);
 
 var constants = _interopRequireWildcard(_actionType);
 
+var _axios = __webpack_require__(43);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 var userIsAuthenticated = exports.userIsAuthenticated = (0, _redirect.connectedRouterRedirect)({
@@ -3303,6 +3320,8 @@ var userIsAuthenticated = exports.userIsAuthenticated = (0, _redirect.connectedR
     // authenticatedSelector: state => state.oauth.fetched,
     authenticatedSelector: function authenticatedSelector(state, props) {
         if (state.oauth.oauth.access_token !== null) {
+            _axios2.default.defaults.headers.common['Authorization'] = state.oauth.oauth.token_type + " " + state.oauth.oauth.access_token;
+            _axios2.default.defaults.headers.post['Accept'] = 'application/json';
             return true;
         }
 
@@ -3310,7 +3329,8 @@ var userIsAuthenticated = exports.userIsAuthenticated = (0, _redirect.connectedR
         if (current_oauth !== null && current_oauth.length > 0) {
             current_oauth = JSON.parse(current_oauth);
             props.dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload: current_oauth });
-            window.axios.defaults.headers.common['Authorization'] = current_oauth.token_type + " " + current_oauth.access_token;
+            _axios2.default.defaults.headers.common['Authorization'] = current_oauth.token_type + " " + current_oauth.access_token;
+            _axios2.default.defaults.headers.post['Accept'] = 'application/json';
             return true;
         }
         return false;
@@ -3327,7 +3347,8 @@ var Authentication = exports.Authentication = function Authentication(props) {
     if (current_oauth !== null && current_oauth.length > 0) {
         current_oauth = JSON.parse(current_oauth);
         props.dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload: current_oauth });
-        window.axios.defaults.headers.common['Authorization'] = current_oauth.token_type + " " + current_oauth.access_token;
+        _axios2.default.defaults.headers.common['Authorization'] = current_oauth.token_type + " " + current_oauth.access_token;
+        _axios2.default.defaults.headers.post['Accept'] = 'application/json';
         return true;
     } else {
         return null;
@@ -5695,7 +5716,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var DASHBOARD = exports.DASHBOARD = '/dashboard';
 var USERS = exports.USERS = '/dashboard/users';
-var CREATE_USERS = exports.CREATE_USERS = '/dashboard/create_user';
+var CONTROLLER = exports.CONTROLLER = '/dashboard/controller';
 
 // api keys
 var CLIENT_SECRET = exports.CLIENT_SECRET = "8oxzLujZHpcNqvTovjhLBbbC6XOtyfqP4cl0RBvI";
@@ -7213,7 +7234,7 @@ exports.f = __webpack_require__(19) ? gOPD : function getOwnPropertyDescriptor(O
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.fetchOauthToken = exports.getUserRole = exports.UserLogin = undefined;
+exports.fetchOauthToken = exports.getUserRole = exports.addUser = exports.fetchUser = exports.UserLogin = undefined;
 
 var _actionType = __webpack_require__(40);
 
@@ -7245,14 +7266,49 @@ var UserLogin = exports.UserLogin = function UserLogin(data) {
     };
 };
 
+var fetchUser = exports.fetchUser = function fetchUser() {
+    return function (dispatch) {
+        _axios2.default.get('/api/kit_users').then(function (response) {
+            if (response.data.success === true) {
+                dispatch({ type: constants.FETCH_USER, payload: response.data.data });
+            } else {
+                console.log("error: ", response.data.message);
+            }
+        }).catch(function (error) {
+            console.log("role error: ", error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
+    };
+};
+
+var addUser = exports.addUser = function addUser(data) {
+    return function (dispatch, getState) {
+        _axios2.default.post('/api/kit_user_register', data).then(function (response) {
+            if (response.data.success === true) {
+                var store = getState();
+                var users = store.users.users;
+
+                users.push(response.data.data);
+                dispatch({ type: constants.FETCH_USER, payload: users });
+            } else {
+                console.log("error: ", response.data.message);
+            }
+        }).catch(function (error) {
+            console.log("role error: ", error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
+    };
+};
+
 var getUserRole = exports.getUserRole = function getUserRole() {
     return function (dispatch) {
-        console.log("axios: ", window.axios.defaults.headers);
+        dispatch({
+            type: constants.FETCHING_USER_ROLE
+        });
         _axios2.default.get('/api/get_roles').then(function (response) {
-            console.log("res: ", response);
-            // dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload:response.data });
+            dispatch({ type: constants.FETCH_USER_ROLE, payload: response.data.data });
         }).catch(function (error) {
-            console.log(error);
+            console.log("role error: ", error);
             // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
         });
     };
@@ -30460,16 +30516,26 @@ var _userReducer = __webpack_require__(199);
 
 var _userReducer2 = _interopRequireDefault(_userReducer);
 
+var _roleReducer = __webpack_require__(291);
+
+var _roleReducer2 = _interopRequireDefault(_roleReducer);
+
 var _oauthReducer = __webpack_require__(200);
 
 var _oauthReducer2 = _interopRequireDefault(_oauthReducer);
+
+var _kitControllerReducer = __webpack_require__(295);
+
+var _kitControllerReducer2 = _interopRequireDefault(_kitControllerReducer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var makeRootReducer = exports.makeRootReducer = function makeRootReducer(asyncReducers) {
     return (0, _redux.combineReducers)((0, _extends3.default)({
         // Add sync reducers here
+        kitControllers: _kitControllerReducer2.default,
         users: _userReducer2.default,
+        roles: _roleReducer2.default,
         oauth: _oauthReducer2.default,
         location: _location2.default
     }, asyncReducers));
@@ -30695,30 +30761,25 @@ var users = function reducer() {
         fetched: false,
         fetchingLogin: false,
         isLoggedIn: false,
-        roles: [],
-        fetchingRole: false,
-        fetchedRole: false,
         error: null
     };
     var action = arguments[1];
 
     switch (action.type) {
-        case 'FETCH_USER_FULFILLED':
+        case constants.FETCHING_USER:
             {
                 return (0, _extends3.default)({}, state, {
                     fetching: true,
+                    fetched: false
+                });
+            }
+        case constants.FETCH_USER:
+            {
+                return (0, _extends3.default)({}, state, {
+                    fetching: false,
                     error: null,
                     fetched: true,
                     users: action.payload
-                });
-            }
-        case 'FETCH_USER_ROLE':
-            {
-                return (0, _extends3.default)({}, state, {
-                    fetchingRole: true,
-                    error: null,
-                    fetchedRole: true,
-                    roles: action.payload
                 });
             }
         case constants.USER_LOGGING_IN:
@@ -30836,9 +30897,9 @@ var _Users = __webpack_require__(270);
 
 var _Users2 = _interopRequireDefault(_Users);
 
-var _CreateUser = __webpack_require__(276);
+var _KitController = __webpack_require__(296);
 
-var _CreateUser2 = _interopRequireDefault(_CreateUser);
+var _KitController2 = _interopRequireDefault(_KitController);
 
 var _Login = __webpack_require__(279);
 
@@ -30887,9 +30948,9 @@ var routes = [{
             exact: true,
             component: _Users2.default
         }, {
-            path: route.CREATE_USERS,
+            path: route.CONTROLLER,
             exact: true,
-            component: _CreateUser2.default
+            component: _KitController2.default
         }, {
             path: "/*",
             exact: true,
@@ -32176,21 +32237,6 @@ var Navbar = exports.Navbar = function Navbar() {
                     "li",
                     { className: "nav-item dropdown" },
                     _react2.default.createElement(
-                        "a",
-                        { href: "#", className: "navbar-nav-link dropdown-toggle caret-0", "data-toggle": "dropdown" },
-                        _react2.default.createElement("i", { className: "icon-git-compare" }),
-                        _react2.default.createElement(
-                            "span",
-                            { className: "d-md-none ml-2" },
-                            "Git updates"
-                        ),
-                        _react2.default.createElement(
-                            "span",
-                            { className: "badge badge-pill bg-warning-400 ml-auto ml-md-0" },
-                            "9"
-                        )
-                    ),
-                    _react2.default.createElement(
                         "div",
                         { className: "dropdown-menu dropdown-content wmin-md-350" },
                         _react2.default.createElement(
@@ -32406,16 +32452,6 @@ var Navbar = exports.Navbar = function Navbar() {
                     "li",
                     { className: "nav-item dropdown" },
                     _react2.default.createElement(
-                        "a",
-                        { href: "#", className: "navbar-nav-link dropdown-toggle caret-0", "data-toggle": "dropdown" },
-                        _react2.default.createElement("i", { className: "icon-people" }),
-                        _react2.default.createElement(
-                            "span",
-                            { className: "d-md-none ml-2" },
-                            "Users"
-                        )
-                    ),
-                    _react2.default.createElement(
                         "div",
                         { className: "dropdown-menu dropdown-menu-right dropdown-content wmin-md-300" },
                         _react2.default.createElement(
@@ -32599,21 +32635,6 @@ var Navbar = exports.Navbar = function Navbar() {
                 _react2.default.createElement(
                     "li",
                     { className: "nav-item dropdown" },
-                    _react2.default.createElement(
-                        "a",
-                        { href: "#", className: "navbar-nav-link dropdown-toggle caret-0", "data-toggle": "dropdown" },
-                        _react2.default.createElement("i", { className: "icon-bubbles4" }),
-                        _react2.default.createElement(
-                            "span",
-                            { className: "d-md-none ml-2" },
-                            "Messages"
-                        ),
-                        _react2.default.createElement(
-                            "span",
-                            { className: "badge badge-pill bg-warning-400 ml-auto ml-md-0" },
-                            "2"
-                        )
-                    ),
                     _react2.default.createElement(
                         "div",
                         { className: "dropdown-menu dropdown-menu-right dropdown-content wmin-md-350" },
@@ -32840,36 +32861,12 @@ var Navbar = exports.Navbar = function Navbar() {
                         _react2.default.createElement(
                             "span",
                             null,
-                            "Victoria"
+                            "Admin"
                         )
                     ),
                     _react2.default.createElement(
                         "div",
                         { className: "dropdown-menu dropdown-menu-right" },
-                        _react2.default.createElement(
-                            "a",
-                            { href: "#", className: "dropdown-item" },
-                            _react2.default.createElement("i", { className: "icon-user-plus" }),
-                            " My profile"
-                        ),
-                        _react2.default.createElement(
-                            "a",
-                            { href: "#", className: "dropdown-item" },
-                            _react2.default.createElement("i", { className: "icon-coins" }),
-                            " My balance"
-                        ),
-                        _react2.default.createElement(
-                            "a",
-                            { href: "#", className: "dropdown-item" },
-                            _react2.default.createElement("i", { className: "icon-comment-discussion" }),
-                            " Messages ",
-                            _react2.default.createElement(
-                                "span",
-                                { className: "badge badge-pill bg-blue ml-auto" },
-                                "58"
-                            )
-                        ),
-                        _react2.default.createElement("div", { className: "dropdown-divider" }),
                         _react2.default.createElement(
                             "a",
                             { href: "#", className: "dropdown-item" },
@@ -33006,13 +33003,13 @@ var Sidebar = exports.Sidebar = function Sidebar() {
                             _react2.default.createElement(
                                 'div',
                                 { className: 'media-title font-weight-semibold' },
-                                'Victoria Baker'
+                                ' Kim Admin '
                             ),
                             _react2.default.createElement(
                                 'div',
                                 { className: 'font-size-xs opacity-50' },
                                 _react2.default.createElement('i', { className: 'icon-pin font-size-sm' }),
-                                ' \xA0Santa Ana, CA'
+                                ' \xA0 Manage Resource'
                             )
                         ),
                         _react2.default.createElement(
@@ -33063,8 +33060,8 @@ var Sidebar = exports.Sidebar = function Sidebar() {
                         { className: 'nav-item' },
                         _react2.default.createElement(
                             _reactRouterDom.Link,
-                            { className: 'nav-link', to: _constants.USERS },
-                            ' Users '
+                            { className: 'nav-link', to: _constants.CONTROLLER },
+                            ' Controller '
                         )
                     ),
                     _react2.default.createElement(
@@ -33072,54 +33069,8 @@ var Sidebar = exports.Sidebar = function Sidebar() {
                         { className: 'nav-item' },
                         _react2.default.createElement(
                             _reactRouterDom.Link,
-                            { className: 'nav-link', to: _constants.CREATE_USERS },
-                            ' Create Users '
-                        )
-                    ),
-                    _react2.default.createElement(
-                        'li',
-                        { className: 'nav-item nav-item-submenu' },
-                        _react2.default.createElement(
-                            'a',
-                            { href: '#', className: 'nav-link' },
-                            _react2.default.createElement('i', { className: 'icon-copy' }),
-                            ' ',
-                            _react2.default.createElement(
-                                'span',
-                                null,
-                                'Layouts'
-                            )
-                        ),
-                        _react2.default.createElement(
-                            'ul',
-                            { className: 'nav nav-group-sub', style: { display: 'block' } },
-                            _react2.default.createElement(
-                                'li',
-                                { className: 'nav-item' },
-                                _react2.default.createElement(
-                                    'a',
-                                    { href: 'index.html', className: 'nav-link active' },
-                                    'Default layout'
-                                )
-                            ),
-                            _react2.default.createElement(
-                                'li',
-                                { className: 'nav-item' },
-                                _react2.default.createElement(
-                                    'a',
-                                    { href: '#', className: 'nav-link' },
-                                    'Layout 2'
-                                )
-                            ),
-                            _react2.default.createElement(
-                                'li',
-                                { className: 'nav-item' },
-                                _react2.default.createElement(
-                                    'a',
-                                    { href: '#', className: 'nav-link' },
-                                    'Layout 3'
-                                )
-                            )
+                            { className: 'nav-link', to: _constants.USERS },
+                            ' Users '
                         )
                     )
                 )
@@ -33329,9 +33280,22 @@ var Home = exports.Home = function Home() {
                 "div",
                 { className: "row" },
                 _react2.default.createElement(
-                    "h1",
-                    null,
-                    " Dashboard "
+                    "div",
+                    { className: "content" },
+                    _react2.default.createElement(
+                        "div",
+                        { className: "card" },
+                        _react2.default.createElement("div", { className: "card-header header-elements-inline" }),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "card-body" },
+                            _react2.default.createElement(
+                                "h1",
+                                null,
+                                " We Will Take Care Of It Later! "
+                            )
+                        )
+                    )
                 )
             )
         )
@@ -35762,7 +35726,8 @@ var User = exports.User = function User(_ref) {
     var toggleModal = _ref.toggleModal,
         userEditAction = _ref.userEditAction,
         userDeleteAction = _ref.userDeleteAction,
-        state = _ref.state;
+        state = _ref.state,
+        users = _ref.users;
     return _react2.default.createElement(
         'div',
         { className: 'Homepage' },
@@ -35833,7 +35798,7 @@ var User = exports.User = function User(_ref) {
                             _react2.default.createElement(
                                 'div',
                                 { className: 'd-flex flex-column bg-light border rounded p-2' },
-                                state.all_user.map(function (user, index) {
+                                users.users.length > 0 && users.users.map(function (user, index) {
                                     return _react2.default.createElement(
                                         'div',
                                         { className: 'bg-slate py-2 px-3 rounded-top  border-top-1 ', key: index },
@@ -35887,7 +35852,8 @@ User.propTypes = {
     toggleModal: _propTypes2.default.func,
     userEditAction: _propTypes2.default.func,
     userDeleteAction: _propTypes2.default.func,
-    state: _propTypes2.default.object
+    state: _propTypes2.default.object,
+    users: _propTypes2.default.object
 };
 
 exports.default = User;
@@ -35937,119 +35903,270 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var roles = [{ name: 'central', id: 0 }, { name: 'district', id: 1 }, { name: 'unit', id: 2 }];
-
 var UserModal = exports.UserModal = function UserModal(_ref) {
     var hideModal = _ref.hideModal,
         onChangeAction = _ref.onChangeAction,
         addUser = _ref.addUser,
+        kitControllers = _ref.kitControllers,
+        roles = _ref.roles,
         state = _ref.state;
     return _react2.default.createElement(
-        'div',
-        { className: 'kit-modal-box-shadow' },
+        "div",
+        { className: "kit-modal-box-shadow" },
         _react2.default.createElement(
-            'div',
-            { className: 'kit-modal-box' },
+            "div",
+            { className: "kit-modal-box" },
             _react2.default.createElement(
-                'div',
-                { className: 'modal-header d-flex' },
+                "div",
+                { className: "modal-header d-flex" },
                 _react2.default.createElement(
-                    'div',
-                    { className: 'flex-1' },
+                    "div",
+                    { className: "flex-1" },
                     _react2.default.createElement(
-                        'h1',
-                        { className: 'modal-title' },
-                        ' Add User '
+                        "h1",
+                        { className: "modal-title" },
+                        " Add Solder "
                     )
                 ),
                 _react2.default.createElement(
-                    'span',
-                    { className: 'close-modal', onClick: function onClick() {
+                    "span",
+                    { className: "close-modal", onClick: function onClick() {
                             hideModal();
                         } },
-                    ' ',
-                    _react2.default.createElement('i', { className: 'fa fa-close' }),
-                    ' '
+                    " ",
+                    _react2.default.createElement("i", { className: "fa fa-close" }),
+                    " "
                 )
             ),
             _react2.default.createElement(
-                'div',
-                { className: 'modal-body' },
+                "div",
+                { className: "modal-body" },
+                state.error !== '' && _react2.default.createElement(
+                    "p",
+                    { className: "alert-danger" },
+                    " ",
+                    state.error
+                ),
                 _react2.default.createElement(
-                    'div',
-                    { className: 'kit-form-body' },
+                    "div",
+                    { className: "kit-form-body" },
                     _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' },
+                        "div",
+                        { className: "form-group" },
                         _react2.default.createElement(
-                            'label',
+                            "label",
                             null,
-                            ' Name '
+                            " Name "
                         ),
-                        _react2.default.createElement('input', { type: 'text', className: 'form-control', value: state.user.name, placeholder: 'User Name', name: 'u_name', onChange: function onChange(e) {
+                        _react2.default.createElement("input", { type: "text", className: "form-control", value: state.user.name, placeholder: "Full Name", name: "u_name", onChange: function onChange(e) {
                                 onChangeAction(e);
                             } })
                     ),
                     _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' },
+                        "div",
+                        { className: "form-group" },
                         _react2.default.createElement(
-                            'label',
+                            "label",
                             null,
-                            ' Password '
+                            " Password "
                         ),
-                        _react2.default.createElement('input', { type: 'password', className: 'form-control', value: state.user.password, placeholder: 'User Name', name: 'password', onChange: function onChange(e) {
+                        _react2.default.createElement("input", { type: "password", className: "form-control", value: state.user.password, placeholder: "Password", name: "password", onChange: function onChange(e) {
                                 onChangeAction(e);
                             } })
                     ),
                     _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' },
+                        "div",
+                        { className: "form-group" },
                         _react2.default.createElement(
-                            'label',
+                            "label",
                             null,
-                            ' Access ID '
+                            " Secret ID ",
+                            _react2.default.createElement(
+                                "span",
+                                { className: "required" },
+                                "*"
+                            ),
+                            " "
                         ),
-                        _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: 'User Name', value: state.user.secret_id, name: 'secret_id', onChange: function onChange(e) {
+                        _react2.default.createElement("input", { type: "text", className: "form-control", placeholder: "Secret ID", value: state.user.secret_id, name: "secret_id", onChange: function onChange(e) {
                                 onChangeAction(e);
                             } })
                     ),
                     _react2.default.createElement(
-                        'div',
-                        { className: 'form-group' },
+                        "div",
+                        { className: "form-group" },
                         _react2.default.createElement(
-                            'label',
+                            "label",
                             null,
-                            ' User Role '
+                            " User Role ",
+                            _react2.default.createElement(
+                                "span",
+                                { className: "required" },
+                                "*"
+                            ),
+                            " "
                         ),
                         _react2.default.createElement(
-                            'select',
-                            { className: 'form-control', defaultValue: state.user.role },
-                            roles.map(function (role) {
+                            "select",
+                            { className: "form-control", name: "user_role", onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } },
+                            roles.fetched && roles.roles.map(function (role) {
                                 return _react2.default.createElement(
-                                    'option',
-                                    { key: role.id, defaultValue: state.user.role === role.id, value: role.id },
-                                    ' ',
-                                    role.name,
-                                    ' '
+                                    "option",
+                                    { key: role.id, defaultValue: state.user.role === role.name, value: role.name },
+                                    " ",
+                                    role.display_name,
+                                    " "
                                 );
                             })
                         )
                     ),
                     _react2.default.createElement(
-                        'div',
-                        { className: 'button-submit-area text-right' },
+                        "div",
+                        { className: "form-group" },
                         _react2.default.createElement(
-                            'button',
-                            { type: 'submit', className: 'btn btn-primary', onClick: function onClick(e) {
-                                    addUser(e);
-                                } },
-                            'Add User'
+                            "label",
+                            null,
+                            " Select Central Office ",
+                            _react2.default.createElement(
+                                "span",
+                                { className: "required" },
+                                "*"
+                            )
                         ),
                         _react2.default.createElement(
-                            'button',
-                            { type: 'submit', className: 'btn btn-primary' },
-                            'Add And Exit'
+                            "select",
+                            { className: "form-control", name: "central_office_id", onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } },
+                            _react2.default.createElement(
+                                "option",
+                                { value: "0" },
+                                " Select Office "
+                            ),
+                            kitControllers.central_offices.length > 0 && kitControllers.central_offices.map(function (office, index) {
+                                return _react2.default.createElement(
+                                    "option",
+                                    { key: index, defaultValue: state.user.central_office_id === office.id, value: office.id },
+                                    " ",
+                                    office.central_name,
+                                    " "
+                                );
+                            })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "form-group" },
+                        _react2.default.createElement(
+                            "label",
+                            null,
+                            " Select District Office ",
+                            _react2.default.createElement(
+                                "span",
+                                { className: "required" },
+                                "*"
+                            )
+                        ),
+                        _react2.default.createElement(
+                            "select",
+                            { className: "form-control", name: "formation_office_id", onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } },
+                            _react2.default.createElement(
+                                "option",
+                                { value: "0" },
+                                " Select Office "
+                            ),
+                            state.filterDistrictOffices.length != 0 && state.filterDistrictOffices.map(function (office, index) {
+                                return _react2.default.createElement(
+                                    "option",
+                                    { key: index, defaultValue: state.user.district_office_id === office.id, value: office.id },
+                                    " ",
+                                    office.district_name,
+                                    " "
+                                );
+                            })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "form-group" },
+                        _react2.default.createElement(
+                            "label",
+                            null,
+                            " Select Unit ",
+                            _react2.default.createElement(
+                                "span",
+                                { className: "required" },
+                                "*"
+                            )
+                        ),
+                        _react2.default.createElement(
+                            "select",
+                            { className: "form-control", name: "unit_id", onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } },
+                            _react2.default.createElement(
+                                "option",
+                                { value: "0" },
+                                " Select Office "
+                            ),
+                            state.filterUnit.length > 0 && state.filterUnit.map(function (office, index) {
+                                return _react2.default.createElement(
+                                    "option",
+                                    { key: index, defaultValue: state.user.unit_id === office.id, value: office.id },
+                                    " ",
+                                    office.unit_name,
+                                    " "
+                                );
+                            })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "form-group" },
+                        _react2.default.createElement(
+                            "label",
+                            null,
+                            " Select Company ",
+                            _react2.default.createElement(
+                                "span",
+                                { className: "required" },
+                                "*"
+                            )
+                        ),
+                        _react2.default.createElement(
+                            "select",
+                            { className: "form-control", name: "company_id", onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } },
+                            _react2.default.createElement(
+                                "option",
+                                { value: "0" },
+                                " Select Company "
+                            ),
+                            state.filterCompany.length > 0 && state.filterCompany.map(function (office, index) {
+                                return _react2.default.createElement(
+                                    "option",
+                                    { key: index, defaultValue: state.user.company_id === office.id, value: office.id },
+                                    " ",
+                                    office.company_name,
+                                    " "
+                                );
+                            })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "button-submit-area text-right" },
+                        _react2.default.createElement(
+                            "button",
+                            { type: "submit", className: "btn btn-primary", onClick: function onClick(e) {
+                                    addUser(e);
+                                } },
+                            "Add User"
                         )
                     )
                 )
@@ -36062,7 +36179,9 @@ UserModal.propTypes = {
     onChangeAction: _propTypes2.default.func,
     hideModal: _propTypes2.default.func,
     addUser: _propTypes2.default.func,
-    state: _propTypes2.default.object
+    roles: _propTypes2.default.object,
+    state: _propTypes2.default.object,
+    kitControllers: _propTypes2.default.object
 };
 
 exports.default = UserModal;
@@ -36084,11 +36203,35 @@ var _extends3 = _interopRequireDefault(_extends2);
 
 var _redux = __webpack_require__(4);
 
+var _reactRedux = __webpack_require__(8);
+
 var _recompose = __webpack_require__(6);
+
+var _userActions = __webpack_require__(118);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = (0, _redux.compose)((0, _recompose.withState)('state', 'setState', { user: { name: '', secret_id: '', password: '', role: 0 } }), (0, _recompose.withHandlers)({
+exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) {
+    return {
+        roles: store.roles,
+        kitControllers: store.kitControllers
+    };
+}), (0, _recompose.withState)('state', 'setState', {
+    user: {
+        name: '',
+        secret_id: '',
+        password: '',
+        role: '',
+        central_office_id: 0,
+        district_office_id: 0,
+        unit_id: 0,
+        company_id: 0
+    },
+    filterDistrictOffices: [],
+    filterUnit: [],
+    filterCompany: [],
+    error: ''
+}), (0, _recompose.withHandlers)({
     hideModal: function hideModal(props) {
         return function () {
             props.closeModal();
@@ -36096,8 +36239,13 @@ exports.default = (0, _redux.compose)((0, _recompose.withState)('state', 'setSta
     },
     onChangeAction: function onChangeAction(props) {
         return function (event) {
-            var user = props.state.user,
-                setState = props.setState;
+            var _props$state = props.state,
+                user = _props$state.user,
+                filterDistrictOffices = _props$state.filterDistrictOffices,
+                filterUnit = _props$state.filterUnit,
+                filterCompany = _props$state.filterCompany,
+                setState = props.setState,
+                kitControllers = props.kitControllers;
 
 
             var name = event.target.name;
@@ -36106,18 +36254,53 @@ exports.default = (0, _redux.compose)((0, _recompose.withState)('state', 'setSta
             if (name === 'u_name') user.name = value;
             if (name === 'secret_id') user.secret_id = value;
             if (name === 'password') user.password = value;
-            if (name === 'role') user.role = value;
-            setState((0, _extends3.default)({}, props.state, { user: user }));
+            if (name === 'user_role') user.role = value;
+            if (name === 'central_office_id') {
+                user.central_office_id = value;
+                filterDistrictOffices = kitControllers.formation_offices.filter(function (office) {
+                    return office.central_office_id === parseInt(value);
+                });
+            }
+            if (name === 'formation_office_id') {
+                user.district_office_id = value;
+                filterUnit = kitControllers.units.filter(function (office) {
+                    return office.district_office_id === parseInt(value);
+                });
+            }
+            if (name === 'unit_id') {
+                user.unit_id = value;
+                filterCompany = kitControllers.companies.filter(function (office) {
+                    return office.unit_id === parseInt(value);
+                });
+            }
+            if (name === 'company_id') {
+                user.company_id = value;
+            }
+
+            setState((0, _extends3.default)({}, props.state, { user: user, filterDistrictOffices: filterDistrictOffices, filterUnit: filterUnit, filterCompany: filterCompany }));
         };
     },
     addUser: function addUser(props) {
         return function (event) {
             event.preventDefault();
-            console.log(props.state.user);
+            var state = props.state,
+                setState = props.setState;
+
+
+            state.error = state.user.name === '' || state.user.secret_id === '' || state.user.role === '' || state.user.central_office_id === 0 || state.user.district_office_id === 0 || state.user.unit_id === 0 || state.user.company_id === 0 ? "Please fill required field!" : "";
+
+            console.log("user: ", state.user);
+
+            if (state.error !== "") {
+                setState((0, _extends3.default)({}, state, { error: error }));
+            } else {
+                props.dispatch((0, _userActions.addUser)(state.user));
+            }
         };
     }
 }), (0, _recompose.lifecycle)({
     componentDidMount: function componentDidMount() {
+        console.log("props: ", this.props);
         var _props = this.props,
             user = _props.user,
             actionType = _props.actionType;
@@ -36151,27 +36334,18 @@ var _services = __webpack_require__(41);
 
 var _userActions = __webpack_require__(118);
 
+var _kitControllerActions = __webpack_require__(299);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var allUser = [{
-    name: 'karim',
-    secret_id: 'karim211',
-    password: 'karim',
-    role: 1
-}, {
-    name: 'selim',
-    secret_id: 'selim222',
-    password: 'selim22',
-    role: 0
-}, {
-    name: 'Jahir',
-    secret_id: 'jahir23',
-    password: 'jahir222',
-    role: 2
-}];
 exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) {
-    return { oauth: store.oauth, user: store.user };
-}), _services.userIsAuthenticated, (0, _recompose.withState)('state', 'setState', { actionType: false, isModalOn: false, user: null, all_user: allUser }), (0, _recompose.withHandlers)({
+    return {
+        oauth: store.oauth,
+        users: store.users,
+        roles: store.roles,
+        kitControllers: store.kitControllers
+    };
+}), _services.userIsAuthenticated, (0, _recompose.withState)('state', 'setState', { actionType: false, isModalOn: false, user: null }), (0, _recompose.withHandlers)({
     toggleModal: function toggleModal(props) {
         return function (event) {
             var state = props.state,
@@ -36199,149 +36373,23 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
     }
 }), (0, _recompose.lifecycle)({
     componentDidMount: function componentDidMount() {
-        this.props.dispatch((0, _userActions.getUserRole)());
-    }
+        var _props = this.props,
+            roles = _props.roles.roles,
+            users = _props.users.users;
+
+        if (roles.length === 0) this.props.dispatch((0, _userActions.getUserRole)());
+
+        if (users.length === 0) this.props.dispatch((0, _userActions.fetchUser)());
+
+        this.props.dispatch((0, _kitControllerActions.getKitController)());
+    },
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {}
 }), _recompose.pure);
 
 /***/ }),
-/* 276 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _CreateUser = __webpack_require__(277);
-
-var _CreateUser2 = _interopRequireDefault(_CreateUser);
-
-var _CreateUser3 = __webpack_require__(278);
-
-var _CreateUser4 = _interopRequireDefault(_CreateUser3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = (0, _CreateUser4.default)(_CreateUser2.default);
-
-/***/ }),
-/* 277 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.User = undefined;
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var User = exports.User = function User() {
-    return _react2.default.createElement(
-        "div",
-        { className: "Homepage" },
-        _react2.default.createElement(
-            "div",
-            { className: "page-header page-header-light" },
-            _react2.default.createElement(
-                "div",
-                { className: "page-header-content header-elements-md-inline" },
-                _react2.default.createElement(
-                    "div",
-                    { className: "page-title d-flex" },
-                    _react2.default.createElement(
-                        "h4",
-                        null,
-                        _react2.default.createElement("i", { className: "icon-arrow-left52 mr-2" }),
-                        " ",
-                        _react2.default.createElement(
-                            "span",
-                            { className: "font-weight-semibold" },
-                            "User"
-                        ),
-                        " - Dashboard"
-                    ),
-                    _react2.default.createElement(
-                        "a",
-                        { href: "#", className: "header-elements-toggle text-default d-md-none" },
-                        _react2.default.createElement("i", { className: "icon-more" })
-                    )
-                )
-            )
-        ),
-        _react2.default.createElement(
-            "div",
-            { className: "content" },
-            _react2.default.createElement(
-                "div",
-                { className: "row" },
-                _react2.default.createElement(
-                    "div",
-                    { className: "content" },
-                    _react2.default.createElement(
-                        "div",
-                        { className: "card" },
-                        _react2.default.createElement(
-                            "div",
-                            { className: "card-header header-elements-inline" },
-                            _react2.default.createElement(
-                                "h5",
-                                { className: "card-title" },
-                                "Add User"
-                            )
-                        ),
-                        _react2.default.createElement(
-                            "div",
-                            { className: "card-body" },
-                            _react2.default.createElement(
-                                "p",
-                                null,
-                                " Form body  "
-                            )
-                        )
-                    )
-                )
-            )
-        )
-    );
-};
-
-exports.default = User;
-
-/***/ }),
-/* 278 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _redux = __webpack_require__(4);
-
-var _recompose = __webpack_require__(6);
-
-var _reactRedux = __webpack_require__(8);
-
-var _services = __webpack_require__(41);
-
-exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) {
-    return { oauth: store.oauth };
-}), _services.userIsAuthenticated, (0, _recompose.withState)('state', 'setState', {}), (0, _recompose.lifecycle)({
-    componentDidMount: function componentDidMount() {}
-}), _recompose.pure);
-
-/***/ }),
+/* 276 */,
+/* 277 */,
+/* 278 */,
 /* 279 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -36595,6 +36643,1301 @@ var NotFound = exports.NotFound = function NotFound() {
 };
 
 exports.default = NotFound;
+
+/***/ }),
+/* 287 */,
+/* 288 */,
+/* 289 */,
+/* 290 */,
+/* 291 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(14);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _actionType = __webpack_require__(40);
+
+var constants = _interopRequireWildcard(_actionType);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var roles = function reducer() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        fetching: false,
+        fetched: false,
+        roles: [],
+        error: null
+    };
+    var action = arguments[1];
+
+    switch (action.type) {
+
+        case constants.FETCHING_USER_ROLE:
+            {
+                return (0, _extends3.default)({}, state, {
+                    fetching: true,
+                    fetched: false
+                });
+            }
+        case constants.FETCH_USER_ROLE:
+            {
+                return (0, _extends3.default)({}, state, {
+                    fetching: false,
+                    error: null,
+                    fetched: true,
+                    roles: action.payload
+                });
+            }
+
+    }
+    return state;
+};
+exports.default = roles;
+
+/***/ }),
+/* 292 */,
+/* 293 */,
+/* 294 */,
+/* 295 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(14);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _actionType = __webpack_require__(40);
+
+var constants = _interopRequireWildcard(_actionType);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var kitControllers = function reducer() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        central_offices: [],
+        formation_offices: [],
+        units: [],
+        companies: [],
+        fetching: false,
+        fetched: false,
+        error: null
+    };
+    var action = arguments[1];
+
+    switch (action.type) {
+        case constants.FETCHING_KIT_CONTROLLER:
+            {
+                return (0, _extends3.default)({}, state, {
+                    fetching: true,
+                    fetched: false
+                });
+            }
+        case constants.FETCH_KIT_CONTROLLER:
+            {
+                var _action$payload = action.payload,
+                    central_offices = _action$payload.central_offices,
+                    formation_offices = _action$payload.formation_offices,
+                    units = _action$payload.units,
+                    companies = _action$payload.companies;
+
+                return (0, _extends3.default)({}, state, {
+                    fetching: true,
+                    error: null,
+                    fetched: true,
+                    central_offices: central_offices,
+                    formation_offices: formation_offices,
+                    units: units,
+                    companies: companies
+
+                });
+            }
+    }
+    return state;
+};
+exports.default = kitControllers;
+
+/***/ }),
+/* 296 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _KitController = __webpack_require__(297);
+
+var _KitController2 = _interopRequireDefault(_KitController);
+
+var _KitController3 = __webpack_require__(298);
+
+var _KitController4 = _interopRequireDefault(_KitController3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = (0, _KitController4.default)(_KitController2.default);
+
+/***/ }),
+/* 297 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.KitController = undefined;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _Modal = __webpack_require__(300);
+
+var _Modal2 = _interopRequireDefault(_Modal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var KitController = exports.KitController = function KitController(_ref) {
+    var kitControllers = _ref.kitControllers,
+        addKitController = _ref.addKitController,
+        toggleModal = _ref.toggleModal,
+        state = _ref.state;
+    return _react2.default.createElement(
+        'div',
+        { className: 'Homepage' },
+        _react2.default.createElement(
+            'div',
+            { className: 'page-header page-header-light' },
+            _react2.default.createElement(
+                'div',
+                { className: 'page-header-content header-elements-md-inline' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'page-title d-flex' },
+                    _react2.default.createElement(
+                        'h4',
+                        null,
+                        _react2.default.createElement('i', { className: 'icon-arrow-left52 mr-2' }),
+                        ' ',
+                        _react2.default.createElement(
+                            'span',
+                            { className: 'font-weight-semibold' },
+                            'User'
+                        ),
+                        ' - Dashboard'
+                    ),
+                    _react2.default.createElement(
+                        'a',
+                        { href: '#', className: 'header-elements-toggle text-default d-md-none' },
+                        _react2.default.createElement('i', { className: 'icon-more' })
+                    )
+                )
+            )
+        ),
+        _react2.default.createElement(
+            'div',
+            { className: 'content' },
+            _react2.default.createElement(
+                'div',
+                { className: 'row' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'content' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'card' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'card-header header-elements-inline' },
+                            _react2.default.createElement(
+                                'h5',
+                                { className: 'card-title' },
+                                ' Central Offices '
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'header-elements' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'btn btn-primary', onClick: function onClick() {
+                                            addKitController('central');
+                                        } },
+                                    ' Add Central Office '
+                                )
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'card-body' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'd-flex flex-column bg-light border rounded p-2' },
+                                kitControllers.central_offices.length > 0 && kitControllers.central_offices.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        'div',
+                                        { className: 'bg-slate py-2 px-3 rounded-top  border-top-1 ', key: index },
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'flex-row d-flex align-items-center' },
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'flex-1' },
+                                                office.central_name
+                                            ),
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'operation-area' },
+                                                _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-info' },
+                                                    ' Edit User '
+                                                ),
+                                                '\xA0',
+                                                _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-danger' },
+                                                    ' Delete '
+                                                )
+                                            )
+                                        )
+                                    );
+                                })
+                            )
+                        )
+                    )
+                )
+            ),
+            _react2.default.createElement('hr', null),
+            _react2.default.createElement(
+                'div',
+                { className: 'row' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'content' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'card' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'card-header header-elements-inline' },
+                            _react2.default.createElement(
+                                'h5',
+                                { className: 'card-title' },
+                                ' Formation Offices '
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'header-elements' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'btn btn-primary', onClick: function onClick() {
+                                            addKitController('district');
+                                        } },
+                                    ' Add Formation Office '
+                                )
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'card-body' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'd-flex flex-column bg-light border rounded p-2' },
+                                kitControllers.formation_offices.length > 0 && kitControllers.formation_offices.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        'div',
+                                        { className: 'bg-slate py-2 px-3 rounded-top  border-top-1 ', key: index },
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'flex-row d-flex align-items-center' },
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'flex-1' },
+                                                office.district_name
+                                            ),
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'operation-area' },
+                                                _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-info' },
+                                                    ' Edit User '
+                                                ),
+                                                '\xA0',
+                                                _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-danger' },
+                                                    ' Delete '
+                                                )
+                                            )
+                                        )
+                                    );
+                                })
+                            )
+                        )
+                    )
+                )
+            ),
+            _react2.default.createElement(
+                'div',
+                { className: 'row' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'content' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'card' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'card-header header-elements-inline' },
+                            _react2.default.createElement(
+                                'h5',
+                                { className: 'card-title' },
+                                'Units'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'header-elements' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'btn btn-primary', onClick: function onClick() {
+                                            addKitController('unit');
+                                        } },
+                                    ' Add Unit '
+                                )
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'card-body' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'd-flex flex-column bg-light border rounded p-2' },
+                                kitControllers.units.length > 0 && kitControllers.units.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        'div',
+                                        { className: 'bg-slate py-2 px-3 rounded-top  border-top-1 ', key: index },
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'flex-row d-flex align-items-center' },
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'flex-1' },
+                                                office.unit_name
+                                            ),
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'operation-area' },
+                                                _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-info' },
+                                                    ' Edit User '
+                                                ),
+                                                '\xA0',
+                                                _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-danger' },
+                                                    ' Delete '
+                                                )
+                                            )
+                                        )
+                                    );
+                                })
+                            )
+                        )
+                    )
+                )
+            ),
+            _react2.default.createElement(
+                'div',
+                { className: 'row' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'content' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'card' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'card-header header-elements-inline' },
+                            _react2.default.createElement(
+                                'h5',
+                                { className: 'card-title' },
+                                'Companies'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'header-elements' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'btn btn-primary', onClick: function onClick() {
+                                            addKitController('company');
+                                        } },
+                                    ' Add Company '
+                                )
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'card-body' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'd-flex flex-column bg-light border rounded p-2' },
+                                kitControllers.companies.length > 0 && kitControllers.companies.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        'div',
+                                        { className: 'bg-slate py-2 px-3 rounded-top  border-top-1 ', key: index },
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'flex-row d-flex align-items-center' },
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'flex-1' },
+                                                office.company_name
+                                            ),
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'operation-area' },
+                                                _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-info' },
+                                                    ' Edit User '
+                                                ),
+                                                '\xA0',
+                                                _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-danger' },
+                                                    ' Delete '
+                                                )
+                                            )
+                                        )
+                                    );
+                                })
+                            )
+                        )
+                    )
+                )
+            )
+        ),
+        state.isModalOn && _react2.default.createElement(_Modal2.default, {
+            closeModal: function closeModal() {
+                toggleModal();
+            },
+            actionType: state.actionType
+        })
+    );
+};
+
+KitController.propTypes = {
+    kitControllers: _propTypes2.default.object,
+    addKitController: _propTypes2.default.func,
+    toggleModal: _propTypes2.default.func,
+    state: _propTypes2.default.object
+};
+
+exports.default = KitController;
+
+/***/ }),
+/* 298 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(14);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _redux = __webpack_require__(4);
+
+var _recompose = __webpack_require__(6);
+
+var _reactRedux = __webpack_require__(8);
+
+var _kitControllerActions = __webpack_require__(299);
+
+var _services = __webpack_require__(41);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) {
+    return { kitControllers: store.kitControllers };
+}), _services.userIsAuthenticated, (0, _recompose.withState)('state', 'setState', { actionType: '', isModalOn: false }), (0, _recompose.withHandlers)({
+    addKitController: function addKitController(props) {
+        return function (type) {
+            var state = props.state,
+                setState = props.setState;
+
+            setState((0, _extends3.default)({}, state, { actionType: type, isModalOn: true }));
+        };
+    },
+    toggleModal: function toggleModal(props) {
+        return function () {
+            var state = props.state,
+                setState = props.setState;
+
+            setState((0, _extends3.default)({}, state, { isModalOn: !state.isModalOn, actionType: '' }));
+        };
+    }
+
+}), (0, _recompose.lifecycle)({
+    componentDidMount: function componentDidMount() {
+        this.props.dispatch((0, _kitControllerActions.getKitController)());
+    }
+}), _recompose.pure);
+
+/***/ }),
+/* 299 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.saveKitController = exports.getKitController = undefined;
+
+var _actionType = __webpack_require__(40);
+
+var constants = _interopRequireWildcard(_actionType);
+
+var _axios = __webpack_require__(43);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var getKitController = exports.getKitController = function getKitController() {
+    return function (dispatch) {
+        dispatch({
+            type: constants.FETCHING_KIT_CONTROLLER
+        });
+        _axios2.default.get('/api/get_kit_controllers').then(function (response) {
+            dispatch({ type: constants.FETCH_KIT_CONTROLLER, payload: response.data.data });
+        }).catch(function (error) {
+            console.log("kit controller error: ", error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
+    };
+};
+
+var saveKitController = exports.saveKitController = function saveKitController(state, actionType) {
+    return function (dispatch, getState) {
+
+        // dispatch({
+        //     type: constants.FETCHING_KIT_CONTROLLER
+        // })
+
+        var endPoint = '';
+        var data = {};
+        if (actionType === 'central') {
+            endPoint = 'add_central_office';
+            data = state.central_office;
+        }
+        if (actionType === 'district') {
+            endPoint = 'add_district_office';
+            data = state.formation_office;
+        }
+        if (actionType === 'unit') {
+            endPoint = 'add_unit';
+            data = state.unit;
+        }
+
+        if (actionType === 'company') {
+            endPoint = 'add_company';
+            data = state.company;
+        }
+
+        _axios2.default.post('/api/' + endPoint, data).then(function (response) {
+            console.log("res: ", response.data);
+            if (response.success === false) return false;
+            var store = getState();
+            var result = response.data.data;
+            var kitControllers = store.kitControllers;
+
+            if (actionType === 'central') {
+                kitControllers.central_offices.push(result);
+            }
+            if (actionType === 'district') {
+                kitControllers.formation_offices.push(result);
+            }
+            if (actionType === 'unit') {
+                kitControllers.units.push(result);
+            }
+            if (actionType === 'company') {
+                kitControllers.companies.push(result);
+            }
+            dispatch({ type: constants.FETCH_KIT_CONTROLLER, payload: kitControllers });
+        }).catch(function (error) {
+            console.log("kit controller error: ", error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
+    };
+};
+
+/***/ }),
+/* 300 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _KitControllerModal = __webpack_require__(301);
+
+var _KitControllerModal2 = _interopRequireDefault(_KitControllerModal);
+
+var _KitControllerModal3 = __webpack_require__(302);
+
+var _KitControllerModal4 = _interopRequireDefault(_KitControllerModal3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = (0, _KitControllerModal4.default)(_KitControllerModal2.default);
+
+/***/ }),
+/* 301 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.KitControllerModal = undefined;
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var KitControllerModal = exports.KitControllerModal = function KitControllerModal(_ref) {
+    var hideModal = _ref.hideModal,
+        onChangeAction = _ref.onChangeAction,
+        addUser = _ref.addUser,
+        kitControllers = _ref.kitControllers,
+        addController = _ref.addController,
+        actionType = _ref.actionType,
+        state = _ref.state;
+    return _react2.default.createElement(
+        "div",
+        { className: "kit-modal-box-shadow" },
+        _react2.default.createElement(
+            "div",
+            { className: "kit-modal-box" },
+            _react2.default.createElement(
+                "div",
+                { className: "modal-header d-flex" },
+                _react2.default.createElement(
+                    "div",
+                    { className: "flex-1" },
+                    _react2.default.createElement(
+                        "h1",
+                        { className: "modal-title" },
+                        " Add Controller "
+                    )
+                ),
+                _react2.default.createElement(
+                    "span",
+                    { className: "close-modal", onClick: function onClick() {
+                            hideModal();
+                        } },
+                    " ",
+                    _react2.default.createElement("i", { className: "fa fa-close" }),
+                    " "
+                )
+            ),
+            _react2.default.createElement(
+                "div",
+                { className: "modal-body" },
+                _react2.default.createElement(
+                    "div",
+                    { className: "kit-form-body" },
+                    state.error !== '' && _react2.default.createElement(
+                        "p",
+                        { className: "alert-danger" },
+                        " ",
+                        state.error
+                    ),
+                    actionType === "central" && _react2.default.createElement(
+                        "div",
+                        null,
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Central Name ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "x"
+                                )
+                            ),
+                            _react2.default.createElement("input", { type: "text", className: "form-control", value: state.central_office.central_name, placeholder: "Central Name", name: "central_name", onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } })
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Details "
+                            ),
+                            _react2.default.createElement("textarea", { name: "central_details", className: "form-control", value: state.central_office.central_details, onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } })
+                        )
+                    ),
+                    actionType === "district" && _react2.default.createElement(
+                        "div",
+                        null,
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Formation Name ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "x"
+                                )
+                            ),
+                            _react2.default.createElement("input", { type: "text", className: "form-control", value: state.formation_office.district_name, placeholder: "Formation Name", name: "district_name", onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } })
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Details "
+                            ),
+                            _react2.default.createElement("textarea", { name: "district_details", className: "form-control", value: state.formation_office.district_details, onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } })
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Select Central Office ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "x"
+                                )
+                            ),
+                            _react2.default.createElement(
+                                "select",
+                                { className: "form-control", name: "central_office_id", onChange: function onChange(e) {
+                                        onChangeAction(e);
+                                    } },
+                                _react2.default.createElement(
+                                    "option",
+                                    { value: "0" },
+                                    " Select Office "
+                                ),
+                                kitControllers.central_offices.length > 0 && kitControllers.central_offices.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        "option",
+                                        { key: index, defaultValue: state.formation_office.central_office_id === office.id, value: office.id },
+                                        " ",
+                                        office.central_name,
+                                        " "
+                                    );
+                                })
+                            )
+                        )
+                    ),
+                    actionType === "unit" && _react2.default.createElement(
+                        "div",
+                        null,
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Unit Name ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "x"
+                                ),
+                                " "
+                            ),
+                            _react2.default.createElement("input", { type: "text", className: "form-control", value: state.unit.unit_name, placeholder: "Unit Name", name: "unit_name", onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } })
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Details "
+                            ),
+                            _react2.default.createElement("textarea", { name: "unit_details", className: "form-control", value: state.unit.unit_details, onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } })
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Select Central Office ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "x"
+                                )
+                            ),
+                            _react2.default.createElement(
+                                "select",
+                                { className: "form-control", name: "central_office_id", onChange: function onChange(e) {
+                                        onChangeAction(e);
+                                    } },
+                                _react2.default.createElement(
+                                    "option",
+                                    { value: "0" },
+                                    " Select Office "
+                                ),
+                                kitControllers.central_offices.length > 0 && kitControllers.central_offices.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        "option",
+                                        { key: index, defaultValue: state.unit.central_office_id === office.id, value: office.id },
+                                        " ",
+                                        office.central_name,
+                                        " "
+                                    );
+                                })
+                            )
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Select District Office ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "x"
+                                )
+                            ),
+                            _react2.default.createElement(
+                                "select",
+                                { className: "form-control", name: "formation_office_id", onChange: function onChange(e) {
+                                        onChangeAction(e);
+                                    } },
+                                _react2.default.createElement(
+                                    "option",
+                                    { value: "0" },
+                                    " Select Office "
+                                ),
+                                state.filterFormation.length != 0 && state.filterFormation.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        "option",
+                                        { key: index, defaultValue: state.unit.formation_office_id === office.id, value: office.id },
+                                        " ",
+                                        office.district_name,
+                                        " "
+                                    );
+                                })
+                            )
+                        )
+                    ),
+                    actionType === "company" && _react2.default.createElement(
+                        "div",
+                        null,
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Company Name ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "x"
+                                )
+                            ),
+                            _react2.default.createElement("input", { type: "text", className: "form-control", value: state.company.company_name, placeholder: "Company Name", name: "company_name", onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } })
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Details "
+                            ),
+                            _react2.default.createElement("textarea", { name: "company_details", className: "form-control", value: state.company.company_details, onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } })
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Select Central Office ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "x"
+                                )
+                            ),
+                            _react2.default.createElement(
+                                "select",
+                                { className: "form-control", name: "central_office_id", onChange: function onChange(e) {
+                                        onChangeAction(e);
+                                    } },
+                                _react2.default.createElement(
+                                    "option",
+                                    { value: "0" },
+                                    " Select Office "
+                                ),
+                                kitControllers.central_offices.length > 0 && kitControllers.central_offices.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        "option",
+                                        { key: index, defaultValue: state.company.central_office_id === office.id, value: office.id },
+                                        " ",
+                                        office.central_name,
+                                        " "
+                                    );
+                                })
+                            )
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Select District Office ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "x"
+                                )
+                            ),
+                            _react2.default.createElement(
+                                "select",
+                                { className: "form-control", name: "formation_office_id", onChange: function onChange(e) {
+                                        onChangeAction(e);
+                                    } },
+                                _react2.default.createElement(
+                                    "option",
+                                    { value: "0" },
+                                    " Select Office "
+                                ),
+                                state.filterFormation.length != 0 && state.filterFormation.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        "option",
+                                        { key: index, defaultValue: state.company.formation_office_id === office.id, value: office.id },
+                                        " ",
+                                        office.district_name,
+                                        " "
+                                    );
+                                })
+                            )
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Select Unit ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "x"
+                                )
+                            ),
+                            _react2.default.createElement(
+                                "select",
+                                { className: "form-control", name: "unit_id", onChange: function onChange(e) {
+                                        onChangeAction(e);
+                                    } },
+                                _react2.default.createElement(
+                                    "option",
+                                    { value: "0" },
+                                    " Select Office "
+                                ),
+                                state.filterUnits.length > 0 && state.filterUnits.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        "option",
+                                        { key: index, defaultValue: state.company.unit_id === office.id, value: office.id },
+                                        " ",
+                                        office.unit_name,
+                                        " "
+                                    );
+                                })
+                            )
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "button-submit-area text-right" },
+                        _react2.default.createElement(
+                            "button",
+                            { type: "submit", className: "btn btn-primary", onClick: function onClick(e) {
+                                    addController(e);
+                                } },
+                            " + Add"
+                        )
+                    )
+                )
+            )
+        )
+    );
+};
+
+KitControllerModal.propTypes = {
+    onChangeAction: _propTypes2.default.func,
+    hideModal: _propTypes2.default.func,
+    addController: _propTypes2.default.func,
+    filterFormation: _propTypes2.default.func,
+    actionType: _propTypes2.default.string,
+    state: _propTypes2.default.object,
+    kitControllers: _propTypes2.default.object
+};
+
+exports.default = KitControllerModal;
+
+/***/ }),
+/* 302 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(14);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _redux = __webpack_require__(4);
+
+var _reactRedux = __webpack_require__(8);
+
+var _recompose = __webpack_require__(6);
+
+var _kitControllerActions = __webpack_require__(299);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) {
+    return {
+        kitControllers: store.kitControllers
+    };
+}), (0, _recompose.withState)('state', 'setState', {
+    central_office: { central_name: '', central_details: '' },
+    formation_office: { district_name: '', district_details: '', central_office_id: 0 },
+    unit: { unit_name: '', unit_details: '', central_office_id: 0, formation_office_id: 0 },
+    company: { central_name: '', company_details: '', central_office_id: 0, formation_office_id: 0, unit_id: 0 },
+    error: '',
+    filterFormation: [],
+    filterUnits: []
+}), (0, _recompose.withHandlers)({
+    hideModal: function hideModal(props) {
+        return function () {
+            props.closeModal();
+        };
+    },
+    onChangeAction: function onChangeAction(props) {
+        return function (event) {
+            var state = props.state,
+                setState = props.setState,
+                actionType = props.actionType,
+                kitControllers = props.kitControllers;
+            var central_office = state.central_office,
+                formation_office = state.formation_office,
+                unit = state.unit,
+                company = state.company,
+                error = state.error,
+                filterFormation = state.filterFormation,
+                filterUnits = state.filterUnits;
+
+
+            var name = event.target.name;
+            var value = event.target.value;
+
+            if (actionType === 'central') {
+                if (name === 'central_name') central_office.central_name = value;
+                if (name === 'central_details') central_office.central_details = value;
+            }
+
+            if (actionType === 'district') {
+                if (name === 'district_name') formation_office.district_name = value;
+                if (name === 'district_details') formation_office.district_details = value;
+                if (name === 'central_office_id') formation_office.central_office_id = value;
+            }
+
+            if (actionType === 'unit') {
+                if (name === 'unit_name') unit.unit_name = value;
+                if (name === 'unit_details') unit.unit_details = value;
+                if (name === 'central_office_id') {
+                    unit.central_office_id = value;
+                    filterFormation = kitControllers.formation_offices.filter(function (office) {
+                        return office.central_office_id === parseInt(value);
+                    });
+                }
+                if (name === 'formation_office_id') {
+                    unit.formation_office_id = value;
+                }
+            }
+
+            if (actionType === 'company') {
+                if (name === 'company_name') company.company_name = value;
+                if (name === 'company_details') company.company_details = value;
+                if (name === 'central_office_id') {
+                    company.central_office_id = value;
+                    filterFormation = kitControllers.formation_offices.filter(function (office) {
+                        return office.central_office_id === parseInt(value);
+                    });
+                }
+                if (name === 'formation_office_id') {
+                    company.formation_office_id = value;
+                    filterUnits = kitControllers.units.filter(function (office) {
+                        return office.district_office_id === parseInt(value);
+                    });
+                }
+                if (name === 'unit_id') {
+                    company.unit_id = value;
+                }
+            }
+
+            setState((0, _extends3.default)({}, props.state, {
+                central_office: central_office,
+                formation_office: formation_office,
+                unit: unit,
+                company: company,
+                filterFormation: filterFormation,
+                filterUnits: filterUnits,
+                error: error
+            }));
+        };
+    },
+    addController: function addController(props) {
+        return function (event) {
+            event.preventDefault();
+            var actionType = props.actionType,
+                state = props.state,
+                setState = props.setState;
+            var central_office = state.central_office,
+                formation_office = state.formation_office,
+                unit = state.unit,
+                company = state.company,
+                error = state.error;
+
+
+            if (actionType === 'district') {
+                error = formation_office.central_office_id === 0 || formation_office.district_name === '' ? 'Please full up the required field!' : '';
+            }
+
+            if (actionType === 'unit') {
+                error = unit.central_office_id === 0 || unit.formation_office_id === 0 || unit.unit_name === '' ? 'Please full up the required field!' : '';
+            }
+
+            if (actionType === 'company') {
+                error = company.central_office_id === 0 || company.formation_office_id === 0 || company.unit_id === 0 || company.company_name === '' ? 'Please full up the required field!' : '';
+            }
+
+            if (actionType === 'central') {
+                error = central_office.central_name === '' ? "Please fill up the required field!" : '';
+            }
+
+            if (error !== '') {
+                setState((0, _extends3.default)({}, state, { error: error }));
+                return false;
+            } else {
+                props.dispatch((0, _kitControllerActions.saveKitController)(state, actionType));
+            }
+        };
+    }
+}), (0, _recompose.lifecycle)({
+    componentDidMount: function componentDidMount() {
+        // let { user, actionType } = this.props
+        // if( actionType === true )
+        //     this.props.setState({...this.props.state, user: user })
+
+    },
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        var state = nextProps.state,
+            setState = nextProps.setState,
+            kitControllers = nextProps.kitControllers;
+
+        if (!_.isEqual(this.props.kitControllers, kitControllers)) {
+            console.log(state.actionType + ' added success!');
+        }
+    }
+}), _recompose.pure);
 
 /***/ })
 /******/ ]);

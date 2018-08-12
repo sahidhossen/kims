@@ -29,6 +29,27 @@ class UserController extends Controller
         }
     }
 
+    /*
+     * Fetch All kit users
+     */
+    public function getAllKitUser(){
+        try{
+            $users = User::all();
+            $result = [];
+            if( count($users ) > 0 ){
+                foreach( $users as $user ){
+                    if( $user->hasRole('kit_admin') )
+                        continue;
+                    array_push( $result, $user );
+                }
+            }
+            return ['success'=>true, 'message'=>'Fetch all users without admin', 'data'=>$result ];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage() ];
+        }
+
+    }
+
     public function getRoles(){
         try{
             $roles = Role::all(); 

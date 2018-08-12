@@ -4,7 +4,7 @@ import AuthDashboard from '../container/Layout/AuthDashboard'
 import Home from './Home'
 import DefaultHome from './DefaultHome'
 import User from './Users'
-import CreateUser from './CreateUser'
+import KitController from './KitController'
 import Login from './Login'
 import Register from './Register'
 import NotFound from './NotFound'
@@ -45,9 +45,9 @@ const routes = [{
                     component: User
                 },
                 {
-                    path: route.CREATE_USERS,
+                    path: route.CONTROLLER,
                     exact: true,
-                    component: CreateUser
+                    component: KitController
                 },
                 {
                     path: "/*",

@@ -26,11 +26,11 @@ export const Navbar = () => (
                 </li>
 
                 <li className="nav-item dropdown">
-                    <a href="#" className="navbar-nav-link dropdown-toggle caret-0" data-toggle="dropdown">
-                        <i className="icon-git-compare"></i>
-                        <span className="d-md-none ml-2">Git updates</span>
-                        <span className="badge badge-pill bg-warning-400 ml-auto ml-md-0">9</span>
-                    </a>
+                    {/*<a href="#" className="navbar-nav-link dropdown-toggle caret-0" data-toggle="dropdown">*/}
+                        {/*<i className="icon-git-compare"></i>*/}
+                        {/*<span className="d-md-none ml-2">Git updates</span>*/}
+                        {/*<span className="badge badge-pill bg-warning-400 ml-auto ml-md-0">9</span>*/}
+                    {/*</a>*/}
 
                     <div className="dropdown-menu dropdown-content wmin-md-350">
                         <div className="dropdown-content-header">
@@ -114,10 +114,10 @@ export const Navbar = () => (
 
             <ul className="navbar-nav">
                 <li className="nav-item dropdown">
-                    <a href="#" className="navbar-nav-link dropdown-toggle caret-0" data-toggle="dropdown">
-                        <i className="icon-people"></i>
-                        <span className="d-md-none ml-2">Users</span>
-                    </a>
+                    {/*<a href="#" className="navbar-nav-link dropdown-toggle caret-0" data-toggle="dropdown">*/}
+                        {/*<i className="icon-people"></i>*/}
+                        {/*<span className="d-md-none ml-2">Users</span>*/}
+                    {/*</a>*/}
 
                     <div className="dropdown-menu dropdown-menu-right dropdown-content wmin-md-300">
                         <div className="dropdown-content-header">
@@ -192,11 +192,11 @@ export const Navbar = () => (
                 </li>
 
                 <li className="nav-item dropdown">
-                    <a href="#" className="navbar-nav-link dropdown-toggle caret-0" data-toggle="dropdown">
-                        <i className="icon-bubbles4"></i>
-                        <span className="d-md-none ml-2">Messages</span>
-                        <span className="badge badge-pill bg-warning-400 ml-auto ml-md-0">2</span>
-                    </a>
+                    {/*<a href="#" className="navbar-nav-link dropdown-toggle caret-0" data-toggle="dropdown">*/}
+                        {/*<i className="icon-bubbles4"></i>*/}
+                        {/*<span className="d-md-none ml-2">Messages</span>*/}
+                        {/*<span className="badge badge-pill bg-warning-400 ml-auto ml-md-0">2</span>*/}
+                    {/*</a>*/}
 
                     <div className="dropdown-menu dropdown-menu-right dropdown-content wmin-md-350">
                         <div className="dropdown-content-header">
@@ -299,14 +299,14 @@ export const Navbar = () => (
                 <li className="nav-item dropdown dropdown-user">
                     <a href="#" className="navbar-nav-link dropdown-toggle" data-toggle="dropdown">
                         <img src="../../../../global_assets/images/placeholders/placeholder.jpg" className="rounded-circle" alt=""/>
-                        <span>Victoria</span>
+                        <span>Admin</span>
                     </a>
 
                     <div className="dropdown-menu dropdown-menu-right">
-                        <a href="#" className="dropdown-item"><i className="icon-user-plus"></i> My profile</a>
-                        <a href="#" className="dropdown-item"><i className="icon-coins"></i> My balance</a>
-                        <a href="#" className="dropdown-item"><i className="icon-comment-discussion"></i> Messages <span className="badge badge-pill bg-blue ml-auto">58</span></a>
-                        <div className="dropdown-divider"></div>
+                        {/*<a href="#" className="dropdown-item"><i className="icon-user-plus"></i> My profile</a>*/}
+                        {/*<a href="#" className="dropdown-item"><i className="icon-coins"></i> My balance</a>*/}
+                        {/*<a href="#" className="dropdown-item"><i className="icon-comment-discussion"></i> Messages <span className="badge badge-pill bg-blue ml-auto">58</span></a>*/}
+                        {/*<div className="dropdown-divider"></div>*/}
                         <a href="#" className="dropdown-item"><i className="icon-cog5"></i> Account settings</a>
                         <a href="#" className="dropdown-item"><i className="icon-switch2"></i> Logout</a>
                     </div>

@@ -1,17 +1,13 @@
 import React from "react"
 import PropTypes from 'prop-types'
 
-const roles = [ 
-        { name:'central', id: 0},
-        { name:'district', id: 1},
-        { name:'unit', id: 2},
-    ]
-
 export const UserModal = (
         {
             hideModal, 
             onChangeAction, 
-            addUser, 
+            addUser,
+            kitControllers,
+            roles,
             state
         }
     ) => (
@@ -19,33 +15,62 @@ export const UserModal = (
         <div className="kit-modal-box">
             <div className="modal-header d-flex">
                 <div className="flex-1">
-                    <h1 className="modal-title"> Add User </h1>
+                    <h1 className="modal-title"> Add Solder </h1>
                 </div>
                 <span className="close-modal" onClick={() => {hideModal()} }> <i className="fa fa-close"></i> </span>
             </div>
             <div className="modal-body">
+                { state.error !== '' && <p className="alert-danger"> {state.error}</p> }
                 <div className="kit-form-body">
                     <div className="form-group">
                         <label> Name </label>
-                        <input type="text" className="form-control" value={state.user.name} placeholder="User Name" name="u_name" onChange={(e)=>{ onChangeAction(e) }} />
+                        <input type="text" className="form-control" value={state.user.name} placeholder="Full Name" name="u_name" onChange={(e)=>{ onChangeAction(e) }} />
                     </div>
                     <div className="form-group">
                         <label> Password </label>
-                        <input type="password" className="form-control" value={state.user.password} placeholder="User Name" name="password" onChange={(e)=>{ onChangeAction(e) }} />
+                        <input type="password" className="form-control" value={state.user.password} placeholder="Password" name="password" onChange={(e)=>{ onChangeAction(e) }} />
                     </div>
                     <div className="form-group">
-                        <label> Access ID </label>
-                        <input type="text" className="form-control" placeholder="User Name" value={state.user.secret_id} name="secret_id" onChange={(e)=>{ onChangeAction(e) }} />
+                        <label> Secret ID <span className="required">*</span> </label>
+                        <input type="text" className="form-control" placeholder="Secret ID" value={state.user.secret_id} name="secret_id" onChange={(e)=>{ onChangeAction(e) }} />
                     </div>
                     <div className="form-group">
-                        <label> User Role </label>
-                        <select className="form-control" defaultValue={state.user.role}>
-                            { roles.map( (role) => (<option key={role.id} defaultValue={state.user.role === role.id } value={role.id}> {role.name} </option>) )}
+                        <label> User Role <span className="required">*</span> </label>
+                        <select className="form-control" name="user_role" onChange={(e)=>{ onChangeAction(e) }}>
+                            { roles.fetched && roles.roles.map( (role) => (<option key={role.id} defaultValue={state.user.role === role.name } value={role.name}> {role.display_name} </option>) )}
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label> Select Central Office <span className="required">*</span></label>
+                        <select className="form-control" name="central_office_id" onChange={(e)=>{ onChangeAction(e) }}>
+                            <option value="0"> Select Office </option>
+                            { kitControllers.central_offices.length > 0 && kitControllers.central_offices.map( (office, index) => (<option key={index} defaultValue={state.user.central_office_id === office.id } value={office.id}> {office.central_name} </option>) )}
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label> Select District Office <span className="required">*</span></label>
+                        <select className="form-control" name="formation_office_id" onChange={(e)=>{ onChangeAction(e) }}>
+                            <option value="0"> Select Office </option>
+                            { state.filterDistrictOffices.length != 0 && state.filterDistrictOffices.map( (office, index) => (<option key={index} defaultValue={state.user.district_office_id === office.id } value={office.id}> {office.district_name} </option>) )}
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label> Select Unit <span className="required">*</span></label>
+                        <select className="form-control" name="unit_id" onChange={(e)=>{ onChangeAction(e) }}>
+                            <option value="0"> Select Office </option>
+                            { state.filterUnit.length > 0 && state.filterUnit.map( (office, index) => (<option key={index} defaultValue={state.user.unit_id === office.id } value={office.id}> {office.unit_name} </option>) )}
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label> Select Company <span className="required">*</span></label>
+                        <select className="form-control" name="company_id" onChange={(e)=>{ onChangeAction(e) }}>
+                            <option value="0"> Select Company </option>
+                            { state.filterCompany.length > 0 && state.filterCompany.map( (office, index) => (<option key={index} defaultValue={state.user.company_id === office.id } value={office.id}> {office.company_name} </option>) )}
                         </select>
                     </div>
                     <div className="button-submit-area text-right">
                         <button type="submit" className="btn btn-primary" onClick={(e)=>{addUser(e)}}>Add User</button>
-                        <button type="submit" className="btn btn-primary">Add And Exit</button>
+                        {/*<button type="submit" className="btn btn-primary">Add And Exit</button>*/}
                     </div>
 
                 </div>
@@ -58,7 +83,9 @@ UserModal.propTypes = {
     onChangeAction: PropTypes.func,
     hideModal: PropTypes.func,
     addUser: PropTypes.func,
-    state: PropTypes.object
+    roles: PropTypes.object,
+    state: PropTypes.object,
+    kitControllers: PropTypes.object
 }
 
 export default UserModal

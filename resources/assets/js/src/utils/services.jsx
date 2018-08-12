@@ -1,5 +1,6 @@
 import { connectedRouterRedirect } from 'redux-auth-wrapper/history4/redirect'
 import * as constants from '../actionType'
+import axios from 'axios';
 
 export const userIsAuthenticated = connectedRouterRedirect({
     // The url to redirect user to if they fail
@@ -9,6 +10,8 @@ export const userIsAuthenticated = connectedRouterRedirect({
     // authenticatedSelector: state => state.oauth.fetched,
     authenticatedSelector: (state, props) => {
         if( state.oauth.oauth.access_token !== null ) {
+            axios.defaults.headers.common['Authorization'] = state.oauth.oauth.token_type +" "+ state.oauth.oauth.access_token;
+            axios.defaults.headers.post['Accept'] = 'application/json';
             return true
         }
 
@@ -16,7 +19,8 @@ export const userIsAuthenticated = connectedRouterRedirect({
         if ( current_oauth !== null && current_oauth.length > 0 ) {
             current_oauth = JSON.parse(current_oauth);
             props.dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload: current_oauth });
-            window.axios.defaults.headers.common['Authorization'] = current_oauth.token_type +" "+ current_oauth.access_token;
+            axios.defaults.headers.common['Authorization'] = current_oauth.token_type +" "+ current_oauth.access_token;
+            axios.defaults.headers.post['Accept'] = 'application/json';
             return true
         }
     	return false
@@ -34,7 +38,8 @@ export const Authentication = props => {
     if ( current_oauth !== null && current_oauth.length > 0 ) {
         current_oauth = JSON.parse( current_oauth );
         props.dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload: current_oauth });
-        window.axios.defaults.headers.common['Authorization'] = current_oauth.token_type +" "+ current_oauth.access_token;
+        axios.defaults.headers.common['Authorization'] = current_oauth.token_type +" "+ current_oauth.access_token;
+        axios.defaults.headers.post['Accept'] = 'application/json';
         return true;
     } else {
         return null

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
 
 class UnitController extends Controller
@@ -44,12 +45,26 @@ class UnitController extends Controller
      */
     public function store(Request $request){
         try{
-            if(!$request->input('unit_name') )
-                throw new Exception("unit name is required!");
+            $validator = Validator::make($request->all(), [
+                'unit_name' => 'required',
+                'central_office_id' => 'required',
+                'formation_office_id' => 'required'
+            ]);
+
+            if( $validator->fails()){
+                $validatorErrors = [];
+                foreach($validator->messages()->getMessages() as $fieldName => $messages) {
+                    foreach( $messages as $message){
+                        $validatorErrors[$fieldName] = $message;
+                    }
+                }
+                throw new Exception(implode(' ',$validatorErrors));
+            }
+
             $Unit = new Unit();
             $Unit->unit_name = $request->input('unit_name');
-            if( $Unit->unit_name == '' )
-                throw new Exception("Minimum unit name length need 2");
+            $Unit->central_office_id = $request->input('central_office_id');
+            $Unit->district_office_id = $request->input('formation_office_id');
             $Unit->unit_details = $request->input('unit_details');
             if(!$Unit->save())
                 throw new Exception("Critical error when save unit data!");

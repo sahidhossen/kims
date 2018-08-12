@@ -2,7 +2,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Modal from './Modal'
 
-export const User = ({ toggleModal, userEditAction, userDeleteAction, state }) => (
+export const User = ({
+    toggleModal,
+    userEditAction,
+    userDeleteAction,
+    state,
+    users
+}) => (
     <div className="Homepage">
         <div className="page-header page-header-light">
             <div className="page-header-content header-elements-md-inline">
@@ -24,7 +30,7 @@ export const User = ({ toggleModal, userEditAction, userDeleteAction, state }) =
                         </div>
                         <div className="card-body">
                             <div className="d-flex flex-column bg-light border rounded p-2">
-                                { state.all_user.map( (user, index) => (
+                                { users.users.length > 0 && users.users.map( (user, index) => (
                                     <div className="bg-slate py-2 px-3 rounded-top  border-top-1 " key={index}>
                                         <div className="flex-row d-flex align-items-center">
                                             <div className="flex-1">
@@ -60,7 +66,8 @@ User.propTypes = {
     toggleModal: PropTypes.func,
     userEditAction: PropTypes.func,
     userDeleteAction : PropTypes.func,
-    state: PropTypes.object
+    state: PropTypes.object,
+    users: PropTypes.object
 }
 
 

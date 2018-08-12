@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
 
 class CompanyController extends Controller
@@ -44,10 +45,27 @@ class CompanyController extends Controller
      */
     public function store(Request $request){
         try{
-            if(!$request->input('company_name') )
-                throw new Exception("company name is required!");
+            $validator = Validator::make($request->all(), [
+                'company_name' => 'required',
+                'central_office_id' => 'required',
+                'formation_office_id' => 'required',
+                'unit_id' => 'required'
+            ]);
+
+            if( $validator->fails()){
+                $validatorErrors = [];
+                foreach($validator->messages()->getMessages() as $fieldName => $messages) {
+                    foreach( $messages as $message){
+                        $validatorErrors[$fieldName] = $message;
+                    }
+                }
+                throw new Exception(implode(' ',$validatorErrors));
+            }
             $Company = new Company();
             $Company->company_name = $request->input('company_name');
+            $Company->central_office_id = $request->input('central_office_id');
+            $Company->district_office_id = $request->input('formation_office_id');
+            $Company->unit_id = $request->input('unit_id');
             $Company->company_details = $request->input('company_details');
             if(!$Company->save())
                 throw new Exception("Critical error when save company data!");

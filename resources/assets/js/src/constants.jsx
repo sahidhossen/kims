@@ -1,6 +1,6 @@
 export const DASHBOARD = '/dashboard'
 export const USERS = '/dashboard/users'
-export const CREATE_USERS = '/dashboard/create_user'
+export const CONTROLLER = '/dashboard/controller'
 
 
 // api keys

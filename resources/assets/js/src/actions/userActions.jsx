@@ -19,15 +19,50 @@ export const UserLogin = data => dispatch => {
 }
 
 
+export const fetchUser = () => dispatch => {
+    axios.get('/api/kit_users' )
+        .then(function (response) {
+            if( response.data.success === true ) {
+                dispatch({type: constants.FETCH_USER, payload: response.data.data });
+            }else {
+                console.log("error: ", response.data.message )
+            }
+        })
+        .catch(function (error) {
+            console.log("role error: ",error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
+}
+
+export const addUser = data => (dispatch, getState) => {
+    axios.post('/api/kit_user_register', data )
+        .then(function (response) {
+            if( response.data.success === true ) {
+                let store = getState()
+                let { users: {users} } = store
+                users.push( response.data.data )
+                dispatch({type: constants.FETCH_USER, payload: users });
+            }else {
+                console.log("error: ", response.data.message )
+            }
+        })
+        .catch(function (error) {
+            console.log("role error: ",error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
+}
+
+
 export const getUserRole = () => dispatch => {
-    console.log("axios: ", window.axios.defaults.headers)
+    dispatch({
+        type: constants.FETCHING_USER_ROLE
+    })
     axios.get('/api/get_roles')
     .then(function (response) {
-         console.log("res: ", response)
-        // dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload:response.data });
+        dispatch({ type: constants.FETCH_USER_ROLE, payload:response.data.data });
     })
     .catch(function (error) {
-        console.log(error);
+        console.log("role error: ",error);
         // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
     });
 }

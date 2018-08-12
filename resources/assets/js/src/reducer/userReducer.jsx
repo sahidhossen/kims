@@ -7,30 +7,25 @@ const users = function reducer(
         fetched: false,
         fetchingLogin: false,
         isLoggedIn: false,
-        roles:[],
-        fetchingRole: false,
-        fetchedRole: false,
         error: null
     },
     action
 ) {
     switch (action.type) {
-        case 'FETCH_USER_FULFILLED': {
+        case constants.FETCHING_USER: {
             return {
                 ...state,
                 fetching: true,
+                fetched: false
+            }
+        }
+        case constants.FETCH_USER: {
+            return {
+                ...state,
+                fetching: false,
                 error: null,
                 fetched: true,
                 users: action.payload
-            }
-        }
-        case 'FETCH_USER_ROLE': {
-            return {
-                ...state,
-                fetchingRole: true,
-                error: null,
-                fetchedRole: true,
-                roles: action.payload
             }
         }
         case constants.USER_LOGGING_IN : {
