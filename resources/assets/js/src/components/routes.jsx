@@ -5,6 +5,8 @@ import Home from './Home'
 import DefaultHome from './DefaultHome'
 import User from './Users'
 import KitController from './KitController'
+import KitItems from './KitItems'
+import ItemTypes from './ItemTypes'
 import Login from './Login'
 import Register from './Register'
 import NotFound from './NotFound'
@@ -48,6 +50,16 @@ const routes = [{
                     path: route.CONTROLLER,
                     exact: true,
                     component: KitController
+                },
+                {
+                    path: route.KIT_ITEMS,
+                    exact: true,
+                    component: KitItems
+                },
+                {
+                    path: route.ITEM_TYPES,
+                    exact: true,
+                    component: ItemTypes
                 },
                 {
                     path: "/*",

@@ -118,3 +118,15 @@
   font-style: italic;
 }
 
+.add-kit-types-box {
+  margin-bottom: 30px;
+}
+
+.add-kit-types-box .action-btn {
+  padding-left: 10px;
+}
+
+.add-kit-types-box .details-input-box {
+  padding-left: 10px;
+}
+

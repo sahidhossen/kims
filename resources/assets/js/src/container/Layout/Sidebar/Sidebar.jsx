@@ -1,10 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { USERS, DASHBOARD, CONTROLLER } from '../../../constants'
+import PropTypes from 'prop-types'
+import { USERS, DASHBOARD, CONTROLLER, KIT_ITEMS, ITEM_TYPES } from '../../../constants'
 
-export const Sidebar = () => (
+export const Sidebar = ({ location }) => (
     <div className="sidebar sidebar-dark sidebar-main sidebar-expand-md">
-
         <div className="sidebar-mobile-toggler text-center">
             <a href="#" className="sidebar-mobile-main-toggle">
                 <i className="icon-arrow-left8"></i>
@@ -45,16 +45,22 @@ export const Sidebar = () => (
 
                     <li className="nav-item-header"><div className="text-uppercase font-size-xs line-height-xs">Main</div> <i className="icon-menu" title="Main"></i></li>
                     <li className="nav-item">
-                        <Link to={DASHBOARD} className="nav-link active">
+                        <Link to={DASHBOARD} className={location.pathname === DASHBOARD ? 'nav-link active' : 'nav-link'}>
                             <i className="icon-home4"></i>
                             <span>Dashboard</span>
                         </Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to={CONTROLLER}> Controller </Link>
+                        <Link className={location.pathname === CONTROLLER ? 'nav-link active' : 'nav-link'} to={CONTROLLER}> Controller </Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to={USERS}> Users </Link>
+                        <Link className={location.pathname === USERS ? 'nav-link active' : 'nav-link'} to={USERS}> Users </Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link className={location.pathname === KIT_ITEMS ? 'nav-link active' : 'nav-link'} to={KIT_ITEMS}> Kit Items </Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link className={location.pathname === ITEM_TYPES ? 'nav-link active' : 'nav-link'} to={ITEM_TYPES}> Item Types </Link>
                     </li>
 
                     {/*<li className="nav-item nav-item-submenu">*/}
@@ -72,5 +78,9 @@ export const Sidebar = () => (
         </div>
     </div>
 )
+
+Sidebar.propTypes = {
+    location: PropTypes.object
+}
 
 export default Sidebar

@@ -4,9 +4,11 @@ import users from './userReducer'
 import roles from './roleReducer'
 import oauth from './oauthReducer'
 import kitControllers from './kitControllerReducer'
+import kitTypes from './kitTypesReducer'
 export const makeRootReducer = asyncReducers => {
     return combineReducers({
         // Add sync reducers here
+        kitTypes,
         kitControllers,
         users,
         roles,
