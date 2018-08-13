@@ -42,6 +42,7 @@ class UserController extends Controller
             if( $currentUser->roles == null )
                 throw new Exception("User don't have any role");
 
+            $currentUser->whoami = $currentUser->roles->first()->name;
             $solderKit = SolderKits::where('user_id',$currentUser->id )->get();
             $result = [];
             if( count($solderKit) > 0 ) {
@@ -51,13 +52,13 @@ class UserController extends Controller
                     $solderInformation->item_name = $itemType->type_name;
                     $solderInformation->issue_date = $kit->issue_date;
                     $solderInformation->expire_date = $kit->expire_date;
-                    $solderInformation->whoami = $currentUser->roles->first()->name;
+
                     $solderInformation->name = $currentUser->name;
                     $solderInformation->secret_id = $currentUser->secret_id;
                     array_push($result, $solderInformation);
                 }
             }
-            return [ 'success' => true, 'data' => $result, 'message'=>'Current user information.'];
+            return [ 'success' => true, 'items' => $result, 'data'=>$currentUser, 'message'=>'Current user information.'];
         }catch (Exception $e){
             return ['success'=>false, 'message'=> $e->getMessage()];
         }
