@@ -3,6 +3,8 @@ import * as constants from '../actionType'
 const users = function reducer(
     state = {
         users: [],
+        user: null,
+        currentItems:[],
         fetching: false,
         fetched: false,
         fetchingLogin: false,
@@ -26,6 +28,38 @@ const users = function reducer(
                 error: null,
                 fetched: true,
                 users: action.payload
+            }
+        }
+        case constants.FETCH_SINGLE_USER: {
+            return {
+                ...state,
+                fetching: false,
+                error: null,
+                fetched: true,
+                user: action.payload
+            }
+        }
+        case constants.REJECT_SINGLE_USER: {
+            return {
+                ...state,
+                user: null,
+                error: action.payload
+            }
+        }
+        case constants.FETCH_USER_ITEMS: {
+            return {
+                ...state,
+                fetching: false,
+                error: null,
+                fetched: true,
+                currentItems: action.payload
+            }
+        }
+        case constants.REJECT_USER_ITEMS: {
+            return {
+                ...state,
+                currentItems: [],
+                error: action.payload
             }
         }
         case constants.USER_LOGGING_IN : {

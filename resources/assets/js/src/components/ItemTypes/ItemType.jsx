@@ -28,10 +28,10 @@ export const KitItem = ({
                 <div className="content">
                     <div className="card">
                         <div className="card-header header-elements-inline">
-                            <h3> Kit Types </h3>
+                            <h3> Add Kit Types </h3>
                             <div className="header-elements d-none">
                                 <div className="d-flex justify-content-center">
-                                    <div className="btn btn-primary"> Add Type </div>
+                                    {/*<div className="btn btn-primary"> Add Type </div>*/}
                                 </div>
                             </div>
                         </div>
@@ -48,6 +48,19 @@ export const KitItem = ({
                                 </div>
                             </div>
                             <div className="d-flex flex-column bg-light border rounded p-2">
+                                <div className="bg-teal-400 py-3 px-2  border-top-1 list-header">
+                                    <div className="flex-row d-flex align-items-center">
+                                        <div className="flex-1">
+                                            <strong>Kit Name</strong>
+                                        </div>
+                                        <div className="flex-1">
+                                            <strong>Central Office</strong>
+                                        </div>
+                                        <div className="operation-area">
+                                            <strong> Actions </strong>
+                                        </div>
+                                    </div>
+                                </div>
                                 { kitTypes.kitTypes.length > 0 && kitTypes.kitTypes.map( (type, index) => (
                                     <div className="bg-slate py-2 px-3 rounded-top  border-top-1 " key={index}>
                                         <div className="flex-row d-flex align-items-center">

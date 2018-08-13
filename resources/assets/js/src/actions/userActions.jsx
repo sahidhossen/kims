@@ -22,10 +22,27 @@ export const UserLogin = data => dispatch => {
 export const fetchUser = () => dispatch => {
     axios.get('/api/kit_users' )
         .then(function (response) {
+            console.log("user: ", response.data )
             if( response.data.success === true ) {
                 dispatch({type: constants.FETCH_USER, payload: response.data.data });
             }else {
                 console.log("error: ", response.data.message )
+            }
+        })
+        .catch(function (error) {
+            console.log("role error: ",error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
+}
+
+export const fetchUserById = data => dispatch => {
+    axios.get('/api/kit_user_by_id', { params: data } )
+        .then(function (response) {
+            if( response.data.success === true ) {
+                dispatch({type: constants.FETCH_SINGLE_USER, payload: response.data.data });
+            }else {
+                console.log("error: ", response.data.message )
+                dispatch({type: constants.REJECT_SINGLE_USER, payload: response.data.message });
             }
         })
         .catch(function (error) {
@@ -44,6 +61,43 @@ export const addUser = data => (dispatch, getState) => {
                 dispatch({type: constants.FETCH_USER, payload: users });
             }else {
                 console.log("error: ", response.data.message )
+            }
+        })
+        .catch(function (error) {
+            console.log("role error: ",error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
+}
+
+export const assignItemToSolder = data => (dispatch, getState ) => {
+    axios.post('/api/assign_kit_item', data )
+        .then(function (response) {
+            console.log("assign: ", response)
+            if( response.data.success === true ) {
+                let store = getState()
+                let { users: {currentItems} } = store
+                currentItems.push( response.data.data )
+                dispatch({type: constants.FETCH_USER_ITEMS, payload: currentItems });
+            }else {
+                console.log("error: ", response.data.message )
+                dispatch({type: constants.REJECT_USER_ITEMS, payload: response.data.message });
+            }
+        })
+        .catch(function (error) {
+            console.log("role error: ",error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
+}
+
+export const getAssignedItems = data => dispatch => {
+
+    axios.get('/api/get_kit_solder_items_by_id', {params: data } )
+        .then(function (response) {
+            if( response.data.success === true ) {
+                dispatch({type: constants.FETCH_USER_ITEMS, payload: response.data.data });
+            }else {
+                console.log("error: ", response.data.message )
+                dispatch({type: constants.REJECT_USER_ITEMS, payload: response.data.message });
             }
         })
         .catch(function (error) {
@@ -86,3 +140,4 @@ export const fetchOauthToken = user  => dispatch => {
             dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
         });
 }
+

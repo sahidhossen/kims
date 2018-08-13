@@ -53,4 +53,28 @@ class TermRelation extends Model
             return $e;
         }
     }
+
+    /*
+     * Get relation result
+     */
+    public static function retrieveSolderTerms($user_id){
+        if(!$user_id)
+            return null;
+        $termRelation = self::where('user_id', $user_id)->first();
+        $centralOffice = CentralOffice::find( $termRelation->central_office_id);
+        $districtOffice = DistrictOffice::find( $termRelation->district_office_id);
+        $unit = Unit::find( $termRelation->unit_id );
+        $company = Company::find( $termRelation->company_id );
+
+        $result = new \stdClass();
+        $result->central_name = $centralOffice->central_name;
+        $result->central_id = $centralOffice->id;
+        $result->district_name = $districtOffice->district_name;
+        $result->district_id = $districtOffice->id;
+        $result->unit_name = $unit->unit_name;
+        $result->unit_id = $unit->id;
+        $result->company_name = $company->company_name;
+        $result->company_id = $company->id;
+        return $result;
+    }
 }

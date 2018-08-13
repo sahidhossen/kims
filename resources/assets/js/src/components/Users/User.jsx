@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 import Modal from './Modal'
 
 export const User = ({
@@ -37,9 +38,10 @@ export const User = ({
                                                 {user.name}
                                             </div>
                                             <div className="operation-area">
-                                                <div className="btn btn-info" onClick={(e)=> {userEditAction(e, index)}}> Edit User </div>
+                                                {/*<div className="btn btn-info" onClick={(e)=> {userEditAction(e, index)}}> Edit User </div>*/}
+                                                <Link className="btn btn-info" to={`/dashboard/user/${user.id}`}> Details </Link>
                                                 &nbsp;
-                                                <div className="btn btn-danger" onClick={(e)=> {userDeleteAction(e, index)}}> Delete </div>
+                                                {/*<div className="btn btn-danger" onClick={(e)=> {userDeleteAction(e, index)}}> Delete </div>*/}
                                             </div>
                                         </div>
                                     </div>

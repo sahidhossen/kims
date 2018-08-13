@@ -22,6 +22,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
  * User Authentication
  */
 Route::middleware('auth:api')->get('/kit_user', 'UserController@getKitUser');
+Route::middleware('auth:api')->get('/kit_solder', 'UserController@getKitSolder'); // After auth from mobile device
+Route::middleware('auth:api')->get('/get_kit_solder_items_by_id', 'UserController@getKitSolderById'); // After auth from mobile device
+
 Route::middleware('auth:api')->get('/kit_users', 'UserController@getAllKitUser');
 Route::middleware('auth:api')->post('/kit_user_register', 'UserController@userRegister');
 Route::middleware('auth:api')->get('/kit_user_by_id', 'UserController@userById');
@@ -90,4 +93,8 @@ Route::middleware('auth:api')->post('/add_kit_item', 'KitItemController@store');
 Route::middleware('auth:api')->post('/update_kit_item', 'KitItemController@update');
 Route::middleware('auth:api')->get('/kit_items_by_central_office', 'KitItemController@kitItemsByQuery');
 Route::middleware('auth:api')->get('/kit_item', 'KitItemController@itemById');
+Route::middleware('auth:api')->get('/kit_items', 'KitItemController@getAllKitItems');
 Route::middleware('auth:api')->post('/delete_kit_item', 'KitItemController@delete');
+
+
+Route::middleware('auth:api')->post('/assign_kit_item', 'UserController@assignKitItemToSolder');

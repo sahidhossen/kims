@@ -26,6 +26,7 @@ class ItemTypeController extends Controller
             }
             $itemType = new ItemType();
             $itemType->type_name = $request->input('type_name');
+            $itemType->type_slug = strtolower(str_replace(' ','_',$request->input('type_name')));
             $itemType->details = $request->input('details');
             $itemType->status =  $request->input('status') ? $request->input('status') : 0;
             $itemType->save();

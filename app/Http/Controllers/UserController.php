@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\CentralOffice;
+use App\ItemType;
+use App\KitItem;
+use App\SolderKits;
 use App\TermRelation;
 use App\User;
 use Illuminate\Http\Request;
@@ -30,6 +34,63 @@ class UserController extends Controller
     }
 
     /*
+     * get Kit Solder
+     */
+    public function getKitSolder( Request $request ){
+        try{
+            $currentUser = $request->user();
+            if( $currentUser->roles == null )
+                throw new Exception("User don't have any role");
+
+            $solderKit = SolderKits::where('user_id',$currentUser->id )->get();
+            $result = [];
+            if( count($solderKit) > 0 ) {
+                foreach( $solderKit as $kit ) {
+                    $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
+                    $itemType = ItemType::find($kit->item_type_id);
+                    $solderInformation->item_name = $itemType->type_name;
+                    $solderInformation->issue_date = $kit->issue_date;
+                    $solderInformation->expire_date = $kit->expire_date;
+                    $solderInformation->whoami = $currentUser->roles->first()->name;
+                    $solderInformation->name = $currentUser->name;
+                    $solderInformation->secret_id = $currentUser->secret_id;
+                    array_push($result, $solderInformation);
+                }
+            }
+            return [ 'success' => true, 'data' => $result, 'message'=>'Current user information.'];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=> $e->getMessage()];
+        }
+
+    }
+
+    public function getKitSolderById(Request $request){
+        try{
+            if(!$request->input('user_id') )
+                throw new Exception("Must be need user ID");
+            $currentUser = User::find( $request->input('user_id') );
+            $solderKit = SolderKits::where('user_id',$currentUser->id )->get();
+            $result = [];
+            if( count($solderKit) > 0 ) {
+                foreach( $solderKit as $kit ) {
+                    $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
+                    $itemType = ItemType::find($kit->item_type_id);
+                    $solderInformation->item_name = $itemType->type_name;
+                    $solderInformation->issue_date = $kit->issue_date;
+                    $solderInformation->expire_date = $kit->expire_date;
+                    $solderInformation->whoami = $currentUser->roles->first()->name;
+                    $solderInformation->name = $currentUser->name;
+                    $solderInformation->secret_id = $currentUser->secret_id;
+                    array_push($result, $solderInformation);
+                }
+            }
+            return [ 'success' => true, 'data' => $result, 'message'=>'Current user information.'];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=> $e->getMessage()];
+        }
+    }
+
+    /*
      * Fetch All kit users
      */
     public function getAllKitUser(){
@@ -40,6 +101,14 @@ class UserController extends Controller
                 foreach( $users as $user ){
                     if( $user->hasRole('kit_admin') )
                         continue;
+                    $termRelation = TermRelation::where( 'user_id', $user->id )->first();
+                    if(!$termRelation)
+                        continue;
+                    $centralOffice = CentralOffice::find($termRelation->central_office_id);
+                    if(!$centralOffice)
+                        continue;
+                    $user->central_office_name = $centralOffice->central_name;
+                    $user->central_office_id = $centralOffice->id;
                     array_push( $result, $user );
                 }
             }
@@ -52,8 +121,14 @@ class UserController extends Controller
 
     public function getRoles(){
         try{
-            $roles = Role::all(); 
-            return ['success'=>true, 'data'=>$roles, 'message'=>"All role fetched!"];
+            $roles = Role::all();
+            $result = [];
+            foreach( $roles as $role ){
+                if( $role->name == "kit_admin" )
+                    continue;
+                array_push($result, $role );
+            }
+            return ['success'=>true, 'data'=>$result, 'message'=>"All role fetched!"];
         }catch(Exception $e){
             return ['success'=>false, 'message'=> $e->getMessage()];
         }
@@ -65,9 +140,22 @@ class UserController extends Controller
             if(!$user)
                 throw new Exception("User not found!");
 
+            if( count($user->roles) === 0 )
+                throw new Exception("User don't have any role!");
+
             $user->whoami = $user->roles->first()->name;
                 if( $user->whoami == null )
                     throw new Exception("User don't have any role");
+
+            $termRelation = TermRelation::where( 'user_id',$user->id )->first();
+            if(!$termRelation)
+                throw new Exception("User haven't any relation with central office ");
+
+            $centralOffice = CentralOffice::find( $termRelation->central_office_id );
+            if( !$centralOffice )
+                throw new Exception("Cannot find any central office with this ID ");
+            $user->central_office_name = $centralOffice->central_name;
+            $user->central_office_id = $centralOffice->id;
 
             return ['success'=>true, 'data'=>$user, 'message'=>"User found!"];
         }catch(Exception $e){
@@ -201,6 +289,51 @@ class UserController extends Controller
                 throw new Exception("Critical error on user update!");
 
             return ['success'=>true, 'message'=>"User update successful!"];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=> $e->getMessage()];
+        }
+    }
+
+    /*
+     * Assign kit item to solder
+     */
+    public function assignKitItemToSolder(Request $request){
+        try{
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required',
+                'item_id' => 'required',
+                'item_type_id' => 'required'
+            ]);
+            if( $validator->fails()){
+                $validatorErrors = [];
+                foreach($validator->messages()->getMessages() as $fieldName => $messages) {
+                    foreach( $messages as $message){
+                        $validatorErrors[$fieldName] = $message;
+                    }
+                }
+                throw new Exception(implode(' ',$validatorErrors));
+            }
+
+            $solderKit = new SolderKits();
+            $solderKit->user_id = $request->input('user_id');
+            $solderKit->item_id = $request->input('item_id');
+            $solderKit->item_type_id = $request->input('item_type_id');
+            $effectiveDate = date('Y-m-d h:m:s', strtotime('+3 month'));
+            $solderKit->expire_date = $effectiveDate;
+
+            $solderKit->save();
+
+            $kitItem = KitItem::find( $solderKit->item_id );
+            $kitItem->status = 1;
+            $kitItem->save();
+
+            $solderInformation = TermRelation::retrieveSolderTerms($solderKit->user_id);
+            $itemType = ItemType::find( $solderKit->item_type_id );
+            $solderInformation->item_name = $itemType->type_name;
+            $solderInformation->issue_date = $solderKit->issue_date;
+            $solderInformation->expire_date = $solderKit->expire_date;
+
+            return ['success'=>true, 'data'=> $solderInformation ,'message'=>'Item assigned success'];
         }catch (Exception $e){
             return ['success'=>false, 'message'=> $e->getMessage()];
         }

@@ -16,7 +16,6 @@ export const Sidebar = ({ location }) => (
             </a>
         </div>
 
-
         <div className="sidebar-content">
             <div className="sidebar-user">
                 <div className="card-body">

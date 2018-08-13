@@ -33,10 +33,15 @@ class KitItemController extends Controller
 //            $kitItem->condemnation_id = $request->input('condemnation_id');
             $kitItem->central_office_id = $request->input('central_office_id');
             $kitItem->status = 0;
+            $result = new \stdClass();
+            if($kitItem->save()){
+                $result->kit_name = $kitItem->ItemType->type_name;
+                $result->central_office_name = $kitItem->centralOffice->central_name;
+                $result->status = $kitItem->status;
+                $result->image = $kitItem->image;
+            }
 
-            $kitItem->save();
-
-            return ['success'=>true, 'data'=>$kitItem, 'message'=>'Kit item save!'];
+            return ['success'=>true, 'data'=>$result, 'message'=>'Kit item save!'];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }
@@ -104,6 +109,7 @@ class KitItemController extends Controller
             if( count($kitItems) > 0 ){
                 foreach( $kitItems as $kitItem){
                     $kitItemObj = new \stdClass();
+                    $kitItemObj->id  = $kitItem->id;
                     $kitItemObj->kit_name = $kitItem->ItemType->type_name;
                     $kitItemObj->central_office_name = $kitItem->centralOffice->central_name;
                     $kitItemObj->status = $kitItem->status;
@@ -113,6 +119,29 @@ class KitItemController extends Controller
             }
 
             return ['success'=>true, 'data'=>$object,'message'=>'Central office data retrieve'];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
+
+    /*
+     * Get All Kit Item
+     */
+    public function getAllKitItems(){
+        try{
+            $kitItems = KitItem::orderBy('created_at', 'desc')->get();
+            $result = [];
+            if( count($kitItems) > 0 ){
+                foreach ($kitItems as $kitItem ){
+                    $kitItemObj = new \stdClass();
+                    $kitItemObj->kit_name = $kitItem->ItemType->type_name;
+                    $kitItemObj->central_office_name = $kitItem->centralOffice->central_name;
+                    $kitItemObj->status = $kitItem->status;
+                    $kitItemObj->image = $kitItem->image;
+                    array_push($result, $kitItemObj);
+                }
+            }
+            return ['success'=>true, 'message'=>"All kit items", 'data'=>$result];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }

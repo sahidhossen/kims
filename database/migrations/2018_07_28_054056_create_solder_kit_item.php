@@ -20,6 +20,8 @@ class CreateSolderKitItem extends Migration
             $table->integer('item_id')->unsigned();
             $table->integer('status')->default(0);
             $table->integer('stage')->default(0)->comment('approve or pending');
+            $table->dateTime('issue_date');
+            $table->dateTime('expire_date');
             $table->timestamps();
         });
     }

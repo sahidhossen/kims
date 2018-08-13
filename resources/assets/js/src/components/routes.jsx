@@ -4,6 +4,7 @@ import AuthDashboard from '../container/Layout/AuthDashboard'
 import Home from './Home'
 import DefaultHome from './DefaultHome'
 import User from './Users'
+import UserDetails from './Users/UserDetails'
 import KitController from './KitController'
 import KitItems from './KitItems'
 import ItemTypes from './ItemTypes'
@@ -60,6 +61,11 @@ const routes = [{
                     path: route.ITEM_TYPES,
                     exact: true,
                     component: ItemTypes
+                },
+                {
+                    path: route.USER_DETAILS,
+                    exact: true,
+                    component: UserDetails
                 },
                 {
                     path: "/*",
