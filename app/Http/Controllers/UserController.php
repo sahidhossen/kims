@@ -318,6 +318,7 @@ class UserController extends Controller
             $solderKit->user_id = $request->input('user_id');
             $solderKit->item_id = $request->input('item_id');
             $solderKit->item_type_id = $request->input('item_type_id');
+            $solderKit->issue_date = date('y-m-d h:m:s');
             $effectiveDate = date('Y-m-d h:m:s', strtotime('+3 month'));
             $solderKit->expire_date = $effectiveDate;
 
