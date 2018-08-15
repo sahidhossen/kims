@@ -77,4 +77,20 @@ class TermRelation extends Model
         $result->company_id = $company->id;
         return $result;
     }
+
+    /*
+     * Get Company Terms
+     */
+    public static function retrieveCompanyTerms($user_id){
+        if(!$user_id)
+            return null;
+        $companyTerms = self::where('user_id',$user_id)->first();
+        $companySolderTerms = self::where(
+                [
+                    'company_id'=>$companyTerms->company_id,
+                    'term_type'=>0,
+                ]
+                )->where('user_id','!=',$user_id)->get();
+        return $companySolderTerms;
+    }
 }

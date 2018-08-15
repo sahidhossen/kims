@@ -23,7 +23,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
  */
 Route::middleware('auth:api')->get('/kit_user', 'UserController@getKitUser');
 Route::middleware('auth:api')->get('/kit_solder', 'UserController@getKitSolder'); // After auth from mobile device
-Route::middleware('auth:api')->get('/get_kit_solder_items_by_id', 'UserController@getKitSolderById'); // After auth from mobile device
+Route::middleware('auth:api')->get('/kit_items_by_solder_id', 'UserController@getKitItemBySolderId'); // After auth from mobile device
 
 Route::middleware('auth:api')->get('/kit_users', 'UserController@getAllKitUser');
 Route::middleware('auth:api')->post('/kit_user_register', 'UserController@userRegister');
@@ -98,3 +98,11 @@ Route::middleware('auth:api')->post('/delete_kit_item', 'KitItemController@delet
 
 
 Route::middleware('auth:api')->post('/assign_kit_item', 'UserController@assignKitItemToSolder');
+
+/*
+ * Request API's
+ */
+
+Route::middleware('auth:api')->post('/request_solder_to_company', 'ItemRequestController@SolderRequest');
+Route::middleware('auth:api')->post('/request_solder_to_company_cancel', 'ItemRequestController@cancelRequest');
+Route::middleware('auth:api')->post('/request_solder_to_company_approve', 'ItemRequestController@approveRequest');

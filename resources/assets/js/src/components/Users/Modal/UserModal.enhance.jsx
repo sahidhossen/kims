@@ -13,6 +13,9 @@ export default compose(
     withState('state', 'setState', {
             user: {
                 name:'',
+                professional:'',
+                designation:'',
+                mobile:'',
                 secret_id: '',
                 password:'',
                 role:'',
@@ -37,7 +40,13 @@ export default compose(
             let value = event.target.value
 
             if( name === 'u_name')
-                user.name = value 
+                user.name = value
+            if( name === 'professional')
+                user.professional = value
+            if( name === 'designation')
+                user.designation = value
+            if( name === 'mobile')
+                user.mobile = value
             if( name === 'secret_id')
                 user.secret_id = value 
             if( name === 'password')
@@ -67,6 +76,9 @@ export default compose(
             let { state, setState } = props
 
             state.error = state.user.name === '' ||
+                    state.user.position === '' ||
+                    state.user.designation === '' ||
+                    state.user.mobile === '' ||
                     state.user.secret_id === '' ||
                     state.user.role === '' ||
                     state.user.central_office_id === 0 ||
@@ -86,8 +98,7 @@ export default compose(
     }),
     lifecycle({
         componentDidMount() {
-            console.log("props: ", this.props)
-            let { user, actionType } = this.props 
+            let { user, actionType } = this.props
             if( actionType === true )
                 this.props.setState({...this.props.state, user: user })
         }

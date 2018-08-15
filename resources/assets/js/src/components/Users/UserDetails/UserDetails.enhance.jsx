@@ -20,12 +20,14 @@ export default compose(
         kitItemSelection:null,
         kitTypeOptions:[],
         kitTypeSelection:null,
+        current_user_id: null,
         assignItem: {
             item_id: 0,
             item_type_id: 0,
             user_id: 0
         },
-        error: ''
+        error: '',
+        lastKitItemId: null
     }),
     withHandlers({
         filterKitType: props => kitItems => {
@@ -45,6 +47,12 @@ export default compose(
                 setState({ ...state, kitItemOptions })
             }
         },
+        removeSelectedKitItem: props => () => {
+            let {  state, setState } = props
+            let { lastKitItemId, kitItemOptions } = state
+            kitItemOptions = kitItemOptions.filter( item => item.value !== lastKitItemId )
+            setState({...state, lastKitItemId: null, kitItemOptions: kitItemOptions, kitItemSelection: null })
+        },
         onChangeAction: props => (option, name) => {
             let { state, setState, users } = props
             if( name === 'kit_type_id' ){
@@ -62,11 +70,12 @@ export default compose(
             error = kitItemSelection === null || kitTypeSelection === null ? "Both field required!":'';
 
             if( error === ''){
-                console.log(kitItemSelection)
                 assignItem.user_id = user.id
                 assignItem.item_id = kitItemSelection.value
                 assignItem.item_type_id = kitTypeSelection.value
+                setState({...state, lastKitItemId: kitItemSelection.value })
                 props.dispatch(assignItemToSolder(assignItem))
+
             }else {
                 setState({...state, error })
             }
@@ -74,9 +83,16 @@ export default compose(
     }),
     lifecycle({
         componentDidMount() {
-            let { match: { params }, kitTypes, kitItems, filterKitType, filterKitItem } = this.props
-            this.props.dispatch( fetchUserById( {user_id: params.id } ))
-            this.props.dispatch( getAssignedItems({ user_id: params.id }))
+            let { match: { params }, kitTypes, kitItems, filterKitType, filterKitItem, users:{ user } } = this.props
+
+            if( user === null ) {
+                this.props.dispatch(fetchUserById({user_id: params.id}))
+                this.props.dispatch(getAssignedItems({user_id: params.id}))
+            }else if( user.id !== parseInt(params.id) ){
+                this.props.dispatch(fetchUserById({user_id: params.id}))
+                this.props.dispatch(getAssignedItems({user_id: params.id}))
+            }
+
             if( kitTypes.kitTypes.length === 0)
                 this.props.dispatch(getKitTypes())
             else {
@@ -88,12 +104,16 @@ export default compose(
             }
         },
         componentWillReceiveProps(nextProps){
-            let { filterKitType, filterKitItem, kitTypes, kitItems } = nextProps
+            let { filterKitType, filterKitItem, kitTypes, kitItems, users, state, removeSelectedKitItem } = nextProps
             if(!_.isEqual(this.props.kitTypes, kitTypes)){
                 filterKitType(kitTypes.kitTypes)
             }
             if(!_.isEqual(this.props.kitItems.userKitItems, kitItems.userKitItems)){
                 filterKitItem(kitItems.userKitItems)
+            }
+
+            if(!_.isEqual(this.props.users.currentItems, users.currentItems) && state.lastKitItemId !== null ){
+                removeSelectedKitItem();
             }
         }
 

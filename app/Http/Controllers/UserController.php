@@ -35,6 +35,7 @@ class UserController extends Controller
 
     /*
      * get Kit Solder
+     * Only for api request
      */
     public function getKitSolder( Request $request ){
         try{
@@ -43,44 +44,77 @@ class UserController extends Controller
                 throw new Exception("User don't have any role");
 
             $currentUser->whoami = $currentUser->roles->first()->name;
-            $solderKit = SolderKits::where('user_id',$currentUser->id )->get();
-            $result = [];
+            $solderKit = SolderKits::where( 'user_id',$currentUser->id )
+                ->where('status','!=',3)->get();
+            $items = [];
             if( count($solderKit) > 0 ) {
                 foreach( $solderKit as $kit ) {
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
                     $itemType = ItemType::find($kit->item_type_id);
                     $solderInformation->item_name = $itemType->type_name;
+                    $solderInformation->status = $kit->status;
                     $solderInformation->issue_date = $kit->issue_date;
                     $solderInformation->expire_date = $kit->expire_date;
-
+                    $solderInformation->id = $kit->id;
                     $solderInformation->name = $currentUser->name;
+                    $solderInformation->professional = $currentUser->professional;
+                    $solderInformation->designation = $currentUser->designation;
+                    $solderInformation->mobile = $currentUser->mobile;
                     $solderInformation->secret_id = $currentUser->secret_id;
-                    array_push($result, $solderInformation);
+                    array_push($items, $solderInformation);
                 }
             }
-            return [ 'success' => true, 'items' => $result, 'data'=>$currentUser, 'message'=>'Current user information.'];
+            $companySolders = [];
+            if($currentUser->hasRole('company')){
+                $companyTerms = TermRelation::retrieveCompanyTerms( $currentUser->id );
+                if( count( $companyTerms) >0 ){
+                    foreach( $companyTerms as $term ){
+                        $solder = User::find( $term->user_id );
+                        array_push($companySolders, $solder);
+                    }
+                }
+            }
+
+            return [
+                'success' => true,
+                'solders'=>$companySolders,
+                'items' => $items,
+                'data'=>$currentUser,
+                'message'=>'Current user information.'
+            ];
         }catch (Exception $e){
             return ['success'=>false, 'message'=> $e->getMessage()];
         }
 
     }
 
-    public function getKitSolderById(Request $request){
+
+    /*
+     * Get kit Items by solder id
+     * When user login as a company and get all solder
+     * then each solder needs their items
+     */
+    public function getKitItemBySolderId(Request $request){
         try{
             if(!$request->input('user_id') )
                 throw new Exception("Must be need user ID");
             $currentUser = User::find( $request->input('user_id') );
-            $solderKit = SolderKits::where('user_id',$currentUser->id )->get();
+            $solderKit = SolderKits::where('user_id',$currentUser->id )
+                ->where('status','!=',3)->get();
             $result = [];
             if( count($solderKit) > 0 ) {
                 foreach( $solderKit as $kit ) {
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
                     $itemType = ItemType::find($kit->item_type_id);
                     $solderInformation->item_name = $itemType->type_name;
+                    $solderInformation->status = $kit->status;
                     $solderInformation->issue_date = $kit->issue_date;
                     $solderInformation->expire_date = $kit->expire_date;
                     $solderInformation->whoami = $currentUser->roles->first()->name;
                     $solderInformation->name = $currentUser->name;
+                    $solderInformation->professional = $currentUser->professional;
+                    $solderInformation->designation = $currentUser->designation;
+                    $solderInformation->mobile = $currentUser->mobile;
                     $solderInformation->secret_id = $currentUser->secret_id;
                     array_push($result, $solderInformation);
                 }
@@ -179,7 +213,10 @@ class UserController extends Controller
             $validator = Validator::make($request->all(), [
                 'secret_id' => 'required|unique:users',
                 'password' => 'required',
-                'name' => 'required|min:5'
+                'name' => 'required|min:5',
+                'professional' => 'required|min:2',
+                'designation' => 'required|min:2',
+                'mobile' => 'required|min:8'
             ]);
 
             if( $validator->fails()){
@@ -194,6 +231,9 @@ class UserController extends Controller
 
             $user = new User();
             $user->name = $request->input('name');
+            $user->professional = $request->input('professional');
+            $user->designation = $request->input('designation');
+            $user->mobile = $request->input('mobile');
             $user->secret_id = $request->input('secret_id');
             $user->password = bcrypt($request->input('password'));
 
@@ -285,6 +325,9 @@ class UserController extends Controller
 
             $user->secret_id = $secret_id;
             $user->name = $request->input('name') ? $request->input('name') : $user->name;
+            $user->professional = $request->input('professional') ? $request->input('professional') : $user->professional;
+            $user->designation = $request->input('designation') ? $request->input('designation') : $user->designation;
+            $user->mobile = $request->input('mobile') ? $request->input('mobile') : $user->mobile;
 
             if(!$user->save())
                 throw new Exception("Critical error on user update!");

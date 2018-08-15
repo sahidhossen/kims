@@ -11,6 +11,13 @@ use League\Flysystem\Exception;
 
 class KitItemController extends Controller
 {
+
+    /*
+     * Add kit item to the solder
+     * @item_type_id = Item Type id
+     * @central_office_id = Who provide the item
+     * @status = 0->new, 1->send_request, 2->expired
+     */
     public function store(Request $request){
         try{
             $validator = Validator::make($request->all(), [

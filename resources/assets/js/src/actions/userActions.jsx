@@ -75,7 +75,8 @@ export const assignItemToSolder = data => (dispatch, getState ) => {
             console.log("assign: ", response)
             if( response.data.success === true ) {
                 let store = getState()
-                let { users: {currentItems} } = store
+                let { users } = store
+                const currentItems = [...users.currentItems]
                 currentItems.push( response.data.data )
                 dispatch({type: constants.FETCH_USER_ITEMS, payload: currentItems });
             }else {
@@ -91,7 +92,7 @@ export const assignItemToSolder = data => (dispatch, getState ) => {
 
 export const getAssignedItems = data => dispatch => {
 
-    axios.get('/api/get_kit_solder_items_by_id', {params: data } )
+    axios.get('/api/kit_items_by_solder_id', {params: data } )
         .then(function (response) {
             if( response.data.success === true ) {
                 dispatch({type: constants.FETCH_USER_ITEMS, payload: response.data.data });

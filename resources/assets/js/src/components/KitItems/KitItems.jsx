@@ -37,7 +37,7 @@ export const KitItem = ({
                                     <Select
                                         value={state.kitSelectOption}
                                         onChange={(value)=>{ onChangeAction(value, "kit_type_id") }}
-                                        options={state.kitTypeOptions}
+                                        options={state.itemKitTypeOptions}
                                     />
                                 </div>
                                 <div className="flex-1 box-1 px-3">

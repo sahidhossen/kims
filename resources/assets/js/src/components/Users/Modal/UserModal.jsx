@@ -27,6 +27,18 @@ export const UserModal = (
                         <input type="text" className="form-control" value={state.user.name} placeholder="Full Name" name="u_name" onChange={(e)=>{ onChangeAction(e) }} />
                     </div>
                     <div className="form-group">
+                        <label> Designation </label>
+                        <input type="text" className="form-control" value={state.user.designation} placeholder="Designation" name="designation" onChange={(e)=>{ onChangeAction(e) }} />
+                    </div>
+                    <div className="form-group">
+                        <label> Professional </label>
+                        <input type="text" className="form-control" value={state.user.professional} placeholder="Professional" name="professional" onChange={(e)=>{ onChangeAction(e) }} />
+                    </div>
+                    <div className="form-group">
+                        <label> Mobile </label>
+                        <input type="text" className="form-control" value={state.user.mobile} placeholder="Mobile" name="mobile" onChange={(e)=>{ onChangeAction(e) }} />
+                    </div>
+                    <div className="form-group">
                         <label> Password </label>
                         <input type="password" className="form-control" value={state.user.password} placeholder="Password" name="password" onChange={(e)=>{ onChangeAction(e) }} />
                     </div>

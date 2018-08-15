@@ -15,7 +15,7 @@ export default compose(
     }),
     userIsAuthenticated,
     withState('state', 'setState', {
-        kitTypeOptions:[],
+        itemKitTypeOptions:[],
         centralOfficeOptions:[],
         error: '',
         kitSelectOption:{ value:0, label: 'select type'},
@@ -39,13 +39,11 @@ export default compose(
                 setState({ ...state, kitItem, centralOfficeOptions, centralOfficeSelectedOption })
             }
         },
-        filterKitItem: props => kitItems => {
+        filterItemKitType: props => kitItems => {
             if( kitItems.length > 0 ){
                 let { state, setState } = props
-                let { kitTypeOptions, kitSelectOption } = state
-                kitTypeOptions = kitItems.map( item => ({value: item.id, label: item.type_name }))
-
-                setState({ ...state, kitTypeOptions, kitSelectOption })
+                state.itemKitTypeOptions = kitItems.map( item => ({value: item.id, label: item.type_name }))
+                setState({ ...state })
             }
         },
         addItem: props => event => {
@@ -79,14 +77,14 @@ export default compose(
 
     lifecycle({
         componentDidMount() {
-            let { kitTypes, kitItems, kitControllers, filterCentralOffice, filterKitItem } = this.props
+            let { kitTypes, kitItems, kitControllers, filterCentralOffice, filterItemKitType } = this.props
             if( kitTypes.kitTypes.length === 0) {
                 this.props.dispatch(getKitTypes())
             }else {
-                filterKitItem(kitTypes.kitTypes)
+                filterItemKitType(kitTypes.kitTypes)
             }
+
             if(kitItems.kitItems.length === 0) {
-                console.log("called")
                 this.props.dispatch(getKitItems())
             }
 
@@ -96,14 +94,13 @@ export default compose(
                 filterCentralOffice(kitControllers.central_offices)
         },
         componentWillReceiveProps(nextProps){
-            let { kitControllers, filterCentralOffice, kitTypes, filterKitItem } = nextProps
+            let { kitControllers, filterCentralOffice, kitTypes, filterItemKitType } = nextProps
             if( !_.isEqual(this.props.kitControllers, kitControllers) ){
                 filterCentralOffice(kitControllers.central_offices)
             }
             if(!_.isEqual(this.props.kitTypes,kitTypes )){
-                filterKitItem(kitTypes.kitTypes)
+                filterItemKitType(kitTypes.kitTypes)
             }
-            // console.log("nexprops: ", nextProps.kitItems)
         }
 
     }),
