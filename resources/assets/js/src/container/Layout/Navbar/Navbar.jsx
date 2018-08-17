@@ -1,6 +1,8 @@
 import React from 'react'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
-export const Navbar = () => (
+export const Navbar = ({ logout }) => (
     <div className="navbar navbar-expand-md navbar-dark">
         <div className="navbar-brand">
             <a href="index.html" className="d-inline-block">
@@ -308,12 +310,16 @@ export const Navbar = () => (
                         {/*<a href="#" className="dropdown-item"><i className="icon-comment-discussion"></i> Messages <span className="badge badge-pill bg-blue ml-auto">58</span></a>*/}
                         {/*<div className="dropdown-divider"></div>*/}
                         <a href="#" className="dropdown-item"><i className="icon-cog5"></i> Account settings</a>
-                        <a href="#" className="dropdown-item"><i className="icon-switch2"></i> Logout</a>
+                        <Link to="#" className="dropdown-item" onClick={(e)=>{logout(e)}}><i className="icon-switch2"></i> Logout</Link>
                     </div>
                 </li>
             </ul>
         </div>
     </div>
 )
+
+Navbar.propTypes = {
+    logout: PropTypes.func
+}
 
 export default Navbar

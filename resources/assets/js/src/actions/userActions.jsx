@@ -4,25 +4,11 @@ import axios from 'axios'
 import { CLIENT_SECRET, CLIENT_ID, GRANT_TYPE } from '../constants';
 
 
-export const UserLogin = data => dispatch => {
-
-    dispatch({
-        type: constants.USER_LOGGING_IN
-    })
-    // Wait 2 seconds before "logging in"
-    setTimeout(() => {
-        dispatch({
-            type: constants.USER_LOGGED_IN,
-            payload: true
-        })
-    }, 2000)
-}
-
 
 export const fetchUser = () => dispatch => {
     axios.get('/api/kit_users' )
         .then(function (response) {
-            console.log("user: ", response.data )
+            // console.log("user: ", response.data )
             if( response.data.success === true ) {
                 dispatch({type: constants.FETCH_USER, payload: response.data.data });
             }else {
@@ -72,7 +58,7 @@ export const addUser = data => (dispatch, getState) => {
 export const assignItemToSolder = data => (dispatch, getState ) => {
     axios.post('/api/assign_kit_item', data )
         .then(function (response) {
-            console.log("assign: ", response)
+            // console.log("assign: ", response)
             if( response.data.success === true ) {
                 let store = getState()
                 let { users } = store
@@ -142,3 +128,7 @@ export const fetchOauthToken = user  => dispatch => {
         });
 }
 
+export const logout = () => dispatch => {
+    localStorage.removeItem('kim_auth')
+    dispatch({ type: constants.FETCH_OAUTH_LOGOUT })
+}

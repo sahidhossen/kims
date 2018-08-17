@@ -74,6 +74,13 @@ const users = function reducer(
                 isLoggedIn: action.payload
             }
         }
+        case constants.USER_LOGGED_OUT : {
+            return {
+                ...state,
+                fetchingLogin: false,
+                isLoggedIn: action.payload
+            }
+        }
 
     }
     return state

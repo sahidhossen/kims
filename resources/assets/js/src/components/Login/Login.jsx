@@ -21,7 +21,7 @@ export const Login = ({ login }) => (
 )
 
 Login.propTypes = {
-    login: PropTypes.func
+    login: PropTypes.func,
 }
 
 

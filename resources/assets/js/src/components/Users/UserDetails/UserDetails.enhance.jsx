@@ -5,6 +5,8 @@ import { userIsAuthenticated } from '../../../utils/services'
 import { fetchUserById, assignItemToSolder, getAssignedItems } from '../../../actions/userActions'
 import { getKitItemsByCentralId } from  '../../../actions/kitItemActions'
 import { getKitTypes } from  '../../../actions/kitTypeActions'
+import moment from 'moment'
+
 
 export default compose(
     connect(store => {
@@ -24,7 +26,9 @@ export default compose(
         assignItem: {
             item_id: 0,
             item_type_id: 0,
-            user_id: 0
+            user_id: 0,
+            issue_date: moment(),
+            expire_date: moment()
         },
         error: '',
         lastKitItemId: null
@@ -63,6 +67,16 @@ export default compose(
             if(name === 'kit_item_id'){
                 setState({ ...state , kitItemSelection: option })
             }
+            if(name === 'issue_date'){
+                let { assignItem } = state
+                assignItem.issue_date = option
+                setState({...state, assignItem})
+            }
+            if( name === 'expire_date' ){
+                let { assignItem } = state
+                assignItem.expire_date = option
+                setState({...state, assignItem})
+            }
         },
         assignItem: props => event => {
             let { state, setState, users:{user} } = props
@@ -70,11 +84,14 @@ export default compose(
             error = kitItemSelection === null || kitTypeSelection === null ? "Both field required!":'';
 
             if( error === ''){
-                assignItem.user_id = user.id
-                assignItem.item_id = kitItemSelection.value
-                assignItem.item_type_id = kitTypeSelection.value
+                let newSssignItem = {...assignItem}
+                newSssignItem.user_id = user.id
+                newSssignItem.item_id = kitItemSelection.value
+                newSssignItem.item_type_id = kitTypeSelection.value
+                newSssignItem.issue_date = moment(assignItem.issue_date).format('YYYY-MM-DD h:mm:ss')
+                newSssignItem.expire_date = moment(assignItem.expire_date).format('YYYY-MM-DD h:mm:ss')
                 setState({...state, lastKitItemId: kitItemSelection.value })
-                props.dispatch(assignItemToSolder(assignItem))
+                props.dispatch(assignItemToSolder(newSssignItem))
 
             }else {
                 setState({...state, error })

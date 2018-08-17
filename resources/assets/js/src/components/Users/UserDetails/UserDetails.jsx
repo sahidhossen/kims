@@ -1,7 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Select from 'react-select';
-
+import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from 'react-datepicker'
+import moment from 'moment'
 
 export const UserDetails = ({
     users,
@@ -49,7 +51,21 @@ export const UserDetails = ({
                                     <div className="btn btn-info" onClick={(e)=> { assignItem(e)}}> Add Item </div>
                                 </div>
                             </div>
-
+                            <hr/>
+                            <div className="d-flex flex-row">
+                                <div className="flex-1 box-1">
+                                    <DatePicker
+                                        selected={state.assignItem.issue_date}
+                                        onChange={(date)=>{onChangeAction(date, "issue_date")}}
+                                    />
+                                </div>
+                                <div className="flex-1 box-1">
+                                    <DatePicker
+                                        selected={state.assignItem.expire_date}
+                                        onChange={(date)=>{onChangeAction(date, "expire_date")}}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -69,9 +85,9 @@ export const UserDetails = ({
                                     <div className="sr">
                                         <strong>S.L. &nbsp;  &nbsp;</strong>
                                     </div>
-                                    <div className="flex-1">
-                                        <strong> Central Office</strong>
-                                    </div>
+                                    {/*<div className="flex-1">*/}
+                                        {/*<strong> Central Office</strong>*/}
+                                    {/*</div>*/}
                                     <div className="flex-1">
                                         <strong> District Office</strong>
                                     </div>
@@ -84,6 +100,12 @@ export const UserDetails = ({
                                     <div className="flex-1">
                                         <strong>Item Name</strong>
                                     </div>
+                                    <div className="flex-1">
+                                        <strong>Issue Date</strong>
+                                    </div>
+                                    <div className="flex-1">
+                                        <strong>Expire Date</strong>
+                                    </div>
                                 </div>
                             </div>
                             { users.currentItems.length > 0 && users.currentItems.map( (user, index) => (
@@ -92,9 +114,9 @@ export const UserDetails = ({
                                         <div className="sr">
                                             { index+1 }  &nbsp;  &nbsp;
                                         </div>
-                                        <div className="flex-1">
-                                            {user.central_name}
-                                        </div>
+                                        {/*<div className="flex-1">*/}
+                                            {/*{user.central_name}*/}
+                                        {/*</div>*/}
                                         <div className="flex-1">
                                             {user.district_name}
                                         </div>
@@ -106,6 +128,12 @@ export const UserDetails = ({
                                         </div>
                                         <div className="flex-1">
                                             {user.item_name}
+                                        </div>
+                                        <div className="flex-1">
+                                            { moment(user.issue_date).format('YYYY-MM-DD') }
+                                        </div>
+                                        <div className="flex-1">
+                                            { moment(user.expire_date).format('YYYY-MM-DD') }
                                         </div>
                                     </div>
                                 </div>
