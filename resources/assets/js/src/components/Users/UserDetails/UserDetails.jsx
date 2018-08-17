@@ -52,15 +52,24 @@ export const UserDetails = ({
                                 </div>
                             </div>
                             <hr/>
-                            <div className="d-flex flex-row">
+                            <div className="d-flex flex-row justify-content-center">
+                                <div className="issue-date-box">
+                                    Issue Date
+                                </div>
                                 <div className="flex-1 box-1">
+
                                     <DatePicker
+                                        className="form-control"
                                         selected={state.assignItem.issue_date}
                                         onChange={(date)=>{onChangeAction(date, "issue_date")}}
                                     />
                                 </div>
+                                <div className="issue-date-box">
+                                    Expire Date
+                                </div>
                                 <div className="flex-1 box-1">
                                     <DatePicker
+                                        className="form-control"
                                         selected={state.assignItem.expire_date}
                                         onChange={(date)=>{onChangeAction(date, "expire_date")}}
                                     />
