@@ -142,6 +142,9 @@ class UserController extends Controller
                     $centralOffice = CentralOffice::find($termRelation->central_office_id);
                     if(!$centralOffice)
                         continue;
+                    if( $user->roles == null )
+                        continue;
+                    $user->whoami = $user->roles->first()->name;
                     $user->central_office_name = $centralOffice->central_name;
                     $user->central_office_id = $centralOffice->id;
                     array_push( $result, $user );
@@ -253,6 +256,7 @@ class UserController extends Controller
                 $relationTableData['user_id'] = $user->id;
                 TermRelation::createRelation( $relationTableData );
             }
+            $user->whoami = $request->input('role');
             return [ 'success' => true, 'data' => $user, 'message'=>'Add user successfully!'];
         }catch(Exception $e){
             return ['success'=>false, 'message'=> $e->getMessage()];

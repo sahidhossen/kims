@@ -7,6 +7,7 @@ export default compose(
     connect(store => {
         return {
             roles: store.roles,
+            users: store.users,
             kitControllers: store.kitControllers
         }
     }),
@@ -69,28 +70,50 @@ export default compose(
                 user.company_id = value
             }
 
-            setState({ ...props.state, user, filterDistrictOffices, filterUnit, filterCompany})
+            setState({ ...props.state, user, filterDistrictOffices, filterUnit, filterCompany, error: '' })
         },
         addUser: props => event => {
             event.preventDefault();
             let { state, setState } = props
 
-            state.error = state.user.name === '' ||
-                    state.user.position === '' ||
-                    state.user.designation === '' ||
-                    state.user.mobile === '' ||
-                    state.user.secret_id === '' ||
-                    state.user.role === '' ||
-                    state.user.central_office_id === 0 ||
-                    state.user.district_office_id === 0 ||
-                    state.user.unit_id === 0 ||
-                    state.user.company_id === 0
-                    ? "Please fill required field!" : "";
+            state.error = state.user.role === '' ? "User must be need a role!" : "";
 
-            console.log("user: ", state.user )
+            if(state.error === '' ) {
+                state.error = state.user.name === '' ||
+                state.user.position === '' ||
+                state.user.designation === '' ||
+                state.user.mobile === '' ||
+                state.user.secret_id === ''
+                    ? "Please fill required field!" : "";
+            }
+
+            if( state.error === '' && state.user.role === 'central' ){
+                state.error = state.user.central_office_id === 0 ? "Must be select central office!" : "";
+            }
+            if( state.error === '' && state.user.role === 'formation' ){
+                state.error = state.user.central_office_id === 0 || state.user.district_office_id === 0 ? "Must be select formation & central office!" : "";
+            }
+            if( state.error === '' && state.user.role === 'unit' ){
+                state.error =   state.user.central_office_id === 0 ||
+                                state.user.district_office_id === 0 ||
+                                state.user.unit_id === 0 ? "Must be required field at least unit office!" : "";
+            }
+            if( state.error === '' && state.user.role === 'company' ){
+                state.error =   state.user.central_office_id === 0 ||
+                                state.user.district_office_id === 0 ||
+                                state.user.unit_id === 0 ||
+                                state.user.company_id === 0 ? "Must be select required field!" : "";
+            }
+
+            if( state.error === '' && state.user.role === 'solder' ){
+                state.error =   state.user.central_office_id === 0 ||
+                state.user.district_office_id === 0 ||
+                state.user.unit_id === 0 ||
+                state.user.company_id === 0 ? "Must be select required field!" : "";
+            }
 
             if( state.error !== "" ){
-                setState({ ...state, error })
+                setState({ ...state })
             }else {
                 props.dispatch(addUser(state.user))
             }
@@ -101,6 +124,16 @@ export default compose(
             let { user, actionType } = this.props
             if( actionType === true )
                 this.props.setState({...this.props.state, user: user })
+        },
+        componentWillReceiveProps(nextProps){
+            let { users } = nextProps
+            if( users.error !== null && !_.isEqual(users, this.props.users)){
+                let { state, setState } = this.props
+                setState({ ...state, error: users.error })
+            }
+            if(users.error === null && !_.isEqual(users, this.props.users)){
+                this.props.closeModal()
+            }
         }
     }),
     pure

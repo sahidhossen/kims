@@ -7,10 +7,10 @@
  */
 
 return [
-  "solder_roles"=> ["central", 'district', 'unit', 'company', 'solder', 'kim_admin'],
+  "solder_roles"=> ["central", 'formation', 'unit', 'company', 'solder', 'kim_admin'],
   "whoami" => [
       'central'=>'Central',
-      'district'=>'DOJSO',
+      'formation'=>'FORMATION',
       'unit'=>"Unit",
       'company'=>"CQMS",
       'solder'=>"Solder"

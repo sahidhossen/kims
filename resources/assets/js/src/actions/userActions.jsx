@@ -47,6 +47,7 @@ export const addUser = data => (dispatch, getState) => {
                 dispatch({type: constants.FETCH_USER, payload: users });
             }else {
                 console.log("error: ", response.data.message )
+                dispatch({type: constants.REJECT_USER_REGISTER, payload: response.data.message });
             }
         })
         .catch(function (error) {

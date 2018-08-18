@@ -30,6 +30,14 @@ const users = function reducer(
                 users: action.payload
             }
         }
+        case constants.REJECT_USER_REGISTER: {
+            return {
+                ...state,
+                fetching: false,
+                error: action.payload,
+                fetched: true
+            }
+        }
         case constants.FETCH_SINGLE_USER: {
             return {
                 ...state,

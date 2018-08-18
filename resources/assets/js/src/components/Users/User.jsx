@@ -31,16 +31,37 @@ export const User = ({
                         </div>
                         <div className="card-body">
                             <div className="d-flex flex-column bg-light border rounded p-2">
+                                <div className="bg-slate py-2 px-3 rounded-top  border-top-1 ">
+                                    <div className="flex-row d-flex align-items-center">
+                                        <div className="flex-1">
+                                            <strong> Name </strong>
+                                        </div>
+                                        <div className="flex-1">
+                                            <strong> Secret ID </strong>
+                                        </div>
+                                        <div className="action">
+                                            <strong> Action </strong>
+                                        </div>
+                                    </div>
+                                </div>
                                 { users.users.length > 0 && users.users.map( (user, index) => (
                                     <div className="bg-slate py-2 px-3 rounded-top  border-top-1 " key={index}>
                                         <div className="flex-row d-flex align-items-center">
                                             <div className="flex-1">
                                                 {user.name}
                                             </div>
+                                            <div className="flex-1 px-1">
+                                                {user.secret_id}
+                                            </div>
                                             <div className="operation-area">
                                                 {/*<div className="btn btn-info" onClick={(e)=> {userEditAction(e, index)}}> Edit User </div>*/}
-                                                <Link className="btn btn-info" to={`/dashboard/user/${user.id}`}> Details </Link>
-                                                &nbsp;
+                                                { user.whoami === "solder" && <Link className="btn btn-info" to={`/dashboard/user/${user.id}`}> Details </Link> }
+
+                                                { user.whoami === 'central' && <span className="badge-central"> Central Officer </span> }
+                                                { user.whoami === 'formation' && <span className="badge-central"> Formation Head </span> }
+                                                { user.whoami === 'unit' && <span className="badge-central"> Unit Head </span> }
+                                                { user.whoami === 'company' && <span className="badge-central"> Company Head </span> }
+
                                                 {/*<div className="btn btn-danger" onClick={(e)=> {userDeleteAction(e, index)}}> Delete </div>*/}
                                             </div>
                                         </div>

@@ -6772,6 +6772,7 @@ var FETCH_OAUTH_FETCHING = exports.FETCH_OAUTH_FETCHING = "FETCH_OAUTH_FETCHING"
 var FETCH_OAUTH_EXPIRED = exports.FETCH_OAUTH_EXPIRED = "FETCH_OAUTH_EXPIRED";
 
 var FETCH_USER = exports.FETCH_USER = 'FETCH_USER';
+var REJECT_USER_REGISTER = exports.REJECT_USER_REGISTER = 'REJECT_USER_REGISTER';
 var FETCH_SINGLE_USER = exports.FETCH_SINGLE_USER = 'FETCH_SINGLE_USER';
 var REJECT_SINGLE_USER = exports.REJECT_SINGLE_USER = 'REJECT_SINGLE_USER';
 var FETCHING_USER = exports.FETCHING_USER = 'FETCHING_USER';
@@ -7717,6 +7718,7 @@ var addUser = exports.addUser = function addUser(data) {
                 dispatch({ type: constants.FETCH_USER, payload: users });
             } else {
                 console.log("error: ", response.data.message);
+                dispatch({ type: constants.REJECT_USER_REGISTER, payload: response.data.message });
             }
         }).catch(function (error) {
             console.log("role error: ", error);
@@ -53755,6 +53757,14 @@ var users = function reducer() {
                     users: action.payload
                 });
             }
+        case constants.REJECT_USER_REGISTER:
+            {
+                return (0, _extends3.default)({}, state, {
+                    fetching: false,
+                    error: action.payload,
+                    fetched: true
+                });
+            }
         case constants.FETCH_SINGLE_USER:
             {
                 return (0, _extends3.default)({}, state, {
@@ -59188,6 +59198,41 @@ var User = exports.User = function User(_ref) {
                             _react2.default.createElement(
                                 'div',
                                 { className: 'd-flex flex-column bg-light border rounded p-2' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'bg-slate py-2 px-3 rounded-top  border-top-1 ' },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'flex-row d-flex align-items-center' },
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'flex-1' },
+                                            _react2.default.createElement(
+                                                'strong',
+                                                null,
+                                                ' Name '
+                                            )
+                                        ),
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'flex-1' },
+                                            _react2.default.createElement(
+                                                'strong',
+                                                null,
+                                                ' Secret ID '
+                                            )
+                                        ),
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'action' },
+                                            _react2.default.createElement(
+                                                'strong',
+                                                null,
+                                                ' Action '
+                                            )
+                                        )
+                                    )
+                                ),
                                 users.users.length > 0 && users.users.map(function (user, index) {
                                     return _react2.default.createElement(
                                         'div',
@@ -59202,13 +59247,37 @@ var User = exports.User = function User(_ref) {
                                             ),
                                             _react2.default.createElement(
                                                 'div',
+                                                { className: 'flex-1 px-1' },
+                                                user.secret_id
+                                            ),
+                                            _react2.default.createElement(
+                                                'div',
                                                 { className: 'operation-area' },
-                                                _react2.default.createElement(
+                                                user.whoami === "solder" && _react2.default.createElement(
                                                     _reactRouterDom.Link,
                                                     { className: 'btn btn-info', to: '/dashboard/user/' + user.id },
                                                     ' Details '
                                                 ),
-                                                '\xA0'
+                                                user.whoami === 'central' && _react2.default.createElement(
+                                                    'span',
+                                                    { className: 'badge-central' },
+                                                    ' Central Officer '
+                                                ),
+                                                user.whoami === 'formation' && _react2.default.createElement(
+                                                    'span',
+                                                    { className: 'badge-central' },
+                                                    ' Formation Head '
+                                                ),
+                                                user.whoami === 'unit' && _react2.default.createElement(
+                                                    'span',
+                                                    { className: 'badge-central' },
+                                                    ' Unit Head '
+                                                ),
+                                                user.whoami === 'company' && _react2.default.createElement(
+                                                    'span',
+                                                    { className: 'badge-central' },
+                                                    ' Company Head '
+                                                )
                                             )
                                         )
                                     );
@@ -59323,92 +59392,20 @@ var UserModal = exports.UserModal = function UserModal(_ref) {
                 "div",
                 { className: "modal-body" },
                 state.error !== '' && _react2.default.createElement(
-                    "p",
-                    { className: "alert-danger" },
+                    "div",
+                    { className: "alert-box" },
                     " ",
-                    state.error
+                    _react2.default.createElement(
+                        "p",
+                        { className: "alert-danger" },
+                        " ",
+                        state.error
+                    ),
+                    " "
                 ),
                 _react2.default.createElement(
                     "div",
                     { className: "kit-form-body" },
-                    _react2.default.createElement(
-                        "div",
-                        { className: "form-group" },
-                        _react2.default.createElement(
-                            "label",
-                            null,
-                            " Name "
-                        ),
-                        _react2.default.createElement("input", { type: "text", className: "form-control", value: state.user.name, placeholder: "Full Name", name: "u_name", onChange: function onChange(e) {
-                                onChangeAction(e);
-                            } })
-                    ),
-                    _react2.default.createElement(
-                        "div",
-                        { className: "form-group" },
-                        _react2.default.createElement(
-                            "label",
-                            null,
-                            " Designation "
-                        ),
-                        _react2.default.createElement("input", { type: "text", className: "form-control", value: state.user.designation, placeholder: "Designation", name: "designation", onChange: function onChange(e) {
-                                onChangeAction(e);
-                            } })
-                    ),
-                    _react2.default.createElement(
-                        "div",
-                        { className: "form-group" },
-                        _react2.default.createElement(
-                            "label",
-                            null,
-                            " Professional "
-                        ),
-                        _react2.default.createElement("input", { type: "text", className: "form-control", value: state.user.professional, placeholder: "Professional", name: "professional", onChange: function onChange(e) {
-                                onChangeAction(e);
-                            } })
-                    ),
-                    _react2.default.createElement(
-                        "div",
-                        { className: "form-group" },
-                        _react2.default.createElement(
-                            "label",
-                            null,
-                            " Mobile "
-                        ),
-                        _react2.default.createElement("input", { type: "text", className: "form-control", value: state.user.mobile, placeholder: "Mobile", name: "mobile", onChange: function onChange(e) {
-                                onChangeAction(e);
-                            } })
-                    ),
-                    _react2.default.createElement(
-                        "div",
-                        { className: "form-group" },
-                        _react2.default.createElement(
-                            "label",
-                            null,
-                            " Password "
-                        ),
-                        _react2.default.createElement("input", { type: "password", className: "form-control", value: state.user.password, placeholder: "Password", name: "password", onChange: function onChange(e) {
-                                onChangeAction(e);
-                            } })
-                    ),
-                    _react2.default.createElement(
-                        "div",
-                        { className: "form-group" },
-                        _react2.default.createElement(
-                            "label",
-                            null,
-                            " Secret ID ",
-                            _react2.default.createElement(
-                                "span",
-                                { className: "required" },
-                                "*"
-                            ),
-                            " "
-                        ),
-                        _react2.default.createElement("input", { type: "text", className: "form-control", placeholder: "Secret ID", value: state.user.secret_id, name: "secret_id", onChange: function onChange(e) {
-                                onChangeAction(e);
-                            } })
-                    ),
                     _react2.default.createElement(
                         "div",
                         { className: "form-group" },
@@ -59428,6 +59425,11 @@ var UserModal = exports.UserModal = function UserModal(_ref) {
                             { className: "form-control", name: "user_role", onChange: function onChange(e) {
                                     onChangeAction(e);
                                 } },
+                            _react2.default.createElement(
+                                "option",
+                                { value: "0" },
+                                " Select Role "
+                            ),
                             roles.fetched && roles.roles.map(function (role) {
                                 return _react2.default.createElement(
                                     "option",
@@ -59445,33 +59447,16 @@ var UserModal = exports.UserModal = function UserModal(_ref) {
                         _react2.default.createElement(
                             "label",
                             null,
-                            " Select Central Office ",
+                            " Name ",
                             _react2.default.createElement(
                                 "span",
                                 { className: "required" },
                                 "*"
                             )
                         ),
-                        _react2.default.createElement(
-                            "select",
-                            { className: "form-control", name: "central_office_id", onChange: function onChange(e) {
-                                    onChangeAction(e);
-                                } },
-                            _react2.default.createElement(
-                                "option",
-                                { value: "0" },
-                                " Select Office "
-                            ),
-                            kitControllers.central_offices.length > 0 && kitControllers.central_offices.map(function (office, index) {
-                                return _react2.default.createElement(
-                                    "option",
-                                    { key: index, defaultValue: state.user.central_office_id === office.id, value: office.id },
-                                    " ",
-                                    office.central_name,
-                                    " "
-                                );
-                            })
-                        )
+                        _react2.default.createElement("input", { type: "text", className: "form-control", value: state.user.name, placeholder: "Full Name", name: "u_name", onChange: function onChange(e) {
+                                onChangeAction(e);
+                            } })
                     ),
                     _react2.default.createElement(
                         "div",
@@ -59479,100 +59464,236 @@ var UserModal = exports.UserModal = function UserModal(_ref) {
                         _react2.default.createElement(
                             "label",
                             null,
-                            " Select District Office ",
+                            " Mobile ",
                             _react2.default.createElement(
                                 "span",
                                 { className: "required" },
                                 "*"
                             )
                         ),
+                        _react2.default.createElement("input", { type: "text", className: "form-control", value: state.user.mobile, placeholder: "Mobile", name: "mobile", onChange: function onChange(e) {
+                                onChangeAction(e);
+                            } })
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "d-flex flex-row" },
                         _react2.default.createElement(
-                            "select",
-                            { className: "form-control", name: "formation_office_id", onChange: function onChange(e) {
-                                    onChangeAction(e);
-                                } },
+                            "div",
+                            { className: "form-group flex-1" },
                             _react2.default.createElement(
-                                "option",
-                                { value: "0" },
-                                " Select Office "
+                                "label",
+                                null,
+                                " Designation ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "*"
+                                )
                             ),
-                            state.filterDistrictOffices.length != 0 && state.filterDistrictOffices.map(function (office, index) {
-                                return _react2.default.createElement(
-                                    "option",
-                                    { key: index, defaultValue: state.user.district_office_id === office.id, value: office.id },
-                                    " ",
-                                    office.district_name,
-                                    " "
-                                );
-                            })
+                            _react2.default.createElement("input", { type: "text", className: "form-control", value: state.user.designation, placeholder: "Designation", name: "designation", onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } })
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group flex-1 px-1" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Professional ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "*"
+                                )
+                            ),
+                            _react2.default.createElement("input", { type: "text", className: "form-control", value: state.user.professional, placeholder: "Professional", name: "professional", onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } })
                         )
                     ),
                     _react2.default.createElement(
                         "div",
-                        { className: "form-group" },
+                        { className: "d-flex flex-row" },
                         _react2.default.createElement(
-                            "label",
-                            null,
-                            " Select Unit ",
+                            "div",
+                            { className: "form-group flex-1" },
                             _react2.default.createElement(
-                                "span",
-                                { className: "required" },
-                                "*"
-                            )
+                                "label",
+                                null,
+                                " Password ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "*"
+                                )
+                            ),
+                            _react2.default.createElement("input", { type: "password", className: "form-control", value: state.user.password, placeholder: "Password", name: "password", onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } })
                         ),
                         _react2.default.createElement(
-                            "select",
-                            { className: "form-control", name: "unit_id", onChange: function onChange(e) {
-                                    onChangeAction(e);
-                                } },
+                            "div",
+                            { className: "form-group flex-1 px-1" },
                             _react2.default.createElement(
-                                "option",
-                                { value: "0" },
-                                " Select Office "
+                                "label",
+                                null,
+                                " Secret ID ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "*"
+                                ),
+                                " "
                             ),
-                            state.filterUnit.length > 0 && state.filterUnit.map(function (office, index) {
-                                return _react2.default.createElement(
-                                    "option",
-                                    { key: index, defaultValue: state.user.unit_id === office.id, value: office.id },
-                                    " ",
-                                    office.unit_name,
-                                    " "
-                                );
-                            })
+                            _react2.default.createElement("input", { type: "text", className: "form-control", placeholder: "Secret ID", value: state.user.secret_id, name: "secret_id", onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } })
                         )
                     ),
                     _react2.default.createElement(
                         "div",
-                        { className: "form-group" },
+                        { className: "d-flex flex-row" },
                         _react2.default.createElement(
-                            "label",
-                            null,
-                            " Select Company ",
+                            "div",
+                            { className: "form-group flex-1" },
                             _react2.default.createElement(
-                                "span",
-                                { className: "required" },
-                                "*"
+                                "label",
+                                null,
+                                " Select Central Office ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "*"
+                                )
+                            ),
+                            _react2.default.createElement(
+                                "select",
+                                { className: "form-control", name: "central_office_id", onChange: function onChange(e) {
+                                        onChangeAction(e);
+                                    } },
+                                _react2.default.createElement(
+                                    "option",
+                                    { value: "0" },
+                                    " Select Office "
+                                ),
+                                kitControllers.central_offices.length > 0 && kitControllers.central_offices.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        "option",
+                                        { key: index, defaultValue: state.user.central_office_id === office.id, value: office.id },
+                                        " ",
+                                        office.central_name,
+                                        " "
+                                    );
+                                })
                             )
                         ),
                         _react2.default.createElement(
-                            "select",
-                            { className: "form-control", name: "company_id", onChange: function onChange(e) {
-                                    onChangeAction(e);
-                                } },
+                            "div",
+                            { className: "form-group flex-1 px-1" },
                             _react2.default.createElement(
-                                "option",
-                                { value: "0" },
-                                " Select Company "
+                                "label",
+                                null,
+                                " Select Formation Office ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "*"
+                                )
                             ),
-                            state.filterCompany.length > 0 && state.filterCompany.map(function (office, index) {
-                                return _react2.default.createElement(
+                            _react2.default.createElement(
+                                "select",
+                                { className: "form-control", name: "formation_office_id", onChange: function onChange(e) {
+                                        onChangeAction(e);
+                                    } },
+                                _react2.default.createElement(
                                     "option",
-                                    { key: index, defaultValue: state.user.company_id === office.id, value: office.id },
-                                    " ",
-                                    office.company_name,
-                                    " "
-                                );
-                            })
+                                    { value: "0" },
+                                    " Select Office "
+                                ),
+                                state.filterDistrictOffices.length != 0 && state.filterDistrictOffices.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        "option",
+                                        { key: index, defaultValue: state.user.district_office_id === office.id, value: office.id },
+                                        " ",
+                                        office.district_name,
+                                        " "
+                                    );
+                                })
+                            )
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "d-flex flex-row" },
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group flex-1" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Select Unit ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "*"
+                                )
+                            ),
+                            _react2.default.createElement(
+                                "select",
+                                { className: "form-control", name: "unit_id", onChange: function onChange(e) {
+                                        onChangeAction(e);
+                                    } },
+                                _react2.default.createElement(
+                                    "option",
+                                    { value: "0" },
+                                    " Select Office "
+                                ),
+                                state.filterUnit.length > 0 && state.filterUnit.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        "option",
+                                        { key: index, defaultValue: state.user.unit_id === office.id, value: office.id },
+                                        " ",
+                                        office.unit_name,
+                                        " "
+                                    );
+                                })
+                            )
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group flex-1 px-1" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Select Company ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "*"
+                                )
+                            ),
+                            _react2.default.createElement(
+                                "select",
+                                { className: "form-control", name: "company_id", onChange: function onChange(e) {
+                                        onChangeAction(e);
+                                    } },
+                                _react2.default.createElement(
+                                    "option",
+                                    { value: "0" },
+                                    " Select Company "
+                                ),
+                                state.filterCompany.length > 0 && state.filterCompany.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        "option",
+                                        { key: index, defaultValue: state.user.company_id === office.id, value: office.id },
+                                        " ",
+                                        office.company_name,
+                                        " "
+                                    );
+                                })
+                            )
                         )
                     ),
                     _react2.default.createElement(
@@ -59631,6 +59752,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) {
     return {
         roles: store.roles,
+        users: store.users,
         kitControllers: store.kitControllers
     };
 }), (0, _recompose.withState)('state', 'setState', {
@@ -59700,7 +59822,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 user.company_id = value;
             }
 
-            setState((0, _extends3.default)({}, props.state, { user: user, filterDistrictOffices: filterDistrictOffices, filterUnit: filterUnit, filterCompany: filterCompany }));
+            setState((0, _extends3.default)({}, props.state, { user: user, filterDistrictOffices: filterDistrictOffices, filterUnit: filterUnit, filterCompany: filterCompany, error: '' }));
         };
     },
     addUser: function addUser(props) {
@@ -59710,12 +59832,31 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 setState = props.setState;
 
 
-            state.error = state.user.name === '' || state.user.position === '' || state.user.designation === '' || state.user.mobile === '' || state.user.secret_id === '' || state.user.role === '' || state.user.central_office_id === 0 || state.user.district_office_id === 0 || state.user.unit_id === 0 || state.user.company_id === 0 ? "Please fill required field!" : "";
+            state.error = state.user.role === '' ? "User must be need a role!" : "";
 
-            console.log("user: ", state.user);
+            if (state.error === '') {
+                state.error = state.user.name === '' || state.user.position === '' || state.user.designation === '' || state.user.mobile === '' || state.user.secret_id === '' ? "Please fill required field!" : "";
+            }
+
+            if (state.error === '' && state.user.role === 'central') {
+                state.error = state.user.central_office_id === 0 ? "Must be select central office!" : "";
+            }
+            if (state.error === '' && state.user.role === 'formation') {
+                state.error = state.user.central_office_id === 0 || state.user.district_office_id === 0 ? "Must be select formation & central office!" : "";
+            }
+            if (state.error === '' && state.user.role === 'unit') {
+                state.error = state.user.central_office_id === 0 || state.user.district_office_id === 0 || state.user.unit_id === 0 ? "Must be required field at least unit office!" : "";
+            }
+            if (state.error === '' && state.user.role === 'company') {
+                state.error = state.user.central_office_id === 0 || state.user.district_office_id === 0 || state.user.unit_id === 0 || state.user.company_id === 0 ? "Must be select required field!" : "";
+            }
+
+            if (state.error === '' && state.user.role === 'solder') {
+                state.error = state.user.central_office_id === 0 || state.user.district_office_id === 0 || state.user.unit_id === 0 || state.user.company_id === 0 ? "Must be select required field!" : "";
+            }
 
             if (state.error !== "") {
-                setState((0, _extends3.default)({}, state, { error: error }));
+                setState((0, _extends3.default)({}, state));
             } else {
                 props.dispatch((0, _userActions.addUser)(state.user));
             }
@@ -59728,6 +59869,20 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
             actionType = _props.actionType;
 
         if (actionType === true) this.props.setState((0, _extends3.default)({}, this.props.state, { user: user }));
+    },
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        var users = nextProps.users;
+
+        if (users.error !== null && !_.isEqual(users, this.props.users)) {
+            var _props2 = this.props,
+                state = _props2.state,
+                setState = _props2.setState;
+
+            setState((0, _extends3.default)({}, state, { error: users.error }));
+        }
+        if (users.error === null && !_.isEqual(users, this.props.users)) {
+            this.props.closeModal();
+        }
     }
 }), _recompose.pure);
 
@@ -59805,7 +59960,9 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
 
         this.props.dispatch((0, _kitControllerActions.getKitController)());
     },
-    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {}
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        // console.log("user: ", nextProps.users)
+    }
 }), _recompose.pure);
 
 /***/ }),
