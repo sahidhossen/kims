@@ -17,6 +17,32 @@ class TermRelation extends Model
         'unit_id'
     ];
 
+
+    /*
+     * get term items
+     *
+     */
+    private static function parseRelatedTerms($term){
+        $result = new \stdClass();
+        if( $term->central_office_id )
+            $result->centralOffice = CentralOffice::find( $term->central_office_id);
+        else
+            $result->centralOffice = null;
+        if( $term->district_office_id )
+            $result->districtOffice = DistrictOffice::find( $term->district_office_id);
+        else
+            $result->districtOffice = null;
+        if( $term->unit_id )
+            $result->unit = Unit::find( $term->unit_id );
+        else
+            $result->unit = null;
+        if( $term->company_id )
+            $result->company = Company::find( $term->company_id );
+        else
+            $result->company =  null;
+        return $result;
+    }
+
     public static function isRelativeExists($user_id, $status ){
         $relative = self::where(['user_id'=>$user_id,'term_type'=>$status])->first();
         if($relative )
@@ -92,5 +118,90 @@ class TermRelation extends Model
                 ]
                 )->where('user_id','!=',$user_id)->get();
         return $companySolderTerms;
+    }
+
+    /*
+     * Get Unit Terms
+     */
+    public static function retrieveUnitTerms($user_id){
+        if(!$user_id)
+            return null;
+        $unitTerms = self::where('user_id',$user_id)->first();
+        $unitSolderTerms = self::where(
+            [
+                'unit_id'=>$unitTerms->unit_id,
+                'term_type'=>0,
+            ]
+        )->where('user_id','!=',$user_id)->get();
+        return $unitSolderTerms;
+    }
+
+    /*
+    * Get District/formation Terms
+    */
+    public static function retrieveDistrictTerms($user_id){
+        if(!$user_id)
+            return null;
+        $unitTerms = self::where('user_id',$user_id)->first();
+        $unitSolderTerms = self::where(
+            [
+                'district_office_id'=>$unitTerms->district_office_id,
+                'term_type'=>0,
+            ]
+        )->where('user_id','!=',$user_id)->get();
+        return $unitSolderTerms;
+    }
+
+    /*
+   * Get central Terms
+   */
+    public static function retrieveCentralTerms($user_id){
+        if(!$user_id)
+            return null;
+        $unitTerms = self::where('user_id',$user_id)->first();
+        $unitSolderTerms = self::where(
+            [
+                'central_office_id'=>$unitTerms->district_office_id,
+                'term_type'=>0,
+            ]
+        )->where('user_id','!=',$user_id)->get();
+        return $unitSolderTerms;
+    }
+
+
+    /*
+     * retrieve condemnation term
+     */
+    public static function getCondemnationTerms($term_id){
+        if(!$term_id)
+            return null;
+        $term = self::find($term_id);
+        $parsedTerm = self::parseRelatedTerms($term);
+        $result = new \stdClass();
+        $result->central_name = $parsedTerm->centralOffice->central_name;
+        $result->central_id = $parsedTerm->centralOffice->id;
+        $result->district_name = $parsedTerm->districtOffice->district_name;
+        $result->district_id = $parsedTerm->districtOffice->id;
+        $result->unit_name = $parsedTerm->unit->unit_name;
+        $result->unit_id = $parsedTerm->unit->id;
+        return $result;
+    }
+
+    /*
+     * Get condemnation by term query
+     * query -> unit_id | central_office_id | district_id, term_type=1
+     */
+    public static function getCondemnationByTermQuery($where){
+        if(!is_array($where))
+            return null;
+        $termsByUnitId = TermRelation::where($where)->get();
+        $result = [];
+        if(count($termsByUnitId)>0){
+            foreach ($termsByUnitId as $term){
+                $termObj = TermRelation::getCondemnationTerms($term->id);
+                array_push($result, $termObj);
+            }
+        }
+        return $result;
     }
 }

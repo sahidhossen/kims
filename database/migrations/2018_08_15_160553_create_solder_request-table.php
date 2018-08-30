@@ -17,7 +17,7 @@ class CreateSolderRequestTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('company_id')->unsigned();
-            $table->integer('item_id')->unsigned();
+            $table->integer('solder_kit_id')->unsigned();
             $table->text('comments')->nullable();
             $table->integer('status')->default(0);
             $table->timestamps();

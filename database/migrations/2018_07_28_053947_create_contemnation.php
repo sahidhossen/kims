@@ -18,7 +18,7 @@ class CreateContemnation extends Migration
             $table->integer('term_id')->unsigned()->comment('type=0');
             $table->string('condemnation_name');
             $table->integer('status')->default(0);
-            $table->dateTime('finish_date');
+            $table->dateTime('condemnation_date');
             $table->timestamps();
         });
     }

@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\CentralOffice;
 use App\ItemType;
 use App\KitItem;
+use App\KitItemRequest;
 use App\SolderKits;
 use App\TermRelation;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
 use App\Role;
@@ -36,6 +38,7 @@ class UserController extends Controller
     /*
      * get Kit Solder
      * Only for api request
+     *
      */
     public function getKitSolder( Request $request ){
         try{
@@ -64,13 +67,85 @@ class UserController extends Controller
                     array_push($items, $solderInformation);
                 }
             }
+
+            // Company level Data
             $companySolders = [];
             if($currentUser->hasRole('company')){
                 $companyTerms = TermRelation::retrieveCompanyTerms( $currentUser->id );
-                if( count( $companyTerms) >0 ){
+                if( count( $companyTerms) > 0 ){
                     foreach( $companyTerms as $term ){
                         $solder = User::find( $term->user_id );
                         array_push($companySolders, $solder);
+                    }
+                }
+
+            }
+
+
+            // Unit level data
+            $unitCompanies = [];
+            if($currentUser->hasRole('unit')){
+                $unitTerms = TermRelation::retrieveUnitTerms( $currentUser->id );
+                if( count( $unitTerms) > 0 ){
+                    foreach( $unitTerms as $term ){
+                        $user = User::find( $term->user_id );
+                        if($user->hasRole('company')) {
+                            $user->company_id = $term->company_id;
+                            $user->unit_id = $term->unit_id;
+                            array_push($unitCompanies, $user);
+                        }
+                    }
+                    if(count($unitCompanies) > 0 ){
+                        foreach( $unitCompanies as $key=>$company){
+                            $unitCompanies[$key]['pending_request'] = count(KitItemRequest::getUnitItemPendingRequestByCompany($company->company_id, $company->unit_id));
+                        }
+                    }
+                }
+
+            }
+
+
+            //Formation level data
+            $districtUnits = [];
+            if($currentUser->hasRole('formation')){
+                $unitTerms = TermRelation::retrieveDistrictTerms( $currentUser->id );
+                if( count( $unitTerms) > 0 ){
+                    foreach( $unitTerms as $term ){
+                        $user = User::find( $term->user_id );
+                        if($user->hasRole('unit')) {
+                            $user->district_office_id = $term->district_office_id;
+                            $user->unit_id = $term->unit_id;
+                            array_push($districtUnits, $user);
+                        }
+                    }
+                    // Get all pending request
+                    if(count($districtUnits)>0){
+                        foreach( $districtUnits as $key=>$company){
+                            $districtUnits[$key]['pending_request'] = count(KitItemRequest::getDistrictItemPendingRequestByUnit($company->unit_id, $company->district_office_id));
+                        }
+                    }
+                }
+            }
+
+            //Central level data
+            $centralFormations = [];
+            if($currentUser->hasRole('central')){
+                $unitTerms = TermRelation::retrieveCentralTerms( $currentUser->id );
+                if( count( $unitTerms) > 0 ){
+                    foreach( $unitTerms as $term ){
+                        $user = User::find( $term->user_id );
+                        if($user->hasRole('formation')) {
+                            $user->central_office_id = $term->central_office_id;
+                            $user->district_office_id = $term->district_office_id;
+                            $user->unit_id = $term->unit_id;
+                            array_push($centralFormations, $user);
+                        }
+                    }
+                    // Get all pending request
+                    if(count($centralFormations)>0){
+                        foreach( $centralFormations as $key=>$company){
+                            $centralFormations[$key]['pending_request'] = count(KitItemRequest::getCentralItemPendingRequestByDistrict($company->district_office_id, $company->central_office_id));
+                        }
                     }
                 }
             }
@@ -78,6 +153,9 @@ class UserController extends Controller
             return [
                 'success' => true,
                 'solders'=>$companySolders,
+                'unit_companies'=>$unitCompanies,
+                'formation_units'=>$districtUnits,
+                'central_formations'=>$centralFormations,
                 'items' => $items,
                 'data'=>$currentUser,
                 'message'=>'Current user information.'

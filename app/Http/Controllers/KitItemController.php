@@ -12,11 +12,18 @@ use League\Flysystem\Exception;
 class KitItemController extends Controller
 {
 
+
+    /*
+     * @status = 0->new, 1->assigned_to_solder, 2->assign_to_unit
+     *
+     *
+     */
+
     /*
      * Add kit item to the solder
      * @item_type_id = Item Type id
      * @central_office_id = Who provide the item
-     * @status = 0->new, 1->send_request, 2->expired
+     *
      */
     public function store(Request $request){
         try{

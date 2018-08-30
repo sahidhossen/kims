@@ -8,6 +8,7 @@ import UserDetails from './Users/UserDetails'
 import KitController from './KitController'
 import KitItems from './KitItems'
 import ItemTypes from './ItemTypes'
+import Condemnation from './Condemnation'
 import Login from './Login'
 import Register from './Register'
 import NotFound from './NotFound'
@@ -66,6 +67,11 @@ const routes = [{
                     path: route.USER_DETAILS,
                     exact: true,
                     component: UserDetails
+                },
+                {
+                    path: route.CONDEMNATION,
+                    exact: true,
+                    component: Condemnation
                 },
                 {
                     path: "/*",

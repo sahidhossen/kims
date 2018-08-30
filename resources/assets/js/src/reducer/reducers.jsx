@@ -6,9 +6,12 @@ import oauth from './oauthReducer'
 import kitControllers from './kitControllerReducer'
 import kitTypes from './kitTypesReducer'
 import kitItems from './kitItemReducer'
+import condemnations from './condemnationReducer'
+
 export const makeRootReducer = asyncReducers => {
     return combineReducers({
         // Add sync reducers here
+        condemnations,
         kitItems,
         kitTypes,
         kitControllers,

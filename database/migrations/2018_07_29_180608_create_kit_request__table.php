@@ -22,9 +22,9 @@ class CreateKitRequestTable extends Migration
             $table->integer('unit_id')->unsigned()->nullable()->comment('Unit level');
             $table->integer('company_id')->unsigned()->nullable()->comment('Company level');
             /*
-             * ids=> [{cat_name:category_name,item_ids:"12,34,22",count:3}, ....]
+             * ids=> [{cat_name:category_name,kit_ids:"12,34,22"}, ....]
              */
-            $table->text('kit_item_ids')->nullable()->comment('kit_items ids with category seperted serialize');
+            $table->text('kit_items')->nullable()->comment('kit_items ids with category seperted serialize');
             $table->integer('request_items')->default(0);
             $table->integer('approval_items')->default(0);
             $table->timestamps();

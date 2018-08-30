@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { USERS, DASHBOARD, CONTROLLER, KIT_ITEMS, ITEM_TYPES } from '../../../constants'
+import { USERS, DASHBOARD, CONTROLLER, KIT_ITEMS, ITEM_TYPES, CONDEMNATION } from '../../../constants'
 
 export const Sidebar = ({ location }) => (
     <div className="sidebar sidebar-dark sidebar-main sidebar-expand-md">
@@ -61,7 +61,9 @@ export const Sidebar = ({ location }) => (
                     <li className="nav-item">
                         <Link className={location.pathname === ITEM_TYPES ? 'nav-link active' : 'nav-link'} to={ITEM_TYPES}> Item Types </Link>
                     </li>
-
+                    <li className="nav-item">
+                        <Link className={location.pathname === CONDEMNATION ? 'nav-link active' : 'nav-link'} to={CONDEMNATION}> Condemnation </Link>
+                    </li>
                     {/*<li className="nav-item nav-item-submenu">*/}
                         {/*<a href="#" className="nav-link"><i className="icon-copy"></i> <span>Layouts</span></a>*/}
 

@@ -106,3 +106,15 @@ Route::middleware('auth:api')->post('/assign_kit_item', 'UserController@assignKi
 Route::middleware('auth:api')->post('/request_solder_to_company', 'ItemRequestController@SolderRequest');
 Route::middleware('auth:api')->post('/request_solder_to_company_cancel', 'ItemRequestController@cancelRequest');
 Route::middleware('auth:api')->post('/request_solder_to_company_approve', 'ItemRequestController@approveRequest');
+
+Route::middleware('auth:api')->post('/request_company_to_unit', 'ItemRequestController@requestCompanyToUnit');
+Route::middleware('auth:api')->get('/get_unit_level_request', 'ItemRequestController@unitLevelPendingRequest');
+Route::middleware('auth:api')->get('/request_unit_to_district', 'ItemRequestController@requestUnitToDistrict');
+/*
+ * Condemnation  API's
+ */
+Route::middleware('auth:api')->post('/add_condemnation', 'CondemnationController@store');
+Route::middleware('auth:api')->post('/delete_condemnation', 'CondemnationController@delete');
+Route::middleware('auth:api')->get('/get_condemnations', 'CondemnationController@getCondemnations');
+Route::middleware('auth:api')->get('/get_condemnation', 'CondemnationController@getCondemnationById');
+Route::middleware('auth:api')->get('/get_condemnation_by_terms', 'CondemnationController@getCondemnationByQuery');
