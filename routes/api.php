@@ -103,6 +103,7 @@ Route::middleware('auth:api')->post('/assign_kit_item', 'UserController@assignKi
  * Request API's
  */
 
+Route::middleware('auth:api')->get('/company_pending_request', 'ItemRequestController@solderPendingRequest');
 Route::middleware('auth:api')->post('/request_solder_to_company', 'ItemRequestController@SolderRequest');
 Route::middleware('auth:api')->post('/request_solder_to_company_cancel', 'ItemRequestController@cancelRequest');
 Route::middleware('auth:api')->post('/request_solder_to_company_approve', 'ItemRequestController@approveRequest');

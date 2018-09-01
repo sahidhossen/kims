@@ -14,6 +14,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
+use phpDocumentor\Reflection\Types\Object_;
 
 class ItemRequestController extends Controller
 {
@@ -119,6 +120,31 @@ class ItemRequestController extends Controller
      * @role = company
     */
     public function solderPendingRequest(Request $request){
+        try{
+            if(!$request->input('company_id'))
+                throw new Exception("Company Id required!");
+
+            $allPendingRequest = SolderItemRequest::where([
+                'company_id'=>$request->input('company_id'),
+                'status'=>1
+            ])->get();
+            $result = [];
+            if(count($allPendingRequest) > 0 ){
+                foreach( $allPendingRequest as $item ){
+                    $item = SolderKits::find( $item->solder_kit_id );
+                    $itemType = ItemType::find($item->item_type_id);
+                    if(isset($result[$itemType->type_name])){
+                        array_push($result[$itemType->type_name], $item );
+                    }else {
+                        $result[$itemType->type_name] = array($item);
+                    }
+                }
+            }
+            return ['success'=>true, 'data'=>$result];
+
+        }catch (Exception $e){
+            return ['success'=>true, 'message'=>$e->getMessage()];
+        }
 
     }
 
@@ -220,6 +246,9 @@ class ItemRequestController extends Controller
             return ['success'=>false, 'message'=>$e->getMessage()];
         }
     }
+
+
+
 
     /*
      * Send request unit to district/formation level

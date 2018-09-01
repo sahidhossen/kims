@@ -44,7 +44,7 @@ export default compose(
             this.props.dispatch(getKitController())
         },
         componentWillReceiveProps(nextProps){
-            // console.log("user: ", nextProps.users)
+            console.log("user: ", nextProps.users)
         }
     }),
     pure

@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('secret_id')->unique();
             $table->string('password');
             $table->integer('status')->default(0);
+            $table->string('device_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

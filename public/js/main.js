@@ -63128,7 +63128,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
         this.props.dispatch((0, _kitControllerActions.getKitController)());
     },
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-        // console.log("user: ", nextProps.users)
+        console.log("user: ", nextProps.users);
     }
 }), _recompose.pure);
 
