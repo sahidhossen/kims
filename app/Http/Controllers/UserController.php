@@ -297,7 +297,6 @@ class UserController extends Controller
                 'secret_id' => 'required|unique:users',
                 'password' => 'required',
                 'name' => 'required|min:5',
-                'professional' => 'required|min:2',
                 'designation' => 'required|min:2',
                 'mobile' => 'required|min:8'
             ]);
