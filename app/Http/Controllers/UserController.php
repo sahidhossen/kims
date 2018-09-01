@@ -250,6 +250,10 @@ class UserController extends Controller
         }
     }
 
+    /*
+     * Get user by id
+     * @params( user_id )
+     */
     public function userById(Request $request){
         try{
             $user = User::find( $request->input('user_id') );
@@ -258,20 +262,18 @@ class UserController extends Controller
 
             if( count($user->roles) === 0 )
                 throw new Exception("User don't have any role!");
+            if(!$user->hasRole('solder'))
+                throw new Exception("Sorry this is not a solder");
 
             $user->whoami = $user->roles->first()->name;
                 if( $user->whoami == null )
                     throw new Exception("User don't have any role");
 
-            $termRelation = TermRelation::where( 'user_id',$user->id )->first();
+            $termRelation = TermRelation::retrieveSolderTerms($user->id);
             if(!$termRelation)
                 throw new Exception("User haven't any relation with central office ");
 
-            $centralOffice = CentralOffice::find( $termRelation->central_office_id );
-            if( !$centralOffice )
-                throw new Exception("Cannot find any central office with this ID ");
-            $user->central_office_name = $centralOffice->central_name;
-            $user->central_office_id = $centralOffice->id;
+            $user->terms = $termRelation;
 
             return ['success'=>true, 'data'=>$user, 'message'=>"User found!"];
         }catch(Exception $e){

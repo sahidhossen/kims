@@ -70,4 +70,15 @@ class User extends Authenticatable
         }
 
     }
+
+    /*
+     * Get user single info
+     */
+    public static function getParams($user_id, $name='name')
+    {
+        $user = User::find($user_id);
+        if(isset($user->{$name}))
+            return $user->{$name};
+        return null;
+    }
 }

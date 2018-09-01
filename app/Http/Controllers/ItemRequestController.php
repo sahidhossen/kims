@@ -59,7 +59,7 @@ class ItemRequestController extends Controller
            $newRequest->solder_kit_id = $request->input('solder_kit_id');
            $newRequest->comments = $request->input('comments');
            if( $request->input('request_type') === 'company' )
-               $newRequest->status = 2; // Request for new item and approve from company
+               $newRequest->status = 1; // Request for new item and approve from company
            $newRequest->save();
 
            // Change solder kit status 1 for pending mode
@@ -77,14 +77,14 @@ class ItemRequestController extends Controller
     /*
     * Approve solder to company request by company user
     */
-    public function approveRequest(Request $request){
+    public function companyApproveRequest(Request $request){
         try{
             if( !$request->input('solder_request_id'))
                 throw new Exception("Must be need request ID");
             $currentRequest = SolderItemRequest::find( $request->input('solder_request_id'));
             if( !$currentRequest )
                 throw new Exception("Sorry didn't find your request data");
-            $currentRequest->status = 2;
+            $currentRequest->status = 1;
             $currentRequest->save();
             return ['success'=>true ,'message'=>'Approve successful!'];
         }catch (Exception $e){
@@ -118,6 +118,8 @@ class ItemRequestController extends Controller
     * All Pending Request
     * To see the pending request list
      * @role = company
+     * status =1 (company approved)
+     * status = 0 (company
     */
     public function solderPendingRequest(Request $request){
         try{
@@ -125,18 +127,27 @@ class ItemRequestController extends Controller
                 throw new Exception("Company Id required!");
 
             $allPendingRequest = SolderItemRequest::where([
-                'company_id'=>$request->input('company_id'),
-                'status'=> 0
-            ])->get();
+                'company_id'=>$request->input('company_id')
+            ])->whereIn('status', [0,1])->get();
             $result = [];
             if(count($allPendingRequest) > 0 ){
-                foreach( $allPendingRequest as $item ){
-                    $item = SolderKits::find( $item->solder_kit_id );
+                foreach( $allPendingRequest as $p_item ){
+                    $item = SolderKits::find( $p_item->solder_kit_id );
                     $itemType = ItemType::find($item->item_type_id);
+
+                    $item_property = new \stdClass();
+
+                    $item_property->id = $p_item->id;
+                    $item_property->type_name = $itemType->type_name;
+                    $item_property->user_name = User::getParams($p_item->user_id, 'name');
+                    $item_property->status = $p_item->status;
+                    $item_property->issue_date = $item->issue_date;
+                    $item_property->expire_date = $item->expire_date;
+
                     if(isset($result[$itemType->type_name])){
-                        array_push($result[$itemType->type_name], $item );
+                        array_push($result[$itemType->type_name], $item_property );
                     }else {
-                        $result[$itemType->type_name] = array($item);
+                        $result[$itemType->type_name] = array($item_property);
                     }
                 }
             }
@@ -182,7 +193,7 @@ class ItemRequestController extends Controller
             // Get all solder request that approve by company
             $allPendingRequest = SolderItemRequest::where([
                 'company_id'=>$request->input('company_id'),
-                'status'=>2
+                'status'=>1
             ])->get();
 
             if(count($allPendingRequest) === 0 )
