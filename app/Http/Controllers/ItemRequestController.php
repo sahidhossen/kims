@@ -126,7 +126,7 @@ class ItemRequestController extends Controller
 
             $allPendingRequest = SolderItemRequest::where([
                 'company_id'=>$request->input('company_id'),
-                'status'=>1
+                'status'=> 0
             ])->get();
             $result = [];
             if(count($allPendingRequest) > 0 ){
