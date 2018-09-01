@@ -143,11 +143,11 @@ class ItemRequestController extends Controller
                     $item_property->status = $p_item->status;
                     $item_property->issue_date = $item->issue_date;
                     $item_property->expire_date = $item->expire_date;
-
-                    if(isset($result[$itemType->type_name])){
-                        array_push($result[$itemType->type_name], $item_property );
+                    $type_name = strtolower(str_replace(' ','_',$itemType->type_name));
+                    if(isset($result[$type_name])){
+                        array_push($result[$type_name], $item_property );
                     }else {
-                        $result[$itemType->type_name] = array($item_property);
+                        $result[$type_name] = array($item_property);
                     }
                 }
             }
