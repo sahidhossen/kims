@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Log;
 use League\Flysystem\Exception;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Laravel\Passport\HasApiTokens;
@@ -30,14 +31,21 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+
     /*
      * Find user information based on secret_id
      * Laravel take primary field as email id but here I need secret_id
      */
     public function findForPassport($identifier) {
-        $currentUser =  $this->orWhere('secret_id', $identifier)->orWhere('secret_id', $identifier)->first();
-        $currentUser->role = $currentUser->roles->first()->name;
-        return $currentUser;
+        try {
+            $currentUser = $this->orWhere('secret_id', $identifier)->first();
+            if(!$currentUser)
+                return null;
+            $currentUser->role = $currentUser->roles->first()->name;
+            return $currentUser;
+        }catch (Exception $e){
+            return null;
+        }
     }
 
     /*

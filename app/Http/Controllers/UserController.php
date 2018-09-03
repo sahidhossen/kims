@@ -47,6 +47,7 @@ class UserController extends Controller
                 throw new Exception("User don't have any role");
 
             $currentUser->whoami = $currentUser->roles->first()->name;
+            $UserTerm = TermRelation::where('user_id', $currentUser->id )->first();
             $solderKit = SolderKits::where( 'user_id',$currentUser->id )
                 ->where('status','!=',3)->get();
             $items = [];
@@ -71,6 +72,7 @@ class UserController extends Controller
             // Company level Data
             $companySolders = [];
             if($currentUser->hasRole('company')){
+                $currentUser->company_id = $UserTerm->company_id;
                 $companyTerms = TermRelation::retrieveCompanyTerms( $currentUser->id );
                 if( count( $companyTerms) > 0 ){
                     foreach( $companyTerms as $term ){
@@ -85,6 +87,7 @@ class UserController extends Controller
             // Unit level data
             $unitCompanies = [];
             if($currentUser->hasRole('unit')){
+                $currentUser->unit_id = $UserTerm->unit_id;
                 $unitTerms = TermRelation::retrieveUnitTerms( $currentUser->id );
                 if( count( $unitTerms) > 0 ){
                     foreach( $unitTerms as $term ){
@@ -108,6 +111,7 @@ class UserController extends Controller
             //Formation level data
             $districtUnits = [];
             if($currentUser->hasRole('formation')){
+                $currentUser->formation_id = $UserTerm->district_office_id;
                 $unitTerms = TermRelation::retrieveDistrictTerms( $currentUser->id );
                 if( count( $unitTerms) > 0 ){
                     foreach( $unitTerms as $term ){
@@ -130,6 +134,7 @@ class UserController extends Controller
             //Central level data
             $centralFormations = [];
             if($currentUser->hasRole('central')){
+                $currentUser->formation_id = $UserTerm->central_office_id;
                 $unitTerms = TermRelation::retrieveCentralTerms( $currentUser->id );
                 if( count( $unitTerms) > 0 ){
                     foreach( $unitTerms as $term ){
@@ -290,7 +295,9 @@ class UserController extends Controller
             if( $currentUser->whoami == null )
                 throw new Exception("User don't have any role");
 
-            if( !in_array( $request->input('role'), config('kims.solder_roles')))
+            $currentRoles = config('kims.solder_roles');
+
+            if( !in_array( $request->input('role'), $currentRoles))
                 throw new Exception("Provided user role invalid. Role should be between ".implode(', ', config('kims.solder_roles')));
 
             $validator = Validator::make($request->all(), [
@@ -333,6 +340,9 @@ class UserController extends Controller
                 $relationTableData['unit_id'] = $request->input('unit_id');
                 $relationTableData['company_id'] = $request->input('company_id');
                 $relationTableData['user_id'] = $user->id;
+
+                $relationTableData['role'] = $this->getRoleIdentity($request->input('role'));
+
                 TermRelation::createRelation( $relationTableData );
             }
             $user->whoami = $request->input('role');
@@ -340,8 +350,24 @@ class UserController extends Controller
         }catch(Exception $e){
             return ['success'=>false, 'message'=> $e->getMessage()];
         }
+    }
 
 
+    private function getRoleIdentity($roleName){
+        $roleIdentity = 0;
+        if($roleName === 'kim_admin' )
+            $roleIdentity = 0;
+        if($roleName === 'central' )
+            $roleIdentity = 1;
+        if($roleName === 'formation' )
+            $roleIdentity = 2;
+        if($roleName === 'unit' )
+            $roleIdentity = 3;
+        if($roleName === 'company' )
+            $roleIdentity = 4;
+        if($roleName === 'solder' )
+            $roleIdentity = 5;
+        return $roleIdentity;
     }
 
     /*

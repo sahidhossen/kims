@@ -70,7 +70,7 @@ class KitItemRequest extends Model
      * stage(1-5)
      */
     public static function getUnitItemPendingRequestByCompany($company_id, $unit_id){
-        $pendingRequests = self::where(['company_id'=> $company_id, 'unit_id'=>$unit_id])
+        $pendingRequests = self::where(['unit_id'=>$unit_id])
                                 ->whereBetween('stage',array(1,5))
                                 ->get();
         return $pendingRequests;

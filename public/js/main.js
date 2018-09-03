@@ -7798,7 +7798,6 @@ var fetchOauthToken = exports.fetchOauthToken = function fetchOauthToken(user) {
             localStorage.setItem('kim_auth', JSON.stringify(response.data));
             dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload: response.data });
         }).catch(function (error) {
-            console.log(error);
             dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error });
         });
     };

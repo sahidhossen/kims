@@ -72,6 +72,29 @@ class CondemnationController extends Controller
         }
     }
     /*
+    * Get all active condemnation
+    * @status = 1
+    * @field(unit_id)
+     *
+     * Request from company or unit
+    */
+    public function getCondemnationsByUnitId(Request $request){
+        try{
+            if(!$request->input('unit_id'))
+                throw new Exception("Unit Id is required!");
+
+            $condemnations = Condemnation::where(['status'=>0, 'unit_id'=>$request->input('unit_id')])->get();
+            if( count($condemnations)>0){
+                foreach($condemnations as $key=>$condemnation){
+                    $condemnations[$key]->terms = TermRelation::getCondemnationTerms($condemnation->term_id);
+                }
+            }
+            return ['success'=>true, 'data'=>$condemnations];
+        }catch (Exception $exception){
+            return ['success'=>false, 'message'=>$exception->getMessage()];
+        }
+    }
+    /*
      * Get condemnation by ID
      * @condemnation_id
      */

@@ -280,7 +280,7 @@ class ItemRequestController extends Controller
                 throw new Exception("Must be need user Id");
 
             $unitTerms = TermRelation::retrieveUnitTerms($request->input('user_id'));
-            $unitCompanies=[];
+            $unitCompanies = [];
             if( count( $unitTerms) > 0 ){
                 foreach( $unitTerms as $term ){
                     $user = User::find( $term->user_id );

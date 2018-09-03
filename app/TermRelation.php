@@ -71,9 +71,13 @@ class TermRelation extends Model
             if( isset($data['company_id']) && $data['company_id']){
                 $newRelation->company_id = $data['company_id'];
             }
+            if( isset($data['role']) && $data['role']){
+                $newRelation->role = $data['role'];
+            }
             if( isset($data['comments']) && $data['comments']){
                 $newRelation->comments = $data['comments'];
             }
+
             $newRelation->save();
         }catch(Exception $e){
             return $e;
@@ -127,13 +131,13 @@ class TermRelation extends Model
         if(!$user_id)
             return null;
         $unitTerms = self::where('user_id',$user_id)->first();
-        $unitSolderTerms = self::where(
+        $unitCompanyTerms = self::where(
             [
                 'unit_id'=>$unitTerms->unit_id,
                 'term_type'=>0,
             ]
         )->where('user_id','!=',$user_id)->get();
-        return $unitSolderTerms;
+        return $unitCompanyTerms;
     }
 
     /*

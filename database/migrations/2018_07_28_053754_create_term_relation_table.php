@@ -20,7 +20,8 @@ class CreateTermRelationTable extends Migration
             $table->integer('central_office_id')->unsigned()->nullable();
             $table->integer('district_office_id')->unsigned()->nullable();
             $table->integer('unit_id')->unsigned()->nullable();
-            $table->integer('company_id')->unsigned()->nullable();
+            $table->integer('company_id')->unsigned()->unsigned()->nullable();
+            $table->integer('role')->nullable();
             $table->string('comments')->nullable();
             $table->timestamps();
         });

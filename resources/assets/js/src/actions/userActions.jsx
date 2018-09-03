@@ -124,7 +124,6 @@ export const fetchOauthToken = user  => dispatch => {
             dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload:response.data });
         })
         .catch(function (error) {
-            console.log(error);
             dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
         });
 }

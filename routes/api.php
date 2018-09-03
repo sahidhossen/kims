@@ -117,5 +117,6 @@ Route::middleware('auth:api')->get('/request_unit_to_district', 'ItemRequestCont
 Route::middleware('auth:api')->post('/add_condemnation', 'CondemnationController@store');
 Route::middleware('auth:api')->post('/delete_condemnation', 'CondemnationController@delete');
 Route::middleware('auth:api')->get('/get_condemnations', 'CondemnationController@getCondemnations');
+Route::middleware('auth:api')->get('/get_condemnations_by_unit_id', 'CondemnationController@getCondemnationsByUnitId');
 Route::middleware('auth:api')->get('/get_condemnation', 'CondemnationController@getCondemnationById');
 Route::middleware('auth:api')->get('/get_condemnation_by_terms', 'CondemnationController@getCondemnationByQuery');
