@@ -41,18 +41,18 @@ class UserController extends Controller
      *
      */
     public function getKitSolder( Request $request ){
-        try{
+        try {
             $currentUser = $request->user();
-            if( $currentUser->roles == null )
+            if ($currentUser->roles == null)
                 throw new Exception("User don't have any role");
 
             $currentUser->whoami = $currentUser->roles->first()->name;
-            $UserTerm = TermRelation::where('user_id', $currentUser->id )->first();
-            $solderKit = SolderKits::where( 'user_id',$currentUser->id )
-                ->where('status','!=',3)->get();
+            $UserTerm = TermRelation::where('user_id', $currentUser->id)->first();
+            $solderKit = SolderKits::where('user_id', $currentUser->id)
+                ->where('status', '!=', 3)->get();
             $items = [];
-            if( count($solderKit) > 0 ) {
-                foreach( $solderKit as $kit ) {
+            if (count($solderKit) > 0) {
+                foreach ($solderKit as $kit) {
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
                     $itemType = ItemType::find($kit->item_type_id);
                     $solderInformation->item_name = $itemType->type_name;
@@ -69,14 +69,23 @@ class UserController extends Controller
                 }
             }
 
+            //Solder
+            if ($currentUser->hasRole('solder')){
+                $currentUser->company_id = $UserTerm->company_id;
+                $currentUser->central_id = $UserTerm->central_office_id;
+                $currentUser->formation_id = $UserTerm->district_office_id;
+            }
+
             // Company level Data
             $companySolders = [];
-            if($currentUser->hasRole('company')){
+            if ($currentUser->hasRole('company')) {
                 $currentUser->company_id = $UserTerm->company_id;
-                $companyTerms = TermRelation::retrieveCompanyTerms( $currentUser->id );
-                if( count( $companyTerms) > 0 ){
-                    foreach( $companyTerms as $term ){
-                        $solder = User::find( $term->user_id );
+                $currentUser->central_id = $UserTerm->central_office_id;
+                $currentUser->formation_id = $UserTerm->district_office_id;
+                $companyTerms = TermRelation::retrieveCompanyTerms($currentUser->id);
+                if (count($companyTerms) > 0) {
+                    foreach ($companyTerms as $term) {
+                        $solder = User::find($term->user_id);
                         array_push($companySolders, $solder);
                     }
                 }
@@ -88,6 +97,8 @@ class UserController extends Controller
             $unitCompanies = [];
             if($currentUser->hasRole('unit')){
                 $currentUser->unit_id = $UserTerm->unit_id;
+                $currentUser->central_id = $UserTerm->central_office_id;
+                $currentUser->formation_id = $UserTerm->district_office_id;
                 $unitTerms = TermRelation::retrieveUnitTerms( $currentUser->id );
                 if( count( $unitTerms) > 0 ){
                     foreach( $unitTerms as $term ){
@@ -112,6 +123,7 @@ class UserController extends Controller
             $districtUnits = [];
             if($currentUser->hasRole('formation')){
                 $currentUser->formation_id = $UserTerm->district_office_id;
+                $currentUser->central_id = $UserTerm->central_office_id;
                 $unitTerms = TermRelation::retrieveDistrictTerms( $currentUser->id );
                 if( count( $unitTerms) > 0 ){
                     foreach( $unitTerms as $term ){
@@ -134,7 +146,7 @@ class UserController extends Controller
             //Central level data
             $centralFormations = [];
             if($currentUser->hasRole('central')){
-                $currentUser->formation_id = $UserTerm->central_office_id;
+                $currentUser->central_id = $UserTerm->central_office_id;
                 $unitTerms = TermRelation::retrieveCentralTerms( $currentUser->id );
                 if( count( $unitTerms) > 0 ){
                     foreach( $unitTerms as $term ){
