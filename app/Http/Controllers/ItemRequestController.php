@@ -297,7 +297,7 @@ class ItemRequestController extends Controller
                 }
             }
 
-            return ['success'=>true,'pending_request'=>$unitCompanies];
+            return ['success'=>true,'data'=>$unitCompanies];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }

@@ -80,6 +80,7 @@ class UserController extends Controller
             $companySolders = [];
             if ($currentUser->hasRole('company')) {
                 $currentUser->company_id = $UserTerm->company_id;
+                $currentUser->unit_id = $UserTerm->unit_id;
                 $currentUser->central_id = $UserTerm->central_office_id;
                 $currentUser->formation_id = $UserTerm->district_office_id;
                 $companyTerms = TermRelation::retrieveCompanyTerms($currentUser->id);

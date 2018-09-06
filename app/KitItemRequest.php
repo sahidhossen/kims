@@ -11,18 +11,25 @@ class KitItemRequest extends Model
 
     /*
      * total stage will be 6 for processing hole item request procedure
-     * stage = 1 (company to unit request)
-     * stage = 2 (unit to district request)
-     * stage = 3 (district to central request)
-     * stage = 4 (central to district approve)
-     * stage = 5 (district to unit approve)
-     * stage = 6 (unit to company approve) (close- unit,district)
-     * stage = 7 done
+     * ====UNIT====
+     * stage = 1 (receive request company to unit)
+     * stage = 2 (approve request)
+     * stage = 3 (cancel request)
+     * stage = 4 (send to formation/district level)
+     * stage = 5 (approve by district)
+     * ====FORMATION====
+     * stage = 1 (receive request from unit)
+     * stage = 2 (approve request)
+     * stage = 3 (cancel request)
+     * stage = 4 (send to central)
+     * stage = 5 (approve by central)
      *
-     * unit(1-5)
-     * district(2-4)
-     * central(3)
-     * company(1-6)
+     * =======CENTRAL=========
+     * stage = 1 (receive request from formation)
+     * stage = 2 (approve request)
+     * stage = 3 (cancel request)
+     *
+     *
      *
      */
     protected $fillable = [
