@@ -511,4 +511,32 @@ class UserController extends Controller
         }
     }
 
+    /*
+     * Get Kit User by Company
+     */
+
+    public function getKitUserByCompany(Request $request){
+        try{
+            $companySolders = [];
+            $currentUser = $request->user();
+            if(!$currentUser || !$currentUser->hasRole('company'))
+                throw new Exception("Must be logged in with company level");
+            $companyTerms = TermRelation::getCompanySolderTerms($currentUser->id);
+
+            if (count($companyTerms) > 0) {
+                foreach ($companyTerms as $term) {
+                    $solder = User::find($term->user_id);
+                    array_push($companySolders, $solder);
+                }
+            }
+            return ['success'=>true, 'data'=> $companySolders ,'message'=>'Fetch users by company id'];
+
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=> $e->getMessage()];
+        }
+        
+        
+
+    }
+
 }

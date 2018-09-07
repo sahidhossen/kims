@@ -1,17 +1,28 @@
 import { compose } from 'redux'
 import { pure, lifecycle, withState, withHandlers } from 'recompose'
 import { connect } from 'react-redux'
-import { fetchOauthToken } from '../../actions/userActions'
+import { fetchOauthToken, fetchAuthUser } from '../../actions/userActions'
 import { Authentication } from '../../utils/services'
 export default compose(
     connect(store => {
         return { users: store.users, oauth: store.oauth }
     }),
-    withState('state', 'setState', {}),
+    withState('state', 'setState', { secret_id:'',password:''}),
     withHandlers({
         login : props => event => {
             event.preventDefault()
-            props.dispatch(fetchOauthToken({username:'orange007',password:'orange007'}))
+            let { state:{secret_id, password } } = props 
+            props.dispatch(fetchOauthToken({username:secret_id,password:password}))
+        },
+        onFieldChange: props => event => {
+            let { state:{secret_id, password }, setState } = props 
+            let value = event.target.value 
+            let name = event.target.name;
+            if(name === 'secret_id')
+                secret_id = value 
+            if( name === 'password' )
+                password = value
+            setState({...props.state, secret_id, password })
         }
     }),
     lifecycle({
@@ -25,7 +36,11 @@ export default compose(
           }
         },
         componentWillReceiveProps(nextProps) {
-            if( nextProps.oauth.oauth.access_token !== null ){
+            console.log(nextProps);
+            // if( nextProps.oauth.oauth.access_token !== null && nextProps.oauth.oauth.user === null ){
+            //     this.props.dispatch(fetchAuthUser())
+            // }
+            if( nextProps.oauth.oauth.access_token !== null && nextProps.oauth.oauth.user !== null ){
                 this.props.history.push('/dashboard')
             }
 

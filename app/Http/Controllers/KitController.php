@@ -11,8 +11,11 @@ use League\Flysystem\Exception;
 
 class KitController extends Controller
 {
-    public function getKitControllers(){
+    public function getKitControllers(Request $request){
         try{
+            $currentUser = $request->user();
+            if(!$currentUser || !$currentUser->hasRole('central'))
+                throw new Exception("You have to logged in as central level!");
             $kitController = new \stdClass();
             $kitController->companies = Company::all();
             $kitController->central_offices = CentralOffice::all();

@@ -7,6 +7,7 @@ export default function reducer(state={
         refresh_token:null,
         token_type:null,
     },
+    user: null,
     isExpired: false,
     fetching: false,
     fetched: false,
@@ -20,8 +21,10 @@ export default function reducer(state={
             return { ...state, fetching: false, error: action.payload }
         }
         case constants.FETCH_OAUTH_FETCHED : {
-
-            return { ...state, fetching: false, fetched:true,  oauth : action.payload}
+            return { ...state, fetching: false, fetched:true,  oauth: action.payload, user: action.user }
+        }
+        case constants.FETCH_OAUTH_USER: {
+            return { ...state, fetching: false, fetched:true,  user : action.payload}
         }
         case constants.FETCH_OAUTH_LOGOUT : {
             let oauth = {

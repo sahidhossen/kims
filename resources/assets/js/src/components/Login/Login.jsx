@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-export const Login = ({ login }) => (
+export const Login = ({ login,state, onFieldChange, oauth }) => (
     <div className="content">
         <div className="row loginPage">
             <div className="content">
@@ -9,9 +9,18 @@ export const Login = ({ login }) => (
                     <div className="card-header header-elements-inline">
                     </div>
                     <div className="card-body">
+                        
                         <h1 className="text-center"> Login Panel </h1>
-                        <p className="note text-center"> (Now we use default login system for development purpose) </p>
-                        <a className="login_url" href="#" onClick={(e)=> login(e)}> Login </a>
+                        { oauth.error !== null && <p className="alert alert-danger" role="alert"> Invalid credential </p>}
+                        <div className="form-group">
+                            <label>Email address</label>
+                            <input type="text" className="form-control" name="secret_id" value={state.screct_id} onChange={(e)=>{onFieldChange(e)}} placeholder="Enter email"/>
+                        </div>
+                        <div className="form-group">
+                            <label>Password</label>
+                            <input type="text" className="form-control" name="password" value={state.password} placeholder="Password" onChange={(e)=>{onFieldChange(e)}} />
+                        </div>
+                        <button type="submit" className="btn btn-primary pull-right" onClick={(e) => login(e)}>Login</button>
                     </div>
                 </div>
             </div>
@@ -22,6 +31,9 @@ export const Login = ({ login }) => (
 
 Login.propTypes = {
     login: PropTypes.func,
+    onFieldChange: PropTypes.func,
+    state: PropTypes.object,
+    oauth: PropTypes.object
 }
 
 

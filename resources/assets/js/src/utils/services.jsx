@@ -18,7 +18,9 @@ export const userIsAuthenticated = connectedRouterRedirect({
         let current_oauth  = localStorage.getItem('kim_auth');
         if ( current_oauth !== null && current_oauth.length > 0 ) {
             current_oauth = JSON.parse(current_oauth);
-            props.dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload: current_oauth });
+            const user = {...current_oauth.user}
+            delete current_oauth.user
+            props.dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload: current_oauth, user:user });
             axios.defaults.headers.common['Authorization'] = current_oauth.token_type +" "+ current_oauth.access_token;
             axios.defaults.headers.post['Accept'] = 'application/json';
             return true
@@ -37,7 +39,9 @@ export const Authentication = props => {
     let current_oauth  = localStorage.getItem('kim_auth');
     if ( current_oauth !== null && current_oauth.length > 0 ) {
         current_oauth = JSON.parse( current_oauth );
-        props.dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload: current_oauth });
+        const user = {...current_oauth.user}
+        delete current_oauth.user
+        props.dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload: current_oauth, user: user });
         axios.defaults.headers.common['Authorization'] = current_oauth.token_type +" "+ current_oauth.access_token;
         axios.defaults.headers.post['Accept'] = 'application/json';
         return true;

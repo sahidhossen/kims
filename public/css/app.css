@@ -157,3 +157,13 @@
   display: block !important;
 }
 
+.user-counter-box {
+  width: 250px;
+}
+
+.user-counter-box .total-user {
+  height: 250px;
+  background-color: #437ae8;
+  color: #ffffff;
+}
+

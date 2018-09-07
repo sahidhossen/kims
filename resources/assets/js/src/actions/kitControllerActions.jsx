@@ -8,6 +8,7 @@ export const getKitController = () => dispatch => {
     })
     axios.get('/api/get_kit_controllers')
         .then(function (response) {
+            console.log("login ");
             dispatch({ type: constants.FETCH_KIT_CONTROLLER, payload:response.data.data });
         })
         .catch(function (error) {
