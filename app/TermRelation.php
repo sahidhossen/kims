@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use League\Flysystem\Exception;
 
 class TermRelation extends Model
@@ -16,6 +17,16 @@ class TermRelation extends Model
         'company_id',
         'unit_id'
     ];
+
+
+    /*
+     * Role = 0 -> super_admin
+     * Role = 1 -> center
+     * Role = 2 -> Formation
+     * Role = 3 -> Unit
+     * role = 4 -> Company
+     * Role = 5 -> Solder
+     */
 
 
     /*
@@ -119,31 +130,70 @@ class TermRelation extends Model
                 [
                     'company_id'=>$companyTerms->company_id,
                     'term_type'=>0,
+                    'role' => 4
                 ]
                 )->where('user_id','!=',$user_id)->get();
         return $companySolderTerms;
     }
+    /*
+     * Get Company Boss(Unit User)
+     */
+    public static function getCompanyUnitUser($unit_id){
+        if(!$unit_id)
+            return null;
+        $unitTerm = self::where(['unit_id'=>$unit_id,'role'=>3,'term_type'=>0])->first();
+        return $unitTerm;
+    }
+
 
     /*
      * Get Unit Terms
      */
-    public static function retrieveUnitTerms($user_id){
+    public static function retrieveUnitCompaniesTerms($user_id){
         if(!$user_id)
             return null;
         $unitTerms = self::where('user_id',$user_id)->first();
         $unitCompanyTerms = self::where(
             [
-                'unit_id'=>$unitTerms->unit_id,
+                'unit_id'=> $unitTerms->unit_id,
                 'term_type'=>0,
+                'role' => 4
             ]
         )->where('user_id','!=',$user_id)->get();
         return $unitCompanyTerms;
     }
 
     /*
-    * Get District/formation Terms
+     * Find unit district
+     */
+    public static function retrieveUnitDistrict($district_office_id){
+        if(!$district_office_id)
+            return null;
+        $districtUser = self::where([
+                'district_office_id'=>$district_office_id,
+                'role'=>2,
+                'term_type'=>0
+            ])->first();
+        return $districtUser;
+    }
+
+    /*
+    * Find district Central
     */
-    public static function retrieveDistrictTerms($user_id){
+    public static function retrieveDistrictCentral($central_office_id){
+        if(!$central_office_id)
+            return null;
+        $CentralUser = self::where([
+            'central_office_id'=>$central_office_id,
+            'role'=>1,
+            'term_type'=>0
+        ])->first();
+        return $CentralUser;
+    }
+    /*
+    * Get District/formation Units Terms
+    */
+    public static function retrieveDistrictUnitsTerms($user_id){
         if(!$user_id)
             return null;
         $unitTerms = self::where('user_id',$user_id)->first();
@@ -151,27 +201,71 @@ class TermRelation extends Model
             [
                 'district_office_id'=>$unitTerms->district_office_id,
                 'term_type'=>0,
+                'role'=> 3
             ]
         )->where('user_id','!=',$user_id)->get();
         return $unitSolderTerms;
     }
 
     /*
-   * Get central Terms
+   * Get District/formation Units Terms
    */
-    public static function retrieveCentralTerms($user_id){
+    public static function retrieveCentralDistrictTerms($user_id){
         if(!$user_id)
             return null;
-        $unitTerms = self::where('user_id',$user_id)->first();
-        $unitSolderTerms = self::where(
+        $centralTerms = self::where('user_id',$user_id)->first();
+        $centralDistrictTerms = self::where(
             [
-                'central_office_id'=>$unitTerms->district_office_id,
+                'district_office_id'=>$centralTerms->central_office_id,
                 'term_type'=>0,
+                'role'=> 2
             ]
         )->where('user_id','!=',$user_id)->get();
-        return $unitSolderTerms;
+        return $centralDistrictTerms;
     }
 
+    /*
+     * Get Company Information by user Id
+     */
+    public static function getCompanyInfoByUserId($user_id){
+        $company = DB::table('term_relation')
+            ->leftJoin('company', 'term_relation.company_id','=','company.id')
+            ->where(['term_relation.user_id'=>$user_id,'term_relation.term_type'=>0,'term_relation.role'=>4])
+            ->first();
+        return $company;
+    }
+
+    /*
+     * Get Unit Information by user Id
+     */
+    public static function getUnitInfoByUserId($user_id){
+        $unit = DB::table('term_relation')
+            ->leftJoin('units', 'term_relation.unit_id','=','units.id')
+            ->where(['term_relation.user_id'=>$user_id,'term_relation.term_type'=>0,'term_relation.role'=>3])
+            ->first();
+        return $unit;
+    }
+
+    /*
+     * Get Formation Information by user Id
+     */
+    public static function getFormationInfoByUserId($user_id){
+        $district = DB::table('term_relation')
+            ->leftJoin('district_offices', 'term_relation.district_office_id','=','district_offices.id')
+            ->where(['term_relation.user_id'=>$user_id,'term_relation.term_type'=>0,'term_relation.role'=>2])
+            ->first();
+        return $district;
+    }
+    /*
+     * Get Central Information by user Id
+     */
+    public static function getCentralInfoByUserId($user_id){
+        $central = DB::table('term_relation')
+            ->leftJoin('central_offices', 'term_relation.central_office_id','=','central_offices.id')
+            ->where(['term_relation.user_id'=>$user_id,'term_relation.term_type'=>0,'term_relation.role'=>1])
+            ->first();
+        return $central;
+    }
 
     /*
      * retrieve condemnation term

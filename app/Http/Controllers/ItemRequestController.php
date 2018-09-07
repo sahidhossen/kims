@@ -12,6 +12,7 @@ use App\SolderKits;
 use App\TermRelation;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
 use phpDocumentor\Reflection\Types\Object_;
@@ -170,9 +171,11 @@ class ItemRequestController extends Controller
     public function requestCompanyToUnit(Request $request){
         try{
             // Collect all request based on company id
+            $companyUser = $request->user();
+            if(!$companyUser || !$companyUser->hasRole('company'))
+                throw new Exception("Must be send by company");
+
             $validator = Validator::make($request->all(), [
-                'company_id' => 'required',
-                'user_id'=>'required',
                 'condemnation_id'=>'required'
             ]);
 
@@ -190,9 +193,11 @@ class ItemRequestController extends Controller
             if(!$activeCondemnation)
                 throw new Exception("Sorry condemnation not found!");
 
+            $company_term = TermRelation::where(['user_id'=>$companyUser->id,'role'=>4, 'term_type'=>0])->first();
+
             // Get all solder request that approve by company
             $allPendingRequest = SolderItemRequest::where([
-                'company_id'=>$request->input('company_id'),
+                'company_id'=>$company_term->company_id,
                 'status'=>1
             ])->get();
 
@@ -200,7 +205,6 @@ class ItemRequestController extends Controller
                 throw new Exception("Pending request not found!");
 
             // Get company term
-            $company_term = TermRelation::where(['user_id'=>$request->input('user_id'), 'term_type'=>0])->first();
 
             $requestJsonData = array();
             $requestItems = 0;
@@ -228,21 +232,26 @@ class ItemRequestController extends Controller
                 $requestItems += 1;
             }
 
-
+            $companyUnitUser = TermRelation::getCompanyUnitUser($company_term->unit_id);
             if( count($requestJsonData) > 0 ) {
                 $requestJsonData = (object) $requestJsonData;
                 $requestJsonData->kit_types = $collectedKitTypes;
                 // Check if it has already a request
-                $unitRequest = KitItemRequest::where(['condemnation_id'=>$request->input('condemnation_id'),'company_id'=>$request->input('company_id')])->first();
+                $unitRequest = KitItemRequest::where([
+                    'condemnation_id'=>$request->input('condemnation_id'),
+                    'company_user_id'=>$companyUser->id,
+                    'stage'=>1,
+                    'status'=> 1 // unit level
+                ])->first();
+
                 if(!$unitRequest )
                     $unitRequest = new KitItemRequest();
                 $unitRequest->stage = 1;
+                $unitRequest->status = 1; // For unit
                 $unitRequest->request_items = $requestItems;
                 $unitRequest->kit_items = \GuzzleHttp\json_encode($requestJsonData);
-                $unitRequest->central_id = $company_term->central_office_id;
-                $unitRequest->district_id = $company_term->district_office_id;
-                $unitRequest->unit_id = $company_term->unit_id;
-                $unitRequest->company_id = $company_term->company_id;
+                $unitRequest->unit_user_id = $companyUnitUser->user_id;
+                $unitRequest->company_user_id = $companyUser->id;
                 $unitRequest->condemnation_id = $request->input('condemnation_id');
                 $unitRequest->save();
 
@@ -260,44 +269,331 @@ class ItemRequestController extends Controller
 
 
 
+    /*
+     * Approve company request by Unit
+     *
+     */
+    public function approveCompanyRequestByUnit(Request $request){
+        try{
+            $unit = $request->user();
+            if(!$unit || !$unit->hasRole('unit'))
+                throw new Exception("You need to logged in as unit level!");
+            if(!$request->input('request_id'))
+                throw new Exception("Must be need request Id");
+            $PendingRequest = KitItemRequest::where([
+                    'id'=>$request->input('request_id'),
+                    'unit_user_id'=>$unit->id,
+                    'stage'=>1,
+                    'status'=>1
+                ])->first();
+            if(!$PendingRequest)
+                throw new Exception("This request not found");
+            $PendingRequest->stage = 2; // Approve
+            $PendingRequest->save();
+            // Send notofication to the company
+            return ['success'=>true, 'message'=> "Request approve success!"];
+
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
+
+    /*
+     * Approve company request by Unit
+     *
+     */
+    public function cancelCompanyRequestByUnit(Request $request){
+        try{
+            $unit = $request->user();
+            if(!$unit || !$unit->hasRole('unit'))
+                throw new Exception("You need to logged in as unit level!");
+            if(!$request->input('request_id'))
+                throw new Exception("Must be need request Id");
+            $PendingRequest = KitItemRequest::where([
+                'id'=>$request->input('request_id'),
+                'unit_user_id'=>$unit->id,
+                'stage'=>1,
+                'status'=>1
+            ])->first();
+            if(!$PendingRequest)
+                throw new Exception("This request not found");
+            $PendingRequest->stage = 3; // Cancel
+            $PendingRequest->save();
+            // Send notification to the company
+            return ['success'=>true, 'message'=> "Request canceled!"];
+
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
 
     /*
      * Send request unit to district/formation level
-     * Check unit level request by user_id and stage=1
-     * User_id will find the unit_id
-     * and now check if this unit_id had active pending request
-     * If it has pending request for current condemnation_id then collect them
-     * and send to the district/formation level
+     * Check unit level request by user_id and stage=(1-5)
+     * status = 1
      */
 
     public function requestUnitToDistrict(Request $request){
+        try{
+            $unitUser = $request->user(); // Get from auth
+            if(!$unitUser || !$unitUser->hasRole('unit'))
+                throw new Exception("You need to logged in as unit level!");
+            $terms = TermRelation::where(['user_id'=>$unitUser->id])->first();
+            $unitBoss = TermRelation::retrieveUnitDistrict($terms->district_office_id);
+            $pendingRequest = KitItemRequest::where([
+                    'unit_user_id'=>$unitUser->id,
+                    'stage'=>2,
+                    'status'=>1
+                    ])->get();
+
+            if(count($pendingRequest) == 0)
+                throw new Exception("Unit have not any accepted request");
+
+            $districtLevelRequest = [];
+            $parentIds = '';
+            $condemnation_id = 0;
+            $requestItems = 0;
+            foreach($pendingRequest as $key=>$pRequest){
+                $districtLevelRequest[$key]['company_user_id'] = $pRequest->company_user_id;
+                $districtLevelRequest[$key]['kit_items'] = \GuzzleHttp\json_decode($pRequest->kit_items);
+                $parentIds = $parentIds == '' ? $pRequest->id : $parentIds.','.$pRequest->id;
+                $pRequest->stage = 4;
+                $condemnation_id = $pRequest->condemnation_id;
+                $requestItems +=$pRequest->request_items;
+                $pRequest->save();
+            }
+            $newRequest = new KitItemRequest();
+            $newRequest->condemnation_id = $condemnation_id;
+            $newRequest->unit_user_id = $unitUser->id;
+            $newRequest->district_user_id = $unitBoss->user_id;
+            $newRequest->stage = 1;
+            $newRequest->status = 2;
+            $newRequest->parent_ids = $parentIds;
+            $newRequest->request_items = $requestItems;
+            $newRequest->kit_items = \GuzzleHttp\json_encode($districtLevelRequest);
+            $newRequest->save();
+            return ['success'=> true, 'message'=>"Request send to formation level!", 'data'=>$pendingRequest];
+
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
 
     }
 
+    /*
+     * Get all pending request by condemnation id
+     */
     public function unitLevelPendingRequest(Request $request){
         try{
-            if(!$request->input('user_id'))
-                throw new Exception("Must be need user Id");
+            if(!$request->input('condemnation_id'))
+                throw new Exception("Condemnation Id required");
+            $unitUser = $request->user();
+            if(!$unitUser || !$unitUser->hasRole('unit'))
+                throw new Exception("Please try to login as unit user!");
+            $unitTerms = TermRelation::retrieveUnitCompaniesTerms($unitUser->id);
+            $pendingRequest = KitItemRequest::where([
+                'unit_user_id'=>$unitUser->id,
+                'condemnation_id'=>$request->input('condemnation_id'),
+                'status'=>1
+            ])->whereIn('stage', array(1,2,4,5))->get();
+            return ['success'=>true,'data'=>$pendingRequest, 'terms'=>$unitTerms];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
 
-            $unitTerms = TermRelation::retrieveUnitTerms($request->input('user_id'));
-            $unitCompanies = [];
-            if( count( $unitTerms) > 0 ){
-                foreach( $unitTerms as $term ){
-                    $user = User::find( $term->user_id );
-                    if($user->hasRole('company')) {
-                        $user->company_id = $term->company_id;
-                        $user->unit_id = $term->unit_id;
-                        array_push($unitCompanies, $user);
-                    }
-                }
-                if(count($unitCompanies) > 0 ){
-                    foreach( $unitCompanies as $key=>$company){
-                        $unitCompanies[$key]['pending_request'] = KitItemRequest::getUnitItemPendingRequestByCompany($company->company_id, $company->unit_id);
-                    }
-                }
+    /*
+     * ================
+     * DISTRICT LEVEL
+     * =================
+     */
+
+    /*
+    * Get all pending request by condemnation id
+    */
+    public function formationLevelPendingRequest(Request $request){
+        try{
+            if(!$request->input('condemnation_id'))
+                throw new Exception("Condemnation Id required");
+            $formationUser = $request->user();
+            if(!$formationUser || !$formationUser->hasRole('formation'))
+                throw new Exception("Please try to login as formation user!");
+            $unitTerms = TermRelation::retrieveDistrictUnitsTerms($formationUser->id);
+
+            $pendingRequest = KitItemRequest::where([
+                'district_user_id'=>$formationUser->id,
+                'condemnation_id'=>$request->input('condemnation_id'),
+                'status'=> 2 //formation
+            ])->whereIn('stage', array(1,2,4,5))->get();
+
+            if(count($pendingRequest) == 0 ){
+                throw new Exception("Formation have not any pending request");
             }
 
-            return ['success'=>true,'data'=>$unitCompanies];
+            foreach( $pendingRequest as $pRequest){
+                $kitItems = \GuzzleHttp\json_decode($pRequest->kit_items);
+                $pRequest->unit_office = TermRelation::getUnitInfoByUserId($pRequest->unit_user_id);
+                if(count($kitItems) > 0 ){
+                    foreach ($kitItems as $key=>$item ){
+                        $kitItems[$key]->company = TermRelation::getCompanyInfoByUserId($item->company_user_id);
+                    }
+                }
+                $pRequest->kit_items = $kitItems;
+            }
+            return ['success'=>true,'data'=>$pendingRequest, 'terms'=>$unitTerms];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
+
+    /*
+     * Approve request for unit level
+     */
+    public function approveUnitRequestByDistrict(Request $request){
+        try{
+            $formation = $request->user();
+            if(!$formation || !$formation->hasRole('formation'))
+                throw new Exception("You need to logged in as formation level!");
+            if(!$request->input('request_id'))
+                throw new Exception("Must be need request Id");
+            $PendingRequest = KitItemRequest::where([
+                'id'=>$request->input('request_id'),
+                'district_user_id'=>$formation->id,
+                'stage'=>1,
+                'status'=>2
+            ])->first();
+            if(!$PendingRequest)
+                throw new Exception("This request not found");
+            $PendingRequest->stage = 2; // Approve
+            $PendingRequest->save();
+            // Send notification to the company
+            return ['success'=>true, 'message'=> "Request approve success!"];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
+
+    /*
+    * Send request district to central level
+    * Check district level request by user_id and stage=(1-5)
+    * status = 2
+    */
+
+    public function requestDistrictToCentral(Request $request){
+        try{
+            $formationUser = $request->user(); // Get from auth
+            if(!$formationUser || !$formationUser->hasRole('formation'))
+                throw new Exception("You need to logged in as formation level!");
+            $terms = TermRelation::where(['user_id'=>$formationUser->id])->first();
+            $districtBoss = TermRelation::retrieveDistrictCentral($terms->central_office_id);
+            $pendingRequest = KitItemRequest::where([
+                'district_user_id'=>$formationUser->id,
+                'stage'=>2,
+                'status'=>2
+            ])->get();
+
+            if(count($pendingRequest) == 0)
+                throw new Exception("Formation have not any accepted request");
+
+            $districtLevelRequest = [];
+            $parentIds = '';
+            $condemnation_id = 0;
+            $requestItems = 0;
+
+            foreach($pendingRequest as $key=>$pRequest){
+                $districtLevelRequest[$key]['unit_user_id'] = $pRequest->district_user_id;
+                $districtLevelRequest[$key]['kit_items'] = \GuzzleHttp\json_decode($pRequest->kit_items);
+                $parentIds = $parentIds == '' ? $pRequest->id : $parentIds.','.$pRequest->id;
+                $pRequest->stage = 4;
+                $condemnation_id = $pRequest->condemnation_id;
+                $requestItems +=$pRequest->request_items;
+                $pRequest->save();
+            }
+            $newRequest = new KitItemRequest();
+            $newRequest->condemnation_id = $condemnation_id;
+            $newRequest->district_user_id = $formationUser->id;
+            $newRequest->central_user_id = $districtBoss->user_id;
+            $newRequest->stage = 1;
+            $newRequest->status = 3;
+            $newRequest->parent_ids = $parentIds;
+            $newRequest->request_items = $requestItems;
+            $newRequest->kit_items = \GuzzleHttp\json_encode($districtLevelRequest);
+            $newRequest->save();
+            return ['success'=> true, 'message'=>"Request send to central level!", 'data'=>$pendingRequest];
+
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+
+    }
+
+    /*
+     * ==============
+     * CENTRAL OFFICE
+     * ==============
+     */
+
+    /*
+    * Get all pending request by condemnation id
+    */
+    public function centralLevelPendingRequest(Request $request){
+        try{
+            $centralUser = $request->user();
+            if(!$centralUser || !$centralUser->hasRole('central'))
+                throw new Exception("Please try to login as central user!");
+            $unitTerms = TermRelation::retrieveCentralDistrictTerms($centralUser->id);
+
+            $pendingRequest = KitItemRequest::where([
+                'central_user_id'=>$centralUser->id,
+                'status'=> 3 //formation
+            ])->whereIn('stage', array(1,2,3))->get();
+
+            if(count($pendingRequest) == 0 ){
+                throw new Exception("Central have not any pending request");
+            }
+
+            foreach( $pendingRequest as $pRequest){
+                $kitItems = \GuzzleHttp\json_decode($pRequest->kit_items);
+                if(count($kitItems) > 0 ){
+                    if(is_array($kitItems))
+                    foreach ($kitItems as $key=>$subKitItem){
+                        $kitItems[$key]->unit = TermRelation::getUnitInfoByUserId($subKitItem->unit_user_id);
+                        if(is_array($subKitItem->kit_items)){
+                            foreach($subKitItem->kit_items as $k=>$subSubKitItems){
+                                $kitItems[$key]->kit_items[$k]->company = TermRelation::getCompanyInfoByUserId($subSubKitItems->company_user_id);
+                            }
+                        }
+                    }
+                }
+                $pRequest->kit_items = $kitItems;
+            }
+            return ['success'=>true,'data'=>$pendingRequest, 'terms'=>$unitTerms];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
+
+    /*
+     * Accept pending request for district/formatin
+     */
+    public function acceptPendingRequestForDistrict(Request $request){
+        try{
+            if(!$request->input('request_id'))
+                throw new Exception("Must be need request Id");
+            $centralUser = $request->user();
+            if(!$centralUser || !$centralUser->hasRole('central'))
+                throw new Exception("Please logged in as a central level");
+
+            $pendingRequest = KitItemRequest::where([
+                'id'=>$request->input('request_id'),
+                'status'=> 3 //formation
+            ])->whereIn('stage', array(1,2))->first();
+            $pendingRequest->kit_items = \GuzzleHttp\json_decode($pendingRequest->kit_items);
+            $centralTerms = TermRelation::where(['user_id'=>$centralUser->id,'role'=>1])->first();
+            $centralItems = KitItem::getFreeItemNumberByCentralOffice($centralTerms->central_office_id);
+            $itemDeliveriable = floor(100*33/100);
+
+            return ['delivery'=>$itemDeliveriable, 'd'=>$pendingRequest];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }

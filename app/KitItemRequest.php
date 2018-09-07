@@ -17,6 +17,8 @@ class KitItemRequest extends Model
      * stage = 3 (cancel request)
      * stage = 4 (send to formation/district level)
      * stage = 5 (approve by district)
+     * stage = 6 (approve back from district)
+     *
      * ====FORMATION====
      * stage = 1 (receive request from unit)
      * stage = 2 (approve request)
@@ -30,6 +32,10 @@ class KitItemRequest extends Model
      * stage = 3 (cancel request)
      *
      *
+     * =======STATUS=======
+     * 1 = unit
+     * 2 = formation
+     * 3 = center
      *
      */
     protected $fillable = [
@@ -55,8 +61,8 @@ class KitItemRequest extends Model
      *
     * stage(1-6)
     */
-    public static function getCompanyItemPendingRequest($company_id){
-        $pendingRequests = self::where(['company_id'=> $company_id])
+    public static function getCompanyItemPendingRequest($company_user_id){
+        $pendingRequests = self::where(['company_user_id'=> $company_user_id])
             ->whereBetween('stage',array(1,6))
             ->get();
         return $pendingRequests;
@@ -76,42 +82,10 @@ class KitItemRequest extends Model
      *
      * stage(1-5)
      */
-    public static function getUnitItemPendingRequestByCompany($company_id, $unit_id){
-        $pendingRequests = self::where(['unit_id'=>$unit_id])
-                                ->whereBetween('stage',array(1,5))
+    public static function getUnitItemPendingRequestByCompany($unit_user_id, $status){
+        $pendingRequests = self::where(['unit_user_id'=>$unit_user_id, 'status'=>$status])
+                                ->whereIn('stage',array(1,2,4,5))
                                 ->get();
-        return $pendingRequests;
-    }
-
-    /*
-     * Get all district pending request that send by unit
-     *
-     * It will get all request that stay between (district-central)
-     *
-     * district-receive request and send central = 2
-     * central-receive and approve back to district=  3
-     * district receive and approve = 4
-     *
-     * stage(2-4)
-     */
-    public static function getDistrictItemPendingRequestByUnit($unit_id, $district_id){
-        $pendingRequests = self::where(['unit_id'=> $unit_id, 'district_id'=>$district_id])
-            ->whereBetween('stage',array(2,4))
-            ->get();
-        return $pendingRequests;
-    }
-
-    /*
-     * Get all central pending request that send by district
-     *
-     * It will get all request that stay only central level
-     *
-     * central-receive and approve back to district=  3
-     *
-     * stage(4)
-     */
-    public static function getCentralItemPendingRequestByDistrict($district_id, $central_id){
-        $pendingRequests = self::where(['district_id'=> $district_id, 'central_id'=>$central_id, 'stage'=>3])->get();
         return $pendingRequests;
     }
 

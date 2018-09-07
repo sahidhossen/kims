@@ -44,4 +44,11 @@ class KitItem extends Model
         $kitItem = self::where($where)->get();
         return $kitItem;
     }
+
+
+    public static function getFreeItemNumberByCentralOffice($central_id){
+        $kiteItems = self::where(['central_office_id'=>$central_id,'status'=>0])->count();
+        return $kiteItems;
+    }
+
 }
