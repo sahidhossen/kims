@@ -17,7 +17,7 @@ class KitItemRequest extends Model
      * stage = 3 (cancel request)
      * stage = 4 (send to formation/district level)
      * stage = 5 (approve by district)
-     * stage = 6 (approve back from district)
+     * stage = 6 (send feedback to company)
      *
      * ====FORMATION====
      * stage = 1 (receive request from unit)
@@ -25,6 +25,7 @@ class KitItemRequest extends Model
      * stage = 3 (cancel request)
      * stage = 4 (send to central)
      * stage = 5 (approve by central)
+     * stage = 6 (send feedback to unit)
      *
      * =======CENTRAL=========
      * stage = 1 (receive request from formation)

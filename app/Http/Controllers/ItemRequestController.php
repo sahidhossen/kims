@@ -69,7 +69,7 @@ class ItemRequestController extends Controller
 
            // Send solder notification after accept new kit item request
            $notificationSend = KimNotification::sendDownstreamMessage();
-           return ['success'=>true, 'message'=>"Request send to the company. Will review as soon as possible!", 'notification'=>$notificationSend->numberSuccess()];
+           return ['success'=>true, 'message'=>"Request send to the company. Will review as soon as possible!"];
        }catch (Exception $e){
            return ['success'=>false, 'message'=>$e->getMessage()];
        }
@@ -80,6 +80,10 @@ class ItemRequestController extends Controller
     */
     public function companyApproveRequest(Request $request){
         try{
+            $companyUser = $request->user();
+            if(!$companyUser || !$companyUser->hasRole('company'))
+                throw new Exception("You need to logged in as company");
+
             if( !$request->input('solder_request_id'))
                 throw new Exception("Must be need request ID");
             $currentRequest = SolderItemRequest::find( $request->input('solder_request_id'));
@@ -99,6 +103,9 @@ class ItemRequestController extends Controller
     */
    public function cancelRequest( Request $request ){
        try{
+           $companyUser = $request->user();
+           if(!$companyUser || !$companyUser->hasRole('company'))
+               throw new Exception("You need to logged in as company");
            if( !$request->input('solder_request_id'))
                throw new Exception("Must be need request ID");
            $currentRequest = SolderItemRequest::find( $request->input('solder_request_id'));
@@ -335,12 +342,15 @@ class ItemRequestController extends Controller
 
     public function requestUnitToDistrict(Request $request){
         try{
+            if(!$request->input('condemnation_id'))
+                throw new Exception("Condemnation Id is required");
             $unitUser = $request->user(); // Get from auth
             if(!$unitUser || !$unitUser->hasRole('unit'))
                 throw new Exception("You need to logged in as unit level!");
             $terms = TermRelation::where(['user_id'=>$unitUser->id])->first();
             $unitBoss = TermRelation::retrieveUnitDistrict($terms->district_office_id);
             $pendingRequest = KitItemRequest::where([
+                    'condemnation_id'=> $request->input('condemnation_id'),
                     'unit_user_id'=>$unitUser->id,
                     'stage'=>2,
                     'status'=>1
@@ -526,7 +536,21 @@ class ItemRequestController extends Controller
         }
 
     }
+    /*
+     * After approve by central office distribute Items to the unit
+     */
+    public function distributeItemToUnit(Request $request){
+        try{
 
+//            $pendingRequest = KitItemRequest::where([
+//                'district_user_id'=>$formationUser->id,
+//                'stage'=>2,
+//                'status'=>2
+//            ])->get();
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
     /*
      * ==============
      * CENTRAL OFFICE
@@ -574,12 +598,42 @@ class ItemRequestController extends Controller
     }
 
     /*
-     * Accept pending request for district/formatin
+     * Central will review each pending request that comes from district level
+     */
+    public function reviewPendingRequestById(Request $request){
+        try{
+            if(!$request->input('request_id'))
+                throw new Exception("Must be need request Id");
+            $centralUser = $request->user();
+            if(!$centralUser || !$centralUser->hasRole('central'))
+                throw new Exception("Please logged in as a central level");
+            $pendingRequest = KitItemRequest::where([
+                'id'=>$request->input('request_id'),
+                'status'=> 3 //formation
+            ])->whereIn('stage', array(1,2))->first();
+            if(!$pendingRequest)
+                throw new Exception("Sorry pending request not found");
+            $centralTerms = TermRelation::where(['user_id'=>$centralUser->id,'role'=>1,'term_type'=>0])->first();
+            $hasItems = KitItem::getFreeItemNumberByCentralOffice($centralTerms->central_office_id);
+            return ['success'=>true, 'total_items'=>$hasItems, 'pendingRequest'=>$pendingRequest];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
+
+    /*
+     * Accept pending request for district/formation
      */
     public function acceptPendingRequestForDistrict(Request $request){
         try{
             if(!$request->input('request_id'))
                 throw new Exception("Must be need request Id");
+
+            if(!$request->input('delivery_item_number'))
+                throw new Exception("Must be need number of delivery items");
+
+            $deliveryItems = (int)$request->input('delivery_item_number');
+
             $centralUser = $request->user();
             if(!$centralUser || !$centralUser->hasRole('central'))
                 throw new Exception("Please logged in as a central level");
@@ -588,12 +642,26 @@ class ItemRequestController extends Controller
                 'id'=>$request->input('request_id'),
                 'status'=> 3 //formation
             ])->whereIn('stage', array(1,2))->first();
-            $pendingRequest->kit_items = \GuzzleHttp\json_decode($pendingRequest->kit_items);
-            $centralTerms = TermRelation::where(['user_id'=>$centralUser->id,'role'=>1])->first();
-            $centralItems = KitItem::getFreeItemNumberByCentralOffice($centralTerms->central_office_id);
-            $itemDeliveriable = floor(100*33/100);
 
-            return ['delivery'=>$itemDeliveriable, 'd'=>$pendingRequest];
+            $centralTerms = TermRelation::where(['user_id'=>$centralUser->id,'role'=>1,'term_type'=>0])->first();
+            $centralItems = KitItem::getFreeItemNumberByCentralOffice($centralTerms->central_office_id);
+            $itemDeliverable = floor($centralItems*66/100);
+            if($itemDeliverable < $deliveryItems)
+                throw new Exception("Sorry you do not have this amount of item");
+            $pendingRequest->stage = 2;
+            $pendingRequest->approval_items = $deliveryItems;
+            $pendingRequest->save();
+
+            $confirmToDistrictOffice = KitItemRequest::where([
+                'id'=>$pendingRequest->parent_ids,
+                'stage'=>4,
+                'status'=>2
+            ])->first();
+            $confirmToDistrictOffice->approval_items = $deliveryItems;
+            $confirmToDistrictOffice->stage = 5;
+            $confirmToDistrictOffice->save();
+            // Send notification
+            return ['success'=>true,"message"=>"Approve successful!"];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }
