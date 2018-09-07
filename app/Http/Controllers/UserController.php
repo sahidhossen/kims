@@ -103,7 +103,10 @@ class UserController extends Controller
                 $unitTerms = TermRelation::retrieveUnitTerms( $currentUser->id );
                 if( count( $unitTerms) > 0 ){
                     foreach( $unitTerms as $term ){
-                        $user = User::find( $term->user_id );
+			$user = User::find( $term->user_id );
+			 if(!$user){
+			    continue;
+			 }
                         if($user->hasRole('company')) {
                             $user->company_id = $term->company_id;
                             $user->unit_id = $term->unit_id;
