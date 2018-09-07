@@ -108,9 +108,22 @@ Route::middleware('auth:api')->post('/request_solder_to_company', 'ItemRequestCo
 Route::middleware('auth:api')->post('/request_solder_to_company_cancel', 'ItemRequestController@cancelRequest');
 Route::middleware('auth:api')->post('/request_solder_to_company_approve', 'ItemRequestController@companyApproveRequest');
 
+
 Route::middleware('auth:api')->post('/request_company_to_unit', 'ItemRequestController@requestCompanyToUnit');
 Route::middleware('auth:api')->get('/get_unit_level_request', 'ItemRequestController@unitLevelPendingRequest');
-Route::middleware('auth:api')->get('/request_unit_to_district', 'ItemRequestController@requestUnitToDistrict');
+Route::middleware('auth:api')->post('/request_unit_to_district', 'ItemRequestController@requestUnitToDistrict');
+Route::middleware('auth:api')->post('/company_request_approve', 'ItemRequestController@approveCompanyRequestByUnit');
+Route::middleware('auth:api')->post('/company_request_cancel', 'ItemRequestController@cancelCompanyRequestByUnit');
+
+Route::middleware('auth:api')->get('/get_formation_level_request', 'ItemRequestController@formationLevelPendingRequest');
+Route::middleware('auth:api')->post('/request_formation_to_central', 'ItemRequestController@requestDistrictToCentral');
+Route::middleware('auth:api')->post('/unit_request_approve', 'ItemRequestController@approveUnitRequestByDistrict');
+//Route::middleware('auth:api')->post('/company_request_cancel', 'ItemRequestController@cancelCompanyRequestByUnit');
+
+Route::middleware('auth:api')->get('/get_central_level_request', 'ItemRequestController@centralLevelPendingRequest');
+Route::middleware('auth:api')->post('/central_approve_request', 'ItemRequestController@acceptPendingRequestForDistrict');
+
+
 /*
  * Condemnation  API's
  */
