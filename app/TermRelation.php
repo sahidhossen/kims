@@ -136,6 +136,22 @@ class TermRelation extends Model
         return $companySolderTerms;
     }
     /*
+     * Retrive company solders terms
+     */
+    public static function retrieveCompanySoldersTerms($user_id){
+        if(!$user_id)
+            return null;
+        $companyTerms = self::where('user_id',$user_id)->first();
+        $companySolderTerms = self::where(
+            [
+                'company_id'=>$companyTerms->company_id,
+                'term_type'=>0,
+                'role' => 5
+            ]
+        )->where('user_id','!=',$user_id)->get();
+        return $companySolderTerms;
+    }
+    /*
      * Get Company Boss(Unit User)
      */
     public static function getCompanyUnitUser($unit_id){

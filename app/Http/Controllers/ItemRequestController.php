@@ -541,7 +541,6 @@ class ItemRequestController extends Controller
      */
     public function distributeItemToUnit(Request $request){
         try{
-
 //            $pendingRequest = KitItemRequest::where([
 //                'district_user_id'=>$formationUser->id,
 //                'stage'=>2,

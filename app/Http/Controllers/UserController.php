@@ -52,6 +52,7 @@ class UserController extends Controller
                 ->where('status', '!=', 3)->get();
             $items = [];
             if (count($solderKit) > 0) {
+
                 foreach ($solderKit as $kit) {
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
                     $itemType = ItemType::find($kit->item_type_id);
@@ -65,7 +66,8 @@ class UserController extends Controller
                     $solderInformation->designation = $currentUser->designation;
                     $solderInformation->mobile = $currentUser->mobile;
                     $solderInformation->secret_id = $currentUser->secret_id;
-                    array_push($items, $solderInformation);
+                    $parseItemType = strtolower(str_replace(' ','_', $itemType->type_name));
+                    $items[$parseItemType][] = $solderInformation;
                 }
             }
 
@@ -83,7 +85,7 @@ class UserController extends Controller
                 $currentUser->unit_id = $UserTerm->unit_id;
                 $currentUser->central_id = $UserTerm->central_office_id;
                 $currentUser->formation_id = $UserTerm->district_office_id;
-                $companyTerms = TermRelation::retrieveCompanyTerms($currentUser->id);
+                $companyTerms = TermRelation::retrieveCompanySoldersTerms($currentUser->id);
                 if (count($companyTerms) > 0) {
                     foreach ($companyTerms as $term) {
                         $solder = User::find($term->user_id);
@@ -103,22 +105,22 @@ class UserController extends Controller
                 $unitTerms = TermRelation::retrieveUnitCompaniesTerms( $currentUser->id );
                 if( count( $unitTerms) > 0 ){
                     foreach( $unitTerms as $term ){
-			$user = User::find( $term->user_id );
-			 if(!$user){
-			    continue;
-			 }
-                        if($user->hasRole('company')) {
-                            $user->company_id = $term->company_id;
-                            $user->unit_id = $term->unit_id;
-                            array_push($unitCompanies, $user);
+                        $user = User::find( $term->user_id );
+                         if(!$user){
+                            continue;
+                         }
+                            if($user->hasRole('company')) {
+                                $user->company_id = $term->company_id;
+                                $user->unit_id = $term->unit_id;
+                                array_push($unitCompanies, $user);
+                            }
+                        }
+                        if(count($unitCompanies) > 0 ){
+                            foreach( $unitCompanies as $key=>$company){
+                                $unitCompanies[$key]['pending_request'] = count(KitItemRequest::getUnitItemPendingRequestByCompany($company->company_id, $company->unit_id));
+                            }
                         }
                     }
-                    if(count($unitCompanies) > 0 ){
-                        foreach( $unitCompanies as $key=>$company){
-                            $unitCompanies[$key]['pending_request'] = count(KitItemRequest::getUnitItemPendingRequestByCompany($company->company_id, $company->unit_id));
-                        }
-                    }
-                }
 
             }
 
