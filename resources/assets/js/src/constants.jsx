@@ -5,6 +5,7 @@ export const CONTROLLER = '/dashboard/controller'
 export const KIT_ITEMS = '/dashboard/kit_items'
 export const ITEM_TYPES = '/dashboard/item_types'
 export const CONDEMNATION = '/dashboard/condemnations'
+export const COMPANY_USERS = '/dashboard/company_users'
 
 // api keys
 export const CLIENT_SECRET = "8oxzLujZHpcNqvTovjhLBbbC6XOtyfqP4cl0RBvI"

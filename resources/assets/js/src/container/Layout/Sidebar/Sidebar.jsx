@@ -1,9 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { USERS, DASHBOARD, CONTROLLER, KIT_ITEMS, ITEM_TYPES, CONDEMNATION } from '../../../constants'
+import { USERS, DASHBOARD, CONTROLLER, KIT_ITEMS, ITEM_TYPES, CONDEMNATION,COMPANY_USERS } from '../../../constants'
 
-export const Sidebar = ({ location }) => (
+export const Sidebar = ({ location, oauth }) => (
     <div className="sidebar sidebar-dark sidebar-main sidebar-expand-md">
         <div className="sidebar-mobile-toggler text-center">
             <a href="#" className="sidebar-mobile-main-toggle">
@@ -49,21 +49,33 @@ export const Sidebar = ({ location }) => (
                             <span>Dashboard</span>
                         </Link>
                     </li>
-                    <li className="nav-item">
-                        <Link className={location.pathname === CONTROLLER ? 'nav-link active' : 'nav-link'} to={CONTROLLER}> Controller </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className={location.pathname === USERS ? 'nav-link active' : 'nav-link'} to={USERS}> Users </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className={location.pathname === KIT_ITEMS ? 'nav-link active' : 'nav-link'} to={KIT_ITEMS}> Kit Items </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className={location.pathname === ITEM_TYPES ? 'nav-link active' : 'nav-link'} to={ITEM_TYPES}> Item Types </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className={location.pathname === CONDEMNATION ? 'nav-link active' : 'nav-link'} to={CONDEMNATION}> Condemnation </Link>
-                    </li>
+                    {oauth.user !== null &&  oauth.user.whoami === 'central' &&
+                        <li className="nav-item">
+                            <Link className={location.pathname === CONTROLLER ? 'nav-link active' : 'nav-link'} to={CONTROLLER}> Controller </Link>
+                        </li>
+                     }
+
+                     {oauth.user !== null &&  oauth.user.whoami === 'company' &&
+                        <li className="nav-item">
+                            <Link className={location.pathname === COMPANY_USERS ? 'nav-link active' : 'nav-link'} to={COMPANY_USERS}> Users </Link>
+                        </li>
+                     }
+
+                    {oauth.user !== null &&  oauth.user.whoami === 'central' &&
+                        <li className="nav-item">
+                            <Link className={location.pathname === KIT_ITEMS ? 'nav-link active' : 'nav-link'} to={KIT_ITEMS}> Kit Items </Link>
+                        </li>
+                    }
+                    {oauth.user !== null &&  oauth.user.whoami === 'central' &&
+                        <li className="nav-item">
+                            <Link className={location.pathname === ITEM_TYPES ? 'nav-link active' : 'nav-link'} to={ITEM_TYPES}> Item Types </Link>
+                        </li>
+                    }
+                    {oauth.user !== null &&  oauth.user.whoami === 'unit' &&
+                        <li className="nav-item">
+                            <Link className={location.pathname === CONDEMNATION ? 'nav-link active' : 'nav-link'} to={CONDEMNATION}> Condemnation </Link>
+                        </li>
+                    }
                     {/*<li className="nav-item nav-item-submenu">*/}
                         {/*<a href="#" className="nav-link"><i className="icon-copy"></i> <span>Layouts</span></a>*/}
 
@@ -81,7 +93,8 @@ export const Sidebar = ({ location }) => (
 )
 
 Sidebar.propTypes = {
-    location: PropTypes.object
+    location: PropTypes.object,
+    oauth: PropTypes.object
 }
 
 export default Sidebar
