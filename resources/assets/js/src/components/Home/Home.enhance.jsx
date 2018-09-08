@@ -18,10 +18,10 @@ export default compose(
             if( users.users.length === 0 && oauth.user !== null ){
 
                 if( users.fetched === false && users.users.length === 0 &&  oauth.user.whoami === 'company'){
-                    console.log("call company")
                     this.props.dispatch(fetchUserByCompany());
                 }
             }
+            console.log("home: ", nextProps)
 
         }
 

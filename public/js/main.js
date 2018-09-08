@@ -60325,10 +60325,10 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
         if (users.users.length === 0 && oauth.user !== null) {
 
             if (users.fetched === false && users.users.length === 0 && oauth.user.whoami === 'company') {
-                console.log("call company");
                 this.props.dispatch((0, _userActions.fetchUserByCompany)());
             }
         }
+        console.log("home: ", nextProps);
     }
 }), _recompose.pure);
 
