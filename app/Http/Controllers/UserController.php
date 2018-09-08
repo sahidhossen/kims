@@ -49,10 +49,10 @@ class UserController extends Controller
             $currentUser->whoami = $currentUser->roles->first()->name;
             $UserTerm = TermRelation::where('user_id', $currentUser->id)->first();
             $solderKit = SolderKits::where('user_id', $currentUser->id)
-                ->where('status', '!=', 3)->get();
+                ->where('status', '!=', 3)->orderByRaw('item_type_id ASC')->get();
             $items = [];
+            $itemResult = [];
             if (count($solderKit) > 0) {
-
                 foreach ($solderKit as $kit) {
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
                     $itemType = ItemType::find($kit->item_type_id);
@@ -66,9 +66,17 @@ class UserController extends Controller
                     $solderInformation->designation = $currentUser->designation;
                     $solderInformation->mobile = $currentUser->mobile;
                     $solderInformation->secret_id = $currentUser->secret_id;
-                    $parseItemType = strtolower(str_replace(' ','_', $itemType->type_name));
-                    $items[$parseItemType][] = $solderInformation;
+                    $items[$itemType->type_name][] = $solderInformation;
                 }
+                if(count($items) > 0 ){
+                    foreach($items as $key=>$item){
+                        $newItem = [];
+                        $newItem['item_name'] = $key;
+                        $newItem['items'] = $item;
+                        array_push($itemResult, $newItem);
+                    }
+                }
+
             }
 
             //Solder
@@ -179,7 +187,7 @@ class UserController extends Controller
                 'unit_companies'=>$unitCompanies,
                 'formation_units'=>$districtUnits,
                 'central_formations'=>$centralFormations,
-                'items' => $items,
+                'items' => $itemResult,
                 'data'=>$currentUser,
                 'message'=>'Current user information.'
             ];
