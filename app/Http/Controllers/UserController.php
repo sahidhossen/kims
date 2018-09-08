@@ -210,25 +210,35 @@ class UserController extends Controller
             $currentUser = User::find( $request->input('user_id') );
             $solderKit = SolderKits::where('user_id',$currentUser->id )
                 ->where('status','!=',3)->get();
-            $result = [];
-            if( count($solderKit) > 0 ) {
-                foreach( $solderKit as $kit ) {
+            $items = [];
+            $itemResult = [];
+            if (count($solderKit) > 0) {
+                foreach ($solderKit as $kit) {
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
                     $itemType = ItemType::find($kit->item_type_id);
                     $solderInformation->item_name = $itemType->type_name;
                     $solderInformation->status = $kit->status;
                     $solderInformation->issue_date = $kit->issue_date;
                     $solderInformation->expire_date = $kit->expire_date;
-                    $solderInformation->whoami = $currentUser->roles->first()->name;
+                    $solderInformation->id = $kit->id;
                     $solderInformation->name = $currentUser->name;
                     $solderInformation->professional = $currentUser->professional;
                     $solderInformation->designation = $currentUser->designation;
                     $solderInformation->mobile = $currentUser->mobile;
                     $solderInformation->secret_id = $currentUser->secret_id;
-                    array_push($result, $solderInformation);
+                    $items[$itemType->type_name][] = $solderInformation;
                 }
+                if(count($items) > 0 ){
+                    foreach($items as $key=>$item){
+                        $newItem = [];
+                        $newItem['item_name'] = $key;
+                        $newItem['items'] = $item;
+                        array_push($itemResult, $newItem);
+                    }
+                }
+
             }
-            return [ 'success' => true, 'data' => $result, 'message'=>'Current user information.'];
+            return [ 'success' => true, 'data' => $itemResult, 'message'=>'Current user information.'];
         }catch (Exception $e){
             return ['success'=>false, 'message'=> $e->getMessage()];
         }
@@ -524,7 +534,6 @@ class UserController extends Controller
     /*
      * Get Kit User by Company
      */
-
     public function getKitUserByCompany(Request $request){
         try{
             $companySolders = [];
