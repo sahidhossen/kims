@@ -55,16 +55,15 @@ export const fetchUserById = data => dispatch => {
 }
 
 export const addUser = data => (dispatch, getState) => {
-   
+    dispatch({ type: constants.FETCHING_ADD_USER })
     axios.post('/api/kit_user_register', data )
         .then(function (response) {
             if( response.data.success === true ) {
                 let store = getState()
                 let users = [...store.users.users]
                 users.push( response.data.data )
-                dispatch({type: constants.FETCH_USER, payload: users });
+                dispatch({type: constants.FETCHED_ADD_USER, payload: users });
             }else {
-                console.log("error: ", response.data.message )
                 dispatch({type: constants.REJECT_USER_REGISTER, payload: response.data.message });
             }
         })
@@ -137,12 +136,13 @@ export const fetchOauthToken = user  => dispatch => {
    
     axios.post('/oauth/token', user)
         .then(function (response) {
+            console.log("yn auth", response)
             // localStorage.setItem('kim_auth', JSON.stringify(response.data) )
             // dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload:response.data });
             dispatch(fetchAuthUser(response.data))
         })
         .catch(function (error) {
-            console.log("error log: ", response)
+            console.log("error log: ", error)
             dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
         });
 }
@@ -169,7 +169,7 @@ export const fetchAuthUser = (authResponse=null) => (dispatch, getState) =>{
             oauth.user = response.data.data 
             if(authResponse !== null )
                 localStorage.setItem('kim_auth', JSON.stringify(oauth) )
-            dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload:response.data, user: response.data.data });
+            dispatch({ type: constants.FETCH_OAUTH_FETCHED, payload:oauth, user: response.data.data });
         }
     })
     .catch(function (error) {

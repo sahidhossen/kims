@@ -1,6 +1,9 @@
 import React from 'react'
+import PropTypes from 'prop-types'
+import Company from './components/Company'
+import DefaultDashboard from './components/Default'
 
-export const Home = () => (
+export const Home = ({users, oauth}) => (
     <div className="Homepage">
         <div className="page-header page-header-light">
             <div className="page-header-content header-elements-md-inline">
@@ -11,29 +14,22 @@ export const Home = () => (
 
                 <div className="header-elements d-none">
                     <div className="d-flex justify-content-center">
-                        <a href="#" className="btn btn-link btn-float text-default"><i className="icon-radio-checked2 text-primary"></i><span>Central</span></a>
-                        <a href="#" className="btn btn-link btn-float text-default"><i className="icon-stack text-primary"></i> <span>District</span></a>
-                        <a href="#" className="btn btn-link btn-float text-default"><i className="icon-drawer text-primary"></i> <span>Unit</span></a>
-                        <a href="#" className="btn btn-link btn-float text-default"><i className="icon-library2 text-primary"></i> <span>Company</span></a>
+                        {oauth.user !== null && oauth.user.whoami === 'central' && <a href="#" className="btn btn-link btn-float text-default"><i className="icon-radio-checked2 text-primary"></i><span>Central</span></a> }
+                        {oauth.user !== null && oauth.user.whoami === 'formation' && <a href="#" className="btn btn-link btn-float text-default"><i className="icon-stack text-primary"></i> <span>District</span></a>}
+                        {oauth.user !== null && oauth.user.whoami === 'unit' && <a href="#" className="btn btn-link btn-float text-default"><i className="icon-drawer text-primary"></i> <span>Unit</span></a>}
+                        {oauth.user !== null && oauth.user.whoami === 'company' && <a href="#" className="btn btn-link btn-float text-default"><i className="icon-library2 text-primary"></i> <span>Company</span></a>}
                     </div>
                 </div>
             </div>
         </div>
-        <div className="content">
-            <div className="row">
-                <div className="content">
-                    <div className="card">
-                        <div className="card-header header-elements-inline">
+        {oauth.user !== null && oauth.user.whoami === 'company' && <Company users={users.users}/> }
+        {oauth.user !== null && oauth.user.whoami !== 'company' && <DefaultDashboard/> }
 
-                        </div>
-                        <div className="card-body">
-                            <h1> We Will Take Care Of It Later! </h1>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 )
 
+Home.propTypes = {
+    users: PropTypes.object,
+    oauth: PropTypes.object
+}
 export default Home

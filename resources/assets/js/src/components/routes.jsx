@@ -5,6 +5,7 @@ import Home from './Home'
 import DefaultHome from './DefaultHome'
 import User from './Users'
 import CompanyUsers from './company_users'
+import AddSoldier from './AddSoldier'
 import UserDetails from './Users/UserDetails'
 import KitController from './KitController'
 import KitItems from './KitItems'
@@ -73,6 +74,11 @@ const routes = [{
                     path: route.CONDEMNATION,
                     exact: true,
                     component: Condemnation
+                },
+                {
+                    path: route.COMPANY_ADD_USERS,
+                    exact: true,
+                    component: AddSoldier
                 },
                 {
                     path: route.COMPANY_USERS,

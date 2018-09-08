@@ -5,9 +5,10 @@ import { Link } from 'react-router-dom'
 export const Navbar = ({ logout }) => (
     <div className="navbar navbar-expand-md navbar-dark">
         <div className="navbar-brand">
-            <a href="index.html" className="d-inline-block">
-                KITS
-            </a>
+            <Link to="/dashboard" className="d-inline-block">
+                {/*<img src={`../images/logo.jpeg`} className="Logo" alt=""/>*/}
+                <span className="app-name"> KIMS </span>
+            </Link>
         </div>
 
         <div className="d-md-none">

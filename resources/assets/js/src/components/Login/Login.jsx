@@ -2,15 +2,17 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 export const Login = ({ login,state, onFieldChange, oauth }) => (
-    <div className="content">
+    <div className="content loginFormHolder">
+        <div className="mask-backaground"></div>
         <div className="row loginPage">
             <div className="content">
+                <div className="login-mask"></div>
                 <div className="card">
                     <div className="card-header header-elements-inline">
                     </div>
                     <div className="card-body">
                         
-                        <h1 className="text-center"> Login Panel </h1>
+                        <h1 className="text-center form-title"> Login </h1>
                         { oauth.error !== null && <p className="alert alert-danger" role="alert"> Invalid credential </p>}
                         <div className="form-group">
                             <label>Email address</label>
@@ -20,7 +22,7 @@ export const Login = ({ login,state, onFieldChange, oauth }) => (
                             <label>Password</label>
                             <input type="text" className="form-control" name="password" value={state.password} placeholder="Password" onChange={(e)=>{onFieldChange(e)}} />
                         </div>
-                        <button type="submit" className="btn btn-primary pull-right" onClick={(e) => login(e)}>Login</button>
+                        <button type="submit" className="btn btn-orange pull-right" onClick={(e) => login(e)}>Login</button>
                     </div>
                 </div>
             </div>

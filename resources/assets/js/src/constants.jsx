@@ -6,7 +6,7 @@ export const KIT_ITEMS = '/dashboard/kit_items'
 export const ITEM_TYPES = '/dashboard/item_types'
 export const CONDEMNATION = '/dashboard/condemnations'
 export const COMPANY_USERS = '/dashboard/company_users'
-
+export const COMPANY_ADD_USERS = '/dashboard/add_solder'
 // api keys
 export const CLIENT_SECRET = "8oxzLujZHpcNqvTovjhLBbbC6XOtyfqP4cl0RBvI"
 export const CLIENT_ID = 1

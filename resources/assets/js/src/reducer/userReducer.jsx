@@ -5,6 +5,8 @@ const users = function reducer(
         users: [],
         user: null,
         currentItems:[],
+        fetchedAddUser: false,
+        fetchingAddUser: false,
         fetching: false,
         fetched: false,
         fetchingLogin: false,
@@ -14,6 +16,21 @@ const users = function reducer(
     action
 ) {
     switch (action.type) {
+        case constants.FETCHING_ADD_USER: {
+            return {
+                ...state,
+                fetchingAddUser: true,
+                fetchedAddUser: false
+            }
+        }
+        case constants.FETCHED_ADD_USER: {
+            return {
+                ...state,
+                fetchingAddUser: false,
+                fetchedAddUser: true,
+                users: action.payload
+            }
+        }
         case constants.FETCHING_USER: {
             return {
                 ...state,
@@ -21,6 +38,7 @@ const users = function reducer(
                 fetched: false
             }
         }
+
         case constants.FETCH_USER: {
             return {
                 ...state,
@@ -34,6 +52,8 @@ const users = function reducer(
             return {
                 ...state,
                 fetching: false,
+                fetchingAddUser: false,
+                fetchedAddUser: true,
                 error: action.payload,
                 fetched: true
             }

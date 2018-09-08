@@ -8,7 +8,6 @@ export const getKitController = () => dispatch => {
     })
     axios.get('/api/get_kit_controllers')
         .then(function (response) {
-            console.log("login ");
             dispatch({ type: constants.FETCH_KIT_CONTROLLER, payload:response.data.data });
         })
         .catch(function (error) {
@@ -45,7 +44,6 @@ export const saveKitController = (state, actionType ) => (dispatch, getState) =>
 
     axios.post('/api/'+endPoint, data )
         .then(function (response) {
-            console.log("res: ", response.data)
             if( response.success === false )
                 return false
             let store = getState()

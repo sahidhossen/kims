@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { USERS, DASHBOARD, CONTROLLER, KIT_ITEMS, ITEM_TYPES, CONDEMNATION,COMPANY_USERS } from '../../../constants'
+import { USERS, DASHBOARD, CONTROLLER, KIT_ITEMS, ITEM_TYPES, CONDEMNATION,COMPANY_USERS, COMPANY_ADD_USERS } from '../../../constants'
 
 export const Sidebar = ({ location, oauth }) => (
     <div className="sidebar sidebar-dark sidebar-main sidebar-expand-md">
@@ -25,7 +25,13 @@ export const Sidebar = ({ location, oauth }) => (
                         </div>
 
                         <div className="media-body">
-                            <div className="media-title font-weight-semibold"> Kim Admin </div>
+                            <div className="media-title font-weight-semibold">
+                                {oauth.user !== null &&  oauth.user.whoami === 'company' && "Company"}
+                                {oauth.user !== null &&  oauth.user.whoami === 'unit' && "Unit"}
+                                {oauth.user !== null &&  oauth.user.whoami === 'solder' && "Solder"}
+                                {oauth.user !== null &&  oauth.user.whoami === 'formation' && "Formation"}
+                                {oauth.user !== null &&  oauth.user.whoami === 'central' && "Central"}
+                            </div>
                             <div className="font-size-xs opacity-50">
                                 <i className="icon-pin font-size-sm"></i> &nbsp; Manage Resource
                             </div>
@@ -57,9 +63,20 @@ export const Sidebar = ({ location, oauth }) => (
 
                      {oauth.user !== null &&  oauth.user.whoami === 'company' &&
                         <li className="nav-item">
-                            <Link className={location.pathname === COMPANY_USERS ? 'nav-link active' : 'nav-link'} to={COMPANY_USERS}> Users </Link>
+                            <Link className={location.pathname === COMPANY_ADD_USERS ? 'nav-link active' : 'nav-link'} to={COMPANY_ADD_USERS}>
+                                <i className="icon-plus3"></i>
+                                Add Soldier
+                            </Link>
                         </li>
                      }
+                    {oauth.user !== null &&  oauth.user.whoami === 'company' &&
+                    <li className="nav-item">
+                        <Link className={location.pathname === COMPANY_USERS ? 'nav-link active' : 'nav-link'} to={COMPANY_USERS}>
+                            <i className="icon-list-unordered"></i>
+                            All Soldiers
+                        </Link>
+                    </li>
+                    }
 
                     {oauth.user !== null &&  oauth.user.whoami === 'central' &&
                         <li className="nav-item">

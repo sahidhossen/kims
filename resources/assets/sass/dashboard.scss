@@ -1,3 +1,17 @@
+
+.bg-red-light {
+  background: $red_light !important;
+  color: $white;
+}
+.bg-blue-dark-shade{
+  background: $blue_dark_shade !important;
+}
+.bg-blue-dark{
+  background: $blue_dark !important;
+}
+.bg-white {
+  background: $white !important;
+}
 .navbar {
   padding:0;
 }
@@ -56,24 +70,73 @@
 .modal-header{
   padding: 1.25em 1.25em 0 1.25em;
 }
-
-.loginPage {
-  width: 450px;
-  margin: 30px auto;
+.loginFormHolder {
+  .mask-backaground {
+    background-image: url('/images/gardient_bg.jpg');
+    -webkit-background-size: cover;
+    background-size: cover;
+    position: fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    z-index:-1;
+    height:100%;
+    width:100%;
+  }
+  .loginPage {
+    width: 450px;
+    margin: 10% auto;
+    position: relative;
+    background: transparent;
+    .login-mask {
+      background: #26262ed9;
+      position: absolute;
+      top:0;
+      bottom:0;
+      left:0;
+      right:0;
+      -webkit-border-radius:5px;
+      -moz-border-radius:5px;
+      border-radius:5px;
+    }
+    .card {
+      background-color: transparent;
+      border: none;
+    }
+    .form-control {
+      background: transparent;
+      border-color: rgba(255,255,255,0.15);
+      color: #ffffff;
+    }
+    .btn-orange {
+      background: #EA6157;
+      color: #ffffff;
+    }
+    .form-title {
+      color: #f1f1f1;
+      text-transform: uppercase;
+      font-weight:300;
+    }
+    label {
+      color: #f1f1f1;
+      font-weight:300;
+    }
     .login_url {
       text-align: center;
-      font-size:18px;
-      margin-bottom:30px;
-      margin-top:10px;
+      font-size: 18px;
+      margin-bottom: 30px;
+      margin-top: 10px;
       display: block;
     }
     .note {
-      font-size:12px;
-      margin:5px 0;
-      padding:0;
+      font-size: 12px;
+      margin: 5px 0;
+      padding: 0;
       color: #a9a9a9;
       font-style: italic;
     }
+  }
 }
 
 .add-kit-types-box {
@@ -118,12 +181,145 @@
   display: block !important;
 }
 .user-counter-box{
-  width: 250px;
-  
   .total-user{
-    height:250px;
-    background-color: #437ae8;
+    padding-top:50px;
+    padding-bottom:50px;
     color:#ffffff;
-    
+    text-align: center;
+  }
+}
+.kit-box-shadow {
+  -webkit-box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  border:none;
+}
+
+.token-box {
+  -webkit-box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  border-radius:5px;
+  overflow: hidden;
+    .token-front {
+      width: 200px;
+      i {
+        font-size: 25px;
+      }
+    }
+    .token-data {
+      padding-left: 10px;
+      padding-top: 25px;
+      padding-bottom: 25px;
+      text-align: center;
+
+      .token-title {
+        color: $blue_dark;
+        font-size: 2.5em;
+        padding: 0;
+        margin: 0;
+        line-height: 48px;
+      }
+      .token-sub-title {
+        color: #6d6e6e;
+        margin: 0;
+        padding: 0;
+        font-size: 18px;
+      }
+    }
+}
+
+.kims-form {
+  .form-control {
+    font-size:18px;
+    font-weight:300;
+    height:55px;
+  }
+  label {
+    font-size:18px;
+    font-weight:300;
+  }
+}
+
+.lds-dual-ring {
+  display: inline-block;
+  width: 54px;
+  height: 54px;
+  position: absolute;
+  right: 0;
+  top: 12px;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 36px;
+  height: 36px;
+  margin: 1px;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.search-box-container {
+  margin-bottom:10px;
+  .form-control {
+    -webkit-box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    -moz-box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border:none;
+    height:50px;
+    font-size:18px;
+    font-weight:300;
+  }
+}
+
+.badge-right {
+  font-size:14px;
+  font-weight:300;
+  position: absolute;
+  right: 10px;
+  top: 20px;
+}
+
+.token-label {
+  display: inline-block;
+  font-size:14px;
+  font-weight:300;
+  position: absolute;
+  right: 10px;
+  top: 20px;
+  padding:3px 5px;
+  text-align:  center;
+  min-width:30px;
+  -webkit-border-radius:10px;
+  -moz-border-radius:10px;
+  border-radius:10px;
+  &.token-white {
+    background: #ffffff;
+    color: $blue_dark;
+
+  }
+}
+
+.navbar-brand {
+  font-size: 1.5em;
+  text-align: center;
+  padding-top: 0;
+  padding-bottom: 0;
+  .app-name {
+
+    font-weight:bold;
+    color: #ffffff;
   }
 }

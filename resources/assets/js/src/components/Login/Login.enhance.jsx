@@ -7,12 +7,14 @@ export default compose(
     connect(store => {
         return { users: store.users, oauth: store.oauth }
     }),
-    withState('state', 'setState', { secret_id:'',password:''}),
+    withState('state', 'setState', { secret_id:'',password:'', error: ''}),
     withHandlers({
         login : props => event => {
             event.preventDefault()
-            let { state:{secret_id, password } } = props 
+            let { state, setState } = props
+            let {secret_id, password } = state
             props.dispatch(fetchOauthToken({username:secret_id,password:password}))
+            setState({...state, error: ''})
         },
         onFieldChange: props => event => {
             let { state:{secret_id, password }, setState } = props 
@@ -36,10 +38,6 @@ export default compose(
           }
         },
         componentWillReceiveProps(nextProps) {
-            console.log(nextProps);
-            // if( nextProps.oauth.oauth.access_token !== null && nextProps.oauth.oauth.user === null ){
-            //     this.props.dispatch(fetchAuthUser())
-            // }
             if( nextProps.oauth.oauth.access_token !== null && nextProps.oauth.oauth.user !== null ){
                 this.props.history.push('/dashboard')
             }

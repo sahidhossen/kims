@@ -9,35 +9,26 @@ export default compose(
         return { oauth: store.oauth, users: store.users}
     }),
     userIsAuthenticated,
-    withState('state', 'setState', {name:'', secret_id:'',password:'',designation:'',professional:'',mobile:''}),
+    withState('state', 'setState', {searchResult:[], switchToSearch: false, searchTxt:'' }),
     withHandlers({
-        addNewSolder: props => event => {
-            event.preventDefault()
-            let { state:{name,secret_id, password,designation,professional,mobile }} = props 
-            let {company_id,central_id,formation_id,unit_id} = props.oauth.user
-            const user = {name,secret_id, password,designation,professional,mobile ,company_id,central_id,formation_id,unit_id,role:'solder'};
-            props.dispatch(addUser(user))
-        },
-        onFieldChange: props => event => {
-            let { state:{name,secret_id, password,designation,professional,mobile }, setState } = props 
-            let value = event.target.value 
-            let Inputname = event.target.name;
-
-            if(Inputname === 'name')
-                name = value
-            if(Inputname === 'secret_id')
-                secret_id = value 
-            if( Inputname === 'password' )
-                password = value
-            if( Inputname === 'designation' )
-                designation = value
-            if( Inputname === 'professional' )
-                professional = value
-            if( Inputname === 'mobile' )
-                mobile = value
-            
-            setState({...props.state,name, secret_id, password,designation,professional,mobile })
-        }
+         onSoldierSearch: props => event => {
+             let { state, setState, users } = props
+             let { searchResult, switchToSearch, searchTxt } = state
+             let searchValue = event.target.value
+             if (searchValue.length === 0){
+                 setState({...state, searchTxt: searchValue, switchToSearch: false })
+             }else {
+                 searchResult = users.users.filter(
+                     c => c.name.toLowerCase().search(searchTxt.toLowerCase()) !== -1
+                 )
+                 setState({
+                     ...state,
+                     searchTxt: searchValue,
+                     searchResult,
+                     switchToSearch: true
+                 })
+             }
+         }
     }),
     lifecycle({
         componentDidMount(){
@@ -47,11 +38,7 @@ export default compose(
             }
         },
         componentWillReceiveProps(nextProps){
-            let { users:{users}} = nextProps
-            if( !_.isEqual(users, this.props.users.users )){
-               let { state, setState } = this.props 
-               setState({...state, name:'', secret_id:'',password:'',designation:'',professional:'',mobile:''})
-            }
+
         }
     }),
     pure

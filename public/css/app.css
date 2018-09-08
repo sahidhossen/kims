@@ -32,6 +32,23 @@
           flex: 1;
 }
 
+.bg-red-light {
+  background: #fc7b7b !important;
+  color: #ffffff;
+}
+
+.bg-blue-dark-shade {
+  background: #243137 !important;
+}
+
+.bg-blue-dark {
+  background: #2F3D46 !important;
+}
+
+.bg-white {
+  background: #ffffff !important;
+}
+
 .navbar {
   padding: 0;
 }
@@ -97,12 +114,64 @@
   padding: 1.25em 1.25em 0 1.25em;
 }
 
-.loginPage {
-  width: 450px;
-  margin: 30px auto;
+.loginFormHolder .mask-backaground {
+  background-image: url("/images/gardient_bg.jpg");
+  background-size: cover;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  height: 100%;
+  width: 100%;
 }
 
-.loginPage .login_url {
+.loginFormHolder .loginPage {
+  width: 450px;
+  margin: 10% auto;
+  position: relative;
+  background: transparent;
+}
+
+.loginFormHolder .loginPage .login-mask {
+  background: #26262ed9;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: 5px;
+}
+
+.loginFormHolder .loginPage .card {
+  background-color: transparent;
+  border: none;
+}
+
+.loginFormHolder .loginPage .form-control {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.loginFormHolder .loginPage .btn-orange {
+  background: #EA6157;
+  color: #ffffff;
+}
+
+.loginFormHolder .loginPage .form-title {
+  color: #f1f1f1;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+.loginFormHolder .loginPage label {
+  color: #f1f1f1;
+  font-weight: 300;
+}
+
+.loginFormHolder .loginPage .login_url {
   text-align: center;
   font-size: 18px;
   margin-bottom: 30px;
@@ -110,7 +179,7 @@
   display: block;
 }
 
-.loginPage .note {
+.loginFormHolder .loginPage .note {
   font-size: 12px;
   margin: 5px 0;
   padding: 0;
@@ -157,13 +226,161 @@
   display: block !important;
 }
 
-.user-counter-box {
-  width: 250px;
+.user-counter-box .total-user {
+  padding-top: 50px;
+  padding-bottom: 50px;
+  color: #ffffff;
+  text-align: center;
 }
 
-.user-counter-box .total-user {
-  height: 250px;
-  background-color: #437ae8;
+.kit-box-shadow {
+  -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border: none;
+}
+
+.token-box {
+  -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.token-box .token-front {
+  width: 200px;
+}
+
+.token-box .token-front i {
+  font-size: 25px;
+}
+
+.token-box .token-data {
+  padding-left: 10px;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  text-align: center;
+}
+
+.token-box .token-data .token-title {
+  color: #2F3D46;
+  font-size: 2.5em;
+  padding: 0;
+  margin: 0;
+  line-height: 48px;
+}
+
+.token-box .token-data .token-sub-title {
+  color: #6d6e6e;
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+}
+
+.kims-form .form-control {
+  font-size: 18px;
+  font-weight: 300;
+  height: 55px;
+}
+
+.kims-form label {
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.lds-dual-ring {
+  display: inline-block;
+  width: 54px;
+  height: 54px;
+  position: absolute;
+  right: 0;
+  top: 12px;
+}
+
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 36px;
+  height: 36px;
+  margin: 1px;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  -webkit-animation: lds-dual-ring 1.2s linear infinite;
+          animation: lds-dual-ring 1.2s linear infinite;
+}
+
+@-webkit-keyframes lds-dual-ring {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+
+@keyframes lds-dual-ring {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+
+.search-box-container {
+  margin-bottom: 10px;
+}
+
+.search-box-container .form-control {
+  -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border: none;
+  height: 50px;
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.badge-right {
+  font-size: 14px;
+  font-weight: 300;
+  position: absolute;
+  right: 10px;
+  top: 20px;
+}
+
+.token-label {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 300;
+  position: absolute;
+  right: 10px;
+  top: 20px;
+  padding: 3px 5px;
+  text-align: center;
+  min-width: 30px;
+  border-radius: 10px;
+}
+
+.token-label.token-white {
+  background: #ffffff;
+  color: #2F3D46;
+}
+
+.navbar-brand {
+  font-size: 1.5em;
+  text-align: center;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.navbar-brand .app-name {
+  font-weight: bold;
   color: #ffffff;
 }
 
