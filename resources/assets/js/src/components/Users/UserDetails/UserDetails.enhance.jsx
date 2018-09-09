@@ -132,6 +132,7 @@ export default compose(
             if(!_.isEqual(this.props.users.currentItems, users.currentItems) && state.lastKitItemId !== null ){
                 removeSelectedKitItem();
             }
+
         }
 
     }),
