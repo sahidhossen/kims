@@ -123,11 +123,11 @@ class UserController extends Controller
                                 array_push($unitCompanies, $user);
                             }
                         }
-                        if(count($unitCompanies) > 0 ){
-                            foreach( $unitCompanies as $key=>$company){
-                                $unitCompanies[$key]['pending_request'] = count(KitItemRequest::getUnitItemPendingRequestByCompany($company->company_id, $company->unit_id));
-                            }
-                        }
+//                        if(count($unitCompanies) > 0 ){
+//                            foreach( $unitCompanies as $key=>$company){
+//                                $unitCompanies[$key]['pending_request'] = count(KitItemRequest::getUnitItemPendingRequestByCompany($company->company_id, $company->unit_id));
+//                            }
+//                        }
                     }
 
             }
