@@ -543,9 +543,11 @@ class UserController extends Controller
             $companyTerms = TermRelation::getCompanySolderTerms($currentUser->id);
 
             if (count($companyTerms) > 0) {
-                foreach ($companyTerms as $term) {
+		    foreach ($companyTerms as $term) {
                     $solder = User::find($term->user_id);
-                    array_push($companySolders, $solder);
+		     if(!$solder)
+                         continue;
+		    array_push($companySolders, $solder);
                 }
             }
             return ['success'=>true, 'data'=> $companySolders ,'message'=>'Fetch users by company id'];
