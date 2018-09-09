@@ -12,17 +12,20 @@ export default compose(
     withState('state', 'setState', {}),
     lifecycle({
         componentDidMount() {
+            let { users, oauth } = this.props
+            if( users.users.length === 0 && oauth.user !== null ) {
+                if (users.fetched === false && users.users.length === 0 && oauth.user.whoami === 'company') {
+                    this.props.dispatch(fetchUserByCompany());
+                }
+            }
         },
         componentWillReceiveProps(nextProps){
             let { users, oauth } = nextProps
             if( users.users.length === 0 && oauth.user !== null ){
-
                 if( users.fetched === false && users.users.length === 0 &&  oauth.user.whoami === 'company'){
                     this.props.dispatch(fetchUserByCompany());
                 }
             }
-            console.log("home: ", nextProps)
-
         }
 
     }),

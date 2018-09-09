@@ -60268,21 +60268,132 @@ var DefaultDashboard = exports.DefaultDashboard = function DefaultDashboard() {
         { className: "content" },
         _react2.default.createElement(
             "div",
-            { className: "row" },
+            { className: "row m-0" },
             _react2.default.createElement(
                 "div",
-                { className: "content" },
+                { className: "col-6" },
                 _react2.default.createElement(
                     "div",
-                    { className: "card" },
-                    _react2.default.createElement("div", { className: "card-header header-elements-inline" }),
+                    { className: "token-box row align-items-center bg-red-light" },
                     _react2.default.createElement(
                         "div",
-                        { className: "card-body" },
+                        { className: "token-front  text-center" },
                         _react2.default.createElement(
-                            "h1",
+                            "span",
                             null,
-                            " We Will Take Care It later! "
+                            _react2.default.createElement("i", { className: "icon-users" })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "token-data flex-1 align-items-center bg-white" },
+                        _react2.default.createElement(
+                            "p",
+                            { className: "token-sub-title" },
+                            " Formation "
+                        ),
+                        _react2.default.createElement(
+                            "h3",
+                            { className: "token-title" },
+                            " 2 "
+                        )
+                    )
+                )
+            ),
+            _react2.default.createElement(
+                "div",
+                { className: "col-5 offset-1" },
+                _react2.default.createElement(
+                    "div",
+                    { className: "token-box row align-items-center bg-red-light" },
+                    _react2.default.createElement(
+                        "div",
+                        { className: "token-front  text-center" },
+                        _react2.default.createElement(
+                            "span",
+                            null,
+                            _react2.default.createElement("i", { className: "icon-list-unordered" })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "token-data flex-1 align-items-center bg-white" },
+                        _react2.default.createElement(
+                            "p",
+                            { className: "token-sub-title" },
+                            " Units "
+                        ),
+                        _react2.default.createElement(
+                            "h3",
+                            { className: "token-title" },
+                            " 2 "
+                        )
+                    )
+                )
+            )
+        ),
+        _react2.default.createElement("br", null),
+        _react2.default.createElement(
+            "div",
+            { className: "row m-0" },
+            _react2.default.createElement(
+                "div",
+                { className: "col-6" },
+                _react2.default.createElement(
+                    "div",
+                    { className: "token-box row align-items-center bg-red-light" },
+                    _react2.default.createElement(
+                        "div",
+                        { className: "token-front  text-center" },
+                        _react2.default.createElement(
+                            "span",
+                            null,
+                            _react2.default.createElement("i", { className: "icon-users" })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "token-data flex-1 align-items-center bg-white" },
+                        _react2.default.createElement(
+                            "p",
+                            { className: "token-sub-title" },
+                            " Total Soldiers "
+                        ),
+                        _react2.default.createElement(
+                            "h3",
+                            { className: "token-title" },
+                            " 300 "
+                        )
+                    )
+                )
+            ),
+            _react2.default.createElement(
+                "div",
+                { className: "col-5 offset-1" },
+                _react2.default.createElement(
+                    "div",
+                    { className: "token-box row align-items-center bg-red-light" },
+                    _react2.default.createElement(
+                        "div",
+                        { className: "token-front  text-center" },
+                        _react2.default.createElement(
+                            "span",
+                            null,
+                            _react2.default.createElement("i", { className: "icon-list-unordered" })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "token-data flex-1 align-items-center bg-white" },
+                        _react2.default.createElement(
+                            "p",
+                            { className: "token-sub-title" },
+                            " Total Kit Items "
+                        ),
+                        _react2.default.createElement(
+                            "h3",
+                            { className: "token-title" },
+                            " 1200 "
                         )
                     )
                 )
@@ -60317,18 +60428,26 @@ var _userActions = __webpack_require__(15);
 exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) {
     return { oauth: store.oauth, users: store.users };
 }), _services.userIsAuthenticated, (0, _recompose.withState)('state', 'setState', {}), (0, _recompose.lifecycle)({
-    componentDidMount: function componentDidMount() {},
+    componentDidMount: function componentDidMount() {
+        var _props = this.props,
+            users = _props.users,
+            oauth = _props.oauth;
+
+        if (users.users.length === 0 && oauth.user !== null) {
+            if (users.fetched === false && users.users.length === 0 && oauth.user.whoami === 'company') {
+                this.props.dispatch((0, _userActions.fetchUserByCompany)());
+            }
+        }
+    },
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
         var users = nextProps.users,
             oauth = nextProps.oauth;
 
         if (users.users.length === 0 && oauth.user !== null) {
-
             if (users.fetched === false && users.users.length === 0 && oauth.user.whoami === 'company') {
                 this.props.dispatch((0, _userActions.fetchUserByCompany)());
             }
         }
-        console.log("home: ", nextProps);
     }
 }), _recompose.pure);
 
