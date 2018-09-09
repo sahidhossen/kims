@@ -59,9 +59,11 @@ export default compose(
         },
         onChangeAction: props => (option, name) => {
             let { state, setState, users } = props
+
             if( name === 'kit_type_id' ){
                 setState({ ...state , kitTypeSelection: option })
-                let params = { central_office_id: users.user.central_office_id, item_type_id: option.value }
+                let params = { central_office_id: users.user.terms.central_id, item_type_id: option.value }
+
                 props.dispatch(getKitItemsByCentralId(params))
             }
             if(name === 'kit_item_id'){

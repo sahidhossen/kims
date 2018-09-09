@@ -71020,9 +71020,11 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 setState = props.setState,
                 users = props.users;
 
+
             if (name === 'kit_type_id') {
                 setState((0, _extends3.default)({}, state, { kitTypeSelection: option }));
-                var params = { central_office_id: users.user.central_office_id, item_type_id: option.value };
+                var params = { central_office_id: users.user.terms.central_id, item_type_id: option.value };
+
                 props.dispatch((0, _kitItemActions.getKitItemsByCentralId)(params));
             }
             if (name === 'kit_item_id') {
