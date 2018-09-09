@@ -245,6 +245,44 @@ class UserController extends Controller
     }
 
     /*
+     * Get kit Items by solder id
+     * When user login as a company and get all solder
+     * then each solder needs their items
+     */
+    public function getWebKitItemBySolderId(Request $request){
+        try{
+            if(!$request->input('user_id') )
+                throw new Exception("Must be need user ID");
+            $currentUser = User::find( $request->input('user_id') );
+            $solderKit = SolderKits::where('user_id',$currentUser->id )
+                ->where('status','!=',3)->get();
+            $items = [];
+            if (count($solderKit) > 0) {
+                foreach ($solderKit as $kit) {
+                    $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
+                    $itemType = ItemType::find($kit->item_type_id);
+                    $solderInformation->item_name = $itemType->type_name;
+                    $solderInformation->status = $kit->status;
+                    $solderInformation->issue_date = $kit->issue_date;
+                    $solderInformation->expire_date = $kit->expire_date;
+                    $solderInformation->id = $kit->id;
+                    $solderInformation->name = $currentUser->name;
+                    $solderInformation->professional = $currentUser->professional;
+                    $solderInformation->designation = $currentUser->designation;
+                    $solderInformation->mobile = $currentUser->mobile;
+                    $solderInformation->secret_id = $currentUser->secret_id;
+//                    $items[$itemType->type_name][] = $solderInformation;
+                    array_push($items, $solderInformation);
+                }
+
+            }
+            return [ 'success' => true, 'data' => $items, 'message'=>'Current user information.'];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=> $e->getMessage()];
+        }
+    }
+
+    /*
      * Fetch All kit users
      */
     public function getAllKitUser(){
@@ -545,6 +583,8 @@ class UserController extends Controller
             if (count($companyTerms) > 0) {
                 foreach ($companyTerms as $term) {
                     $solder = User::find($term->user_id);
+                    if(!$solder)
+                        continue;
                     array_push($companySolders, $solder);
                 }
             }

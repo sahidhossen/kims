@@ -7028,7 +7028,7 @@ var addUser = exports.addUser = function addUser(data) {
 var assignItemToSolder = exports.assignItemToSolder = function assignItemToSolder(data) {
     return function (dispatch, getState) {
         _axios2.default.post('/api/assign_kit_item', data).then(function (response) {
-            // console.log("assign: ", response)
+
             if (response.data.success === true) {
                 var store = getState();
                 var users = store.users;
@@ -7050,7 +7050,7 @@ var assignItemToSolder = exports.assignItemToSolder = function assignItemToSolde
 var getAssignedItems = exports.getAssignedItems = function getAssignedItems(data) {
     return function (dispatch) {
 
-        _axios2.default.get('/api/kit_items_by_solder_id', { params: data }).then(function (response) {
+        _axios2.default.get('/api/web_kit_items_by_solder_id', { params: data }).then(function (response) {
             if (response.data.success === true) {
                 dispatch({ type: constants.FETCH_USER_ITEMS, payload: response.data.data });
             } else {
