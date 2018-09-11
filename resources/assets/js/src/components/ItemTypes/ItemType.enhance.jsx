@@ -12,7 +12,10 @@ export default compose(
     withState('state', 'setState', {
         kitType: { type_name: '', details:'', id:0 },
         error: '',
-        isUpdate: false
+        isUpdate: false,
+        selected_type: null,
+        isItemProblemModal: false,
+        type_index: null
     }),
     withHandlers({
         onChangeAction: props => event => {
@@ -41,9 +44,12 @@ export default compose(
         },
         kitTypeEditAction: props => (e, index) => {
             let { kitTypes, state, setState } = props
-            console.log("index: ", index)
             setState({...state, kitType: kitTypes.kitTypes[index], isUpdate: true })
             window.scrollTo(0,0)
+        },
+        openModal: props => index => {
+            let { state, setState, kitTypes: {kitTypes} } = props;
+            setState({...state, isItemProblemModal: !state.isItemProblemModal, selected_type: kitTypes[index], type_index: index })
         }
     }),
     lifecycle({

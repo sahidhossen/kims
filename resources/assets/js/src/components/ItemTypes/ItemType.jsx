@@ -1,9 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import ItemProblem from './ItemProblem'
 
 export const KitItem = ({
     kitTypes,
     addKitType,
+    openModal,
     onChangeAction,
     kitTypeEditAction,
     state
@@ -74,6 +76,7 @@ export const KitItem = ({
                                                 <div className="btn btn-info" onClick={(e)=> {kitTypeEditAction(e, index)}}> Edit </div>
                                                 &nbsp;
                                                 {/*<div className="btn btn-danger" onClick={(e)=> {userDeleteAction(e, index)}}> Delete </div>*/}
+                                                <div className="btn btn-primary" onClick={()=>{openModal(index)}}> ({type.problems === null ? 0 :type.problems.length}) Problem List </div>
                                             </div>
                                         </div>
                                     </div>
@@ -85,6 +88,11 @@ export const KitItem = ({
                 </div>
             </div>
         </div>
+        {state.isItemProblemModal &&
+            <ItemProblem
+                onClose={()=>{openModal()}}
+                type_index={state.type_index}
+                kit_type={state.selected_type} /> }
     </div>
 )
 
@@ -93,6 +101,7 @@ KitItem.propTypes = {
     addKitType: PropTypes.func,
     onChangeAction: PropTypes.func,
     kitTypeEditAction: PropTypes.func,
+    openModal: PropTypes.func,
     state: PropTypes.object
 }
 

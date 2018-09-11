@@ -38,9 +38,9 @@ class ItemTypeController extends Controller
 
     public function update(Request $request){
         try{
-            if( !$request->input('type_id'))
+            if( !$request->input('id'))
                 throw new Exception("Type Id must be need");
-            $itemType = ItemType::find( $request->input('type_id'));
+            $itemType = ItemType::find( $request->input('id'));
 
             $typeName = $request->input('type_name');
             if( $typeName == '' )
@@ -48,8 +48,10 @@ class ItemTypeController extends Controller
 
             $itemType->type_name = $typeName;
             $itemType->details = $request->input('details') ? $request->input('details')  : $itemType->details;
+            $itemType->problems = $request->input('problems') ? \GuzzleHttp\json_encode($request->input('problems')) : $itemType->problems;
             $itemType->status =  $request->input('status') ? $request->input('status') : $itemType->status;
             $itemType->save();
+            $itemType->problems = \GuzzleHttp\json_decode($itemType->problems);
             return ['success'=>true, 'data'=>$itemType, 'message'=>'Item Type Update!'];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
@@ -64,7 +66,7 @@ class ItemTypeController extends Controller
             $itemType = ItemType::find($request->input('type_id'));
             if( !$itemType )
                 throw new Exception("Item Type not found with this ID");
-
+            $itemType->problems = $itemType->problems == null ? null : \GuzzleHttp\json_decode($itemType->problems);
             return ['success'=>true ,'data'=>$itemType, 'message'=>"Found item type"];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
@@ -74,6 +76,13 @@ class ItemTypeController extends Controller
     public function fetchAll(){
         try{
             $itemTypes = ItemType::all();
+            if(count($itemTypes)>0){
+                foreach( $itemTypes as $types ) {
+                    if($types->problems != null ){
+                        $types->problems = \GuzzleHttp\json_decode($types->problems);
+                    }
+                }
+            }
             return ['success'=>true, 'data'=>$itemTypes,'message'=>"All item types"];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];

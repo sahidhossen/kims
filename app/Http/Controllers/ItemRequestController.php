@@ -406,6 +406,12 @@ class ItemRequestController extends Controller
                 'condemnation_id'=>$request->input('condemnation_id'),
                 'status'=>1
             ])->whereIn('stage', array(1,2,4,5))->get();
+
+            if(count($pendingRequest) > 0 ){
+                foreach($pendingRequest as $pRequest){
+                    $pRequest->kit_items = \GuzzleHttp\json_decode($pRequest->kit_items);
+                }
+            }
             return ['success'=>true,'data'=>$pendingRequest, 'terms'=>$unitTerms];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];

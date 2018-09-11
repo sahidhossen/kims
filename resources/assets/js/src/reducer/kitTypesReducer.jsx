@@ -5,6 +5,8 @@ const kitTypes = function reducer(
         kitTypes: [],
         fetching: false,
         fetched: false,
+        type_problem_fetching: false,
+        type_problem_fetched: false,
         error: null
     },
     action
@@ -24,6 +26,21 @@ const kitTypes = function reducer(
                 error: null,
                 fetched: true,
                 kitTypes: action.payload,
+            }
+        }
+        case constants.FETCHING_KIT_TYPE_PROBLEM: {
+            return {
+                ...state,
+                type_problem_fetching: true,
+                type_problem_fetched: false,
+            }
+        }
+        case constants.FETCHED_KIT_TYPE_PROBLEM: {
+            return {
+                ...state,
+                type_problem_fetching: false,
+                type_problem_fetched: true,
+                kitTypes: action.payload
             }
         }
     }

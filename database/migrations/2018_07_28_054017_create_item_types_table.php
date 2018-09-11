@@ -18,6 +18,7 @@ class CreateItemTypesTable extends Migration
             $table->string('type_name');
             $table->string('type_slug')->nullable();
             $table->text('details')->nullable();
+            $table->text('problems')->nullable();
             $table->integer('status')->default(0);
             $table->timestamps();
         });

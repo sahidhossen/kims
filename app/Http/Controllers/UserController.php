@@ -57,6 +57,7 @@ class UserController extends Controller
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
                     $itemType = ItemType::find($kit->item_type_id);
                     $solderInformation->item_name = $itemType->type_name;
+                    $solderInformation->problems = ($itemType->problems == null) ? [] : \GuzzleHttp\json_decode($itemType->problems);
                     $solderInformation->status = $kit->status;
                     $solderInformation->issue_date = $kit->issue_date;
                     $solderInformation->expire_date = $kit->expire_date;
@@ -217,6 +218,7 @@ class UserController extends Controller
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
                     $itemType = ItemType::find($kit->item_type_id);
                     $solderInformation->item_name = $itemType->type_name;
+                    $solderInformation->problems = ($itemType->problems == null) ? [] : \GuzzleHttp\json_decode($itemType->problems);
                     $solderInformation->status = $kit->status;
                     $solderInformation->issue_date = $kit->issue_date;
                     $solderInformation->expire_date = $kit->expire_date;
@@ -262,6 +264,7 @@ class UserController extends Controller
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
                     $itemType = ItemType::find($kit->item_type_id);
                     $solderInformation->item_name = $itemType->type_name;
+                    $solderInformation->problems = ($itemType->problems == null) ? [] : \GuzzleHttp\json_decode($itemType->problems);
                     $solderInformation->status = $kit->status;
                     $solderInformation->issue_date = $kit->issue_date;
                     $solderInformation->expire_date = $kit->expire_date;

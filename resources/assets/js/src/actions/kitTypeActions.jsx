@@ -35,3 +35,30 @@ export const addKitType = data => (dispatch, getState) => {
             // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
         });
 }
+
+/*
+ Data contains (problem_list=array, index=integer, item_type_id=integer)
+ */
+export const addKitTypeProblem = data => (dispatch, getState) => {
+    dispatch({
+        type: constants.FETCHING_KIT_TYPE_PROBLEM
+    })
+
+    // return
+    axios.post('/api/update_item_type', data)
+        .then(function (response) {
+            if( response.data.success === true ) {
+                let store = getState()
+                let {kitTypes: {kitTypes} } = store
+                kitTypes[data.index] = response.data.data
+                dispatch({type: constants.FETCH_KIT_TYPE, payload: kitTypes});
+            }else {
+                console.log("problem add error: ", response.data.message)
+
+            }
+        })
+        .catch(function (error) {
+            console.log("kit controller error: ",error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
+}
