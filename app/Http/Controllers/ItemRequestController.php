@@ -410,11 +410,9 @@ class ItemRequestController extends Controller
                 'status'=>1
             ])->whereIn('stage', array(1,2,4,5))->first();
 
-            if(count($pendingRequest) > 0 ){
-                foreach($pendingRequest as $pRequest){
-                    $pRequest->kit_items = \GuzzleHttp\json_decode($pRequest->kit_items);
-                }
-            }
+            if(!$pendingRequest)
+                throw new Exception("Unit has no pending request!");
+            $pendingRequest->kit_items = \GuzzleHttp\json_decode($pendingRequest->kit_items);
             return ['success'=>true,'data'=>$pendingRequest, 'terms'=>$unitTerms];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
