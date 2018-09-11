@@ -121,6 +121,8 @@ class UserController extends Controller
                             if($user->hasRole('company')) {
                                 $user->company_id = $term->company_id;
                                 $user->unit_id = $term->unit_id;
+                                $company = TermRelation::getCompanyInfoByUserId($user->id);
+                                $user->company_name = $company == null ? null : $company->company_name;
                                 array_push($unitCompanies, $user);
                             }
                         }
