@@ -406,9 +406,9 @@ class ItemRequestController extends Controller
             $pendingRequest = KitItemRequest::where([
                 'unit_user_id'=>$unitUser->id,
                 'condemnation_id'=>$request->input('condemnation_id'),
-                'company_user_id'=>$request->input('condemnation_user_id'),
+                'company_user_id'=>$request->input('company_user_id'),
                 'status'=>1
-            ])->whereIn('stage', array(1,2,4,5))->get();
+            ])->whereIn('stage', array(1,2,4,5))->first();
 
             if(count($pendingRequest) > 0 ){
                 foreach($pendingRequest as $pRequest){
