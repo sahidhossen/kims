@@ -392,6 +392,8 @@ class ItemRequestController extends Controller
 
     /*
      * Get all pending request by condemnation id
+     * @condemnation_id
+     * @company_user_id
      */
     public function unitLevelPendingRequest(Request $request){
         try{
@@ -404,6 +406,7 @@ class ItemRequestController extends Controller
             $pendingRequest = KitItemRequest::where([
                 'unit_user_id'=>$unitUser->id,
                 'condemnation_id'=>$request->input('condemnation_id'),
+                'company_user_id'=>$request->input('condemnation_user_id'),
                 'status'=>1
             ])->whereIn('stage', array(1,2,4,5))->get();
 
