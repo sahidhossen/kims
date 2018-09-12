@@ -26,6 +26,8 @@ Route::middleware('auth:api')->get('/kit_solder', 'UserController@getKitSolder')
 Route::middleware('auth:api')->get('/kit_items_by_solder_id', 'UserController@getKitItemBySolderId'); // After auth from mobile device
 Route::middleware('auth:api')->get('/web_kit_items_by_solder_id', 'UserController@getWebKitItemBySolderId'); // After auth from mobile device
 
+Route::middleware('auth:api')->post('/save_device_id', 'UserController@saveUserDeviceId'); // Save user device Id
+
 Route::middleware('auth:api')->get('/kit_users', 'UserController@getAllKitUser');
 Route::middleware('auth:api')->post('/kit_user_register', 'UserController@userRegister');
 Route::middleware('auth:api')->get('/kit_user_by_id', 'UserController@userById');

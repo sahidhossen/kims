@@ -24,7 +24,11 @@ export default compose(
     lifecycle({
         componentDidMount() {
             this.props.dispatch(getKitController())
+        },
+        componentWillReceiveProps(nextProps){
+            console.log("next: ", nextProps)
         }
+
     }),
     pure
 )

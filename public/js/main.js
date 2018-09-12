@@ -57252,6 +57252,7 @@ var kitControllers = function reducer() {
         formation_offices: [],
         units: [],
         companies: [],
+        quarters: [],
         fetching: false,
         fetched: false,
         error: null
@@ -57272,7 +57273,8 @@ var kitControllers = function reducer() {
                     central_offices = _action$payload.central_offices,
                     formation_offices = _action$payload.formation_offices,
                     units = _action$payload.units,
-                    companies = _action$payload.companies;
+                    companies = _action$payload.companies,
+                    quarters = _action$payload.quarters;
 
                 return (0, _extends3.default)({}, state, {
                     fetching: true,
@@ -57281,7 +57283,8 @@ var kitControllers = function reducer() {
                     central_offices: central_offices,
                     formation_offices: formation_offices,
                     units: units,
-                    companies: companies
+                    companies: companies,
+                    quarters: quarters
 
                 });
             }
@@ -71529,6 +71532,76 @@ var KitController = exports.KitController = function KitController(_ref) {
                             _react2.default.createElement(
                                 'h5',
                                 { className: 'card-title' },
+                                'Quarter Master'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'header-elements' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'btn btn-primary', onClick: function onClick() {
+                                            addKitController('quarter_master');
+                                        } },
+                                    ' Add Quarter Master '
+                                )
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'card-body' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'd-flex flex-column bg-light border rounded p-2' },
+                                kitControllers.quarters.length > 0 && kitControllers.quarters.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        'div',
+                                        { className: 'bg-slate py-2 px-3 rounded-top  border-top-1 ', key: index },
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'flex-row d-flex align-items-center' },
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'flex-1' },
+                                                office.quarter_name
+                                            ),
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'operation-area' },
+                                                _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-info' },
+                                                    ' Details '
+                                                ),
+                                                '\xA0',
+                                                _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-danger' },
+                                                    ' Delete '
+                                                )
+                                            )
+                                        )
+                                    );
+                                })
+                            )
+                        )
+                    )
+                )
+            ),
+            _react2.default.createElement(
+                'div',
+                { className: 'row' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'content' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'card' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'card-header header-elements-inline' },
+                            _react2.default.createElement(
+                                'h5',
+                                { className: 'card-title' },
                                 'Units'
                             ),
                             _react2.default.createElement(
@@ -72354,6 +72427,9 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
 }), (0, _recompose.lifecycle)({
     componentDidMount: function componentDidMount() {
         this.props.dispatch((0, _kitControllerActions.getKitController)());
+    },
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        console.log("next: ", nextProps);
     }
 }), _recompose.pure);
 

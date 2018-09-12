@@ -148,6 +148,8 @@ class UserController extends Controller
                         if($user->hasRole('unit')) {
                             $user->district_office_id = $term->district_office_id;
                             $user->unit_id = $term->unit_id;
+                            $unit = TermRelation::getUnitInfoByUserId($user->id);
+                            $user->unit_name = $unit->unit_name;
                             array_push($districtUnits, $user);
                         }
                     }
@@ -440,6 +442,8 @@ class UserController extends Controller
             $roleIdentity = 1;
         if($roleName === 'formation' )
             $roleIdentity = 2;
+        if($roleName === 'quarter_master')
+            $roleIdentity = 6;
         if($roleName === 'unit' )
             $roleIdentity = 3;
         if($roleName === 'company' )
@@ -598,9 +602,24 @@ class UserController extends Controller
         }catch (Exception $e){
             return ['success'=>false, 'message'=> $e->getMessage()];
         }
-        
-        
+    }
 
+    /*
+     * Save device ID
+     */
+    public function saveUserDeviceId(Request $request){
+        try{
+            if(!$request->input('device_id'))
+                throw new Exception("Device Id required");
+            $user = $request->user();
+            if(!$user)
+                throw new Exception("Sorry authentication problem");
+            $user->device_id = $request->input('device_id');
+            $user->save();
+            return ['success'=>true, 'message'=>"Device Id save successful!", 'device_id'=>$user->device_id];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=> $e->getMessage()];
+        }
     }
 
 }

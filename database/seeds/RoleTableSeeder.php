@@ -30,6 +30,12 @@ class RoleTableSeeder extends Seeder
         $bojso->description  = 'Upper then BQMS'; // optional
         $bojso->save();
 
+        $quarterMaster = new Role();
+        $quarterMaster->name         = 'quarter_master';
+        $quarterMaster->display_name = 'Quarter Master'; // optional
+        $quarterMaster->description  = 'Upper then Unit. It will handle all of the unit request!'; // optional
+        $quarterMaster->save();
+
         $bqms = new Role();
         $bqms->name         = 'unit';
         $bqms->display_name = 'UNIT Level'; // optional

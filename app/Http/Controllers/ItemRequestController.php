@@ -216,14 +216,14 @@ class ItemRequestController extends Controller
             $requestJsonData = array();
             $requestItems = 0;
             $collectedKitTypes = [];
-            foreach( $allPendingRequest as $pendingRequest ){
+            $mainCollection =[];
+            foreach( $allPendingRequest as $key=>$pendingRequest ){
                 // Get request item
                 $kitItem = SolderKits::find($pendingRequest->solder_kit_id);
 
                 // Collect item Ids
                 if(isset($requestJsonData['kit_ids'])){
                     $requestJsonData['kit_ids'] = $requestJsonData['kit_ids'].','.$kitItem->item_id;
-
                 }else {
                     $requestJsonData['kit_ids'] = (string)$kitItem->item_id;
                 }
@@ -238,11 +238,18 @@ class ItemRequestController extends Controller
 
                 $requestItems += 1;
             }
+            if(count($collectedKitTypes)>0){
+                foreach($collectedKitTypes as $type_name=>$quantity ){
+                    array_push($mainCollection, ['type_name'=>$type_name,'quantity'=>$quantity]);
+                }
+            }
+
+
 
             $companyUnitUser = TermRelation::getCompanyUnitUser($company_term->unit_id);
             if( count($requestJsonData) > 0 ) {
                 $requestJsonData = (object) $requestJsonData;
-                $requestJsonData->kit_types = $collectedKitTypes;
+                $requestJsonData->kit_types = $mainCollection;
                 // Check if it has already a request
                 $unitRequest = KitItemRequest::where([
                     'condemnation_id'=>$request->input('condemnation_id'),
@@ -392,8 +399,6 @@ class ItemRequestController extends Controller
 
     /*
      * Get all pending request by condemnation id
-     * @condemnation_id
-     * @company_user_id
      */
     public function unitLevelPendingRequest(Request $request){
         try{
@@ -406,13 +411,13 @@ class ItemRequestController extends Controller
             $pendingRequest = KitItemRequest::where([
                 'unit_user_id'=>$unitUser->id,
                 'condemnation_id'=>$request->input('condemnation_id'),
-                'company_user_id'=>$request->input('company_user_id'),
                 'status'=>1
-            ])->whereIn('stage', array(1,2,4,5))->first();
-
-            if(!$pendingRequest)
-                throw new Exception("Unit has no pending request!");
-            $pendingRequest->kit_items = \GuzzleHttp\json_decode($pendingRequest->kit_items);
+            ])->whereIn('stage', array(1,2,4,5))->get();
+            if(count($pendingRequest) > 0 ){
+                foreach($pendingRequest as $pRequest){
+                    $pRequest->kit_items = \GuzzleHttp\json_decode($pRequest->kit_items);
+                }
+            }
             return ['success'=>true,'data'=>$pendingRequest, 'terms'=>$unitTerms];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];

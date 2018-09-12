@@ -86,6 +86,37 @@ export const KitController = ({
                 <div className="content">
                     <div className="card">
                         <div className="card-header header-elements-inline">
+                            <h5 className="card-title">Quarter Master</h5>
+                            <div className="header-elements">
+                                <div className="btn btn-primary" onClick={()=>{addKitController('quarter_master')}}> Add Quarter Master </div>
+                            </div>
+                        </div>
+                        <div className="card-body">
+                            <div className="d-flex flex-column bg-light border rounded p-2">
+                                {kitControllers.quarters.length > 0 && kitControllers.quarters.map( (office, index) => (
+                                    <div className="bg-slate py-2 px-3 rounded-top  border-top-1 " key={index}>
+                                        <div className="flex-row d-flex align-items-center">
+                                            <div className="flex-1">
+                                                {office.quarter_name}
+                                            </div>
+                                            <div className="operation-area">
+                                                <div className="btn btn-info"> Details </div>
+                                                &nbsp;
+                                                <div className="btn btn-danger"> Delete </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="row">
+                <div className="content">
+                    <div className="card">
+                        <div className="card-header header-elements-inline">
                             <h5 className="card-title">Units</h5>
                             <div className="header-elements">
                                 <div className="btn btn-primary" onClick={()=>{addKitController('unit')}}> Add Unit </div>
