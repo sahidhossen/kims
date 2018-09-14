@@ -225,7 +225,7 @@ class TermRelation extends Model
         $districtUser = DB::table('term_relation')
             ->leftJoin('users','term_relation.user_id','=','users.id')
             ->leftJoin('district_offices','term_relation.district_office_id','=','district_offices.id')
-            ->where(['district_office_id'=>$district_office_id, 'role'=>2, 'term_type'=>0])
+            ->where(['term_relation.district_office_id'=>$district_office_id, 'term_relation.role'=>2, 'term_relation.term_type'=>0])
             ->first();
         return $districtUser;
     }
