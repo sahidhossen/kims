@@ -39,4 +39,18 @@ class Company extends Model
     {
         return $this->belongsTo('App\CentralOffice');
     }
+
+    /*
+    * Get office with admin
+    */
+    public static function getOfficesWithAdmin(){
+        $offices = self::all();
+        if(count($offices) > 0 ){
+            foreach($offices as $office){
+                $where = ['company_id'=>$office->id,'role'=>4];
+                $office->head = TermRelation::findMyAdmin($where);
+            }
+        }
+        return $offices;
+    }
 }

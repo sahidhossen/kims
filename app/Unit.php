@@ -38,4 +38,18 @@ class Unit extends Model
     {
         return $this->belongsTo('App\CentralOffice');
     }
+
+    /*
+    * Get office with admin
+    */
+    public static function getOfficesWithAdmin(){
+        $offices = self::all();
+        if(count($offices) > 0 ){
+            foreach($offices as $office){
+                $where = ['unit_id'=>$office->id,'role'=>3];
+                $office->head = TermRelation::findMyAdmin($where);
+            }
+        }
+        return $offices;
+    }
 }

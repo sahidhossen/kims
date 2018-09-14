@@ -85,6 +85,15 @@ class UserController extends Controller
                 $currentUser->company_id = $UserTerm->company_id;
                 $currentUser->central_id = $UserTerm->central_office_id;
                 $currentUser->formation_id = $UserTerm->district_office_id;
+                $companyHead = TermRelation::getSolderCompanyHead($UserTerm->company_id);
+                if($companyHead != null ){
+                    $companyHeadInfo = new \stdClass();
+                    $companyHeadInfo->device_id = $companyHead->device_id;
+                    $companyHeadInfo->name = $companyHead->name;
+                    $currentUser->company_head = $companyHeadInfo;
+                }else{
+                    $currentUser->company_head = null;
+                }
             }
 
             // Company level Data

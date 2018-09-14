@@ -37,4 +37,18 @@ class DistrictOffice extends Model
     {
         return $this->hasMany('App\Company');
     }
+
+    /*
+     * Get district office with admin
+     */
+    public static function getOfficesWithAdmin(){
+        $offices = self::all();
+        if(count($offices) > 0 ){
+            foreach($offices as $office){
+                $where = ['district_office_id'=>$office->id,'role'=>2];
+                $office->head = TermRelation::findMyAdmin($where);
+            }
+        }
+        return $offices;
+    }
 }

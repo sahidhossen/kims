@@ -119,6 +119,20 @@ class TermRelation extends Model
         return $result;
     }
 
+
+    /*
+     * Get Solder Company Head Information
+     */
+    public static function getSolderCompanyHead($company_id){
+        if(!$company_id)
+            return null;
+        $companyInfo = DB::table('users')
+                    ->leftJoin('term_relation','term_relation.user_id','=','users.id')
+                    ->where(['term_relation.company_id'=>$company_id,'term_relation.role'=>4])
+                    ->first();
+        return $companyInfo;
+    }
+
     /**
      * Get company solder terms  
      */
@@ -334,5 +348,19 @@ class TermRelation extends Model
             }
         }
         return $result;
+    }
+
+    /*
+    * Find my admin
+    * admin=central_office, formation_office, quarter_master, unit, company
+     * $whereClose['{admin}_office_id','role']
+    */
+    public static function findMyAdmin($whereClose){
+        $whereClose['term_type'] = 0;
+        $queryInfo = DB::table('users')
+            ->leftJoin('term_relation','users.id','=','term_relation.user_id')
+            ->where($whereClose)
+            ->first();
+        return $queryInfo;
     }
 }

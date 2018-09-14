@@ -14,4 +14,18 @@ class QuarterMaster extends Model
         'quarter_name',
         'quarter_details'
     ];
+
+    /*
+    * Get central office with admin
+    */
+    public static function getOfficeWithAdmin(){
+        $offices = self::all();
+        if(count($offices) > 0 ){
+            foreach($offices as $office){
+                $where = ['quarter_master_id'=>$office->id,'role'=>6];
+                $office->head = TermRelation::findMyAdmin($where);
+            }
+        }
+        return $offices;
+    }
 }

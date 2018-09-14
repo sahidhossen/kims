@@ -6,6 +6,7 @@ use App\CentralOffice;
 use App\Company;
 use App\DistrictOffice;
 use App\QuarterMaster;
+use App\TermRelation;
 use App\Unit;
 use Illuminate\Http\Request;
 use League\Flysystem\Exception;
@@ -18,11 +19,11 @@ class KitController extends Controller
             if(!$currentUser || !$currentUser->hasRole('central'))
                 throw new Exception("You have to logged in as central level!");
             $kitController = new \stdClass();
-            $kitController->companies = Company::all();
-            $kitController->central_offices = CentralOffice::all();
-            $kitController->formation_offices =  DistrictOffice::all();
-            $kitController->units = Unit::all();
-            $kitController->quarters = QuarterMaster::all();
+            $kitController->companies = Company::getOfficesWithAdmin();
+            $kitController->central_offices = CentralOffice::getOfficeWithAdmin();
+            $kitController->formation_offices =  DistrictOffice::getOfficesWithAdmin();
+            $kitController->units = Unit::getOfficesWithAdmin();
+            $kitController->quarters = QuarterMaster::getOfficeWithAdmin();
             $kitController->demo = 'asdfasdf';
             return ['success'=>true ,'message'=>"Get all kit controllers ", 'data'=> $kitController ];
 

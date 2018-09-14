@@ -28,4 +28,18 @@ class CentralOffice extends Model
     {
         return $this->hasMany('App\DistrictOffice');
     }
+
+    /*
+     * Get central office with admin
+     */
+    public static function getOfficeWithAdmin(){
+        $offices = self::all();
+        if(count($offices) > 0 ){
+            foreach($offices as $office){
+                $where = ['central_office_id'=>$office->id,'role'=>1];
+                $office->head = TermRelation::findMyAdmin($where);
+            }
+        }
+        return $offices;
+    }
 }
