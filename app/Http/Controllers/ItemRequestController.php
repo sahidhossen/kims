@@ -419,8 +419,7 @@ class ItemRequestController extends Controller
                     $company = TermRelation::getCompanyInfoByUserId($pRequest->company_user_id);
                     if($company) {
                         $pRequest->company_name = $company->company_name;
-                        $pRequest->company_user_name = $company->company_name;
-                        $pRequest->company_name = $company->user_name;
+                        $pRequest->company_user_name = $company->user_name;
                         $pRequest->user_designation = $company->designation;
                     }
                 }
