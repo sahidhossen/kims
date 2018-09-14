@@ -418,9 +418,10 @@ class ItemRequestController extends Controller
                     $pRequest->kit_items = \GuzzleHttp\json_decode($pRequest->kit_items);
                     $company = TermRelation::getCompanyInfoByUserId($pRequest->company_user_id);
                     if($company) {
-                        $pRequest->company = ['company_name' => $company->company_name, 'company_id' => $company->company_id];
-                    }else {
-                        $pRequest->company = null;
+                        $pRequest->company_name = $company->company_name;
+                        $pRequest->company_user_name = $company->company_name;
+                        $pRequest->company_name = $company->user_name;
+                        $pRequest->user_designation = $company->designation;
                     }
                 }
             }

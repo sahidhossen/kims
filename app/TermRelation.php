@@ -277,7 +277,9 @@ class TermRelation extends Model
     public static function getCompanyInfoByUserId($user_id){
         $company = DB::table('term_relation')
             ->leftJoin('company', 'term_relation.company_id','=','company.id')
+            ->leftJoin('users', 'users.id','=','term_relation.user_id')
             ->where(['term_relation.user_id'=>$user_id,'term_relation.term_type'=>0,'term_relation.role'=>4])
+            ->select('term_relation.*','company.*','users.id as c_user_id','users.name as user_name','users.designation')
             ->first();
         return $company;
     }
