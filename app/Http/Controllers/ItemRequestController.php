@@ -416,6 +416,12 @@ class ItemRequestController extends Controller
             if(count($pendingRequest) > 0 ){
                 foreach($pendingRequest as $pRequest){
                     $pRequest->kit_items = \GuzzleHttp\json_decode($pRequest->kit_items);
+                    $company = TermRelation::getCompanyInfoByUserId($pRequest->company_user_id);
+                    if($company) {
+                        $pRequest->company = ['company_name' => $company->company_name, 'company_id' => $company->company_id];
+                    }else {
+                        $pRequest->company = null;
+                    }
                 }
             }
             return ['success'=>true,'data'=>$pendingRequest, 'terms'=>$unitTerms];

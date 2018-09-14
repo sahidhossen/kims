@@ -593,10 +593,14 @@ class UserController extends Controller
     public function getKitUserByCompany(Request $request){
         try{
             $companySolders = [];
-            $currentUser = $request->user();
+            if($request->input('company_user_id')) {
+                $currentUser = User::find($request->input('company_user_id'));
+            }else {
+                $currentUser = $request->user();
+            }
             if(!$currentUser || !$currentUser->hasRole('company'))
-                throw new Exception("Must be logged in with company level");
-            $companyTerms = TermRelation::getCompanySolderTerms($currentUser->id);
+                throw new Exception("User should be company role");
+            $companyTerms = TermRelation::retrieveCompanySoldersTerms($currentUser->id);
 
             if (count($companyTerms) > 0) {
 		    foreach ($companyTerms as $term) {

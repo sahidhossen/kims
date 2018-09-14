@@ -13,10 +13,12 @@ export default compose(
     withState('state', 'setState', {
         central_office: {central_name:'', central_details: '' },
         formation_office: {district_name:'', district_details: '', central_office_id:0 },
+        quarter_master: {quarter_name:'', quarter_details: '', central_office_id:0, formation_office_id:0 },
         unit: {unit_name:'', unit_details: '', central_office_id:0, formation_office_id: 0 },
         company: {central_name:'', company_details: '',central_office_id:0, formation_office_id: 0, unit_id:0  },
         error: '',
         filterFormation:[],
+        filterQuarterMaster:[],
         filterUnits:[]
     }),
     withHandlers({
@@ -28,10 +30,12 @@ export default compose(
             let {
                 central_office,
                 formation_office,
+                quarter_master,
                 unit,
                 company,
                 error,
                 filterFormation,
+                filterQuarterMaster,
                 filterUnits
                 } = state
 
@@ -65,6 +69,7 @@ export default compose(
                 }
                 if( name === 'formation_office_id' ) {
                     unit.formation_office_id = value;
+                    filterQuarterMaster = kitControllers.quarters.filter( office => office.district_office_id === parseInt(value) )
                 }
             }
 
@@ -83,6 +88,21 @@ export default compose(
                 }
                 if( name === 'unit_id' ) {
                     company.unit_id = value;
+                }
+            }
+
+            if( actionType === 'quarter_master' ){
+                if( name === 'quarter_name')
+                    quarter_master.quarter_name = value
+                if( name === 'quarter_details' )
+                    company.quarter_details = value;
+                if( name === 'central_office_id' ) {
+                    company.central_office_id = value;
+                    filterFormation = kitControllers.formation_offices.filter( office => office.central_office_id === parseInt(value) )
+                }
+                if( name === 'formation_office_id' ) {
+                    company.formation_office_id = value;
+                    filterUnits = kitControllers.units.filter( office => office.district_office_id === parseInt(value) )
                 }
             }
 
@@ -106,7 +126,9 @@ export default compose(
             if( actionType === 'district' ){
                 error = formation_office.central_office_id === 0 || formation_office.district_name === '' ? 'Please full up the required field!' : ''
             }
-
+            if( actionType === 'quarter_master' ){
+                error = unit.central_office_id === 0 || unit.formation_office_id === 0  || unit.quarter_name === '' ? 'Please full up the required field!' : ''
+            }
             if( actionType === 'unit' ){
                 error = unit.central_office_id === 0 || unit.formation_office_id === 0  || unit.unit_name === '' ? 'Please full up the required field!' : ''
             }

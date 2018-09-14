@@ -32,6 +32,10 @@ export const saveKitController = (state, actionType ) => (dispatch, getState) =>
         endPoint = 'add_district_office'
         data = state.formation_office
     }
+    if( actionType === 'quarter_master') {
+        endPoint = 'add_quarter_master_office'
+        data = state.quarter_master
+    }
     if( actionType === 'unit') {
         endPoint = 'add_unit'
         data = state.unit
@@ -55,6 +59,9 @@ export const saveKitController = (state, actionType ) => (dispatch, getState) =>
             }
             if( actionType === 'district' ) {
                 kitControllers.formation_offices.push(result)
+            }
+            if( actionType === 'quarter_master' ) {
+                kitControllers.quarters.push(result)
             }
             if( actionType === 'unit' ) {
                 kitControllers.units.push(result)

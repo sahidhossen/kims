@@ -58,6 +58,33 @@ export const KitControllerModal = (
                         </div>
                     ) }
 
+                    { actionType === "quarter_master" && (
+                        <div>
+                            <div className="form-group">
+                                <label> Quarter Office Name <span className="required">x</span> </label>
+                                <input type="text" className="form-control" value={state.unit.quarter_name} placeholder="Quarter Name" name="quarter_name" onChange={(e)=>{ onChangeAction(e) }} />
+                            </div>
+                            <div className="form-group">
+                                <label> Details </label>
+                                <textarea name="quarter_details" className="form-control" value={state.unit.quarter_details} onChange={(e)=>{ onChangeAction(e) }} />
+                            </div>
+                            <div className="form-group">
+                                <label> Select Central Office <span className="required">x</span></label>
+                                <select className="form-control" name="central_office_id" onChange={(e)=>{ onChangeAction(e) }}>
+                                    <option value="0"> Select Office </option>
+                                    { kitControllers.central_offices.length > 0 && kitControllers.central_offices.map( (office, index) => (<option key={index} defaultValue={state.unit.central_office_id === office.id } value={office.id}> {office.central_name} </option>) )}
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label> Select District Office <span className="required">x</span></label>
+                                <select className="form-control" name="formation_office_id" onChange={(e)=>{ onChangeAction(e) }}>
+                                    <option value="0"> Select Office </option>
+                                    { state.filterFormation.length != 0 && state.filterFormation.map( (office, index) => (<option key={index} defaultValue={state.unit.formation_office_id === office.id } value={office.id}> {office.district_name} </option>) )}
+                                </select>
+                            </div>
+                        </div>
+                    ) }
+
                     { actionType === "unit" && (
                         <div>
                             <div className="form-group">
@@ -80,6 +107,13 @@ export const KitControllerModal = (
                                 <select className="form-control" name="formation_office_id" onChange={(e)=>{ onChangeAction(e) }}>
                                     <option value="0"> Select Office </option>
                                     { state.filterFormation.length != 0 && state.filterFormation.map( (office, index) => (<option key={index} defaultValue={state.unit.formation_office_id === office.id } value={office.id}> {office.district_name} </option>) )}
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label> Select Quarter Master Office <span className="required">x</span></label>
+                                <select className="form-control" name="formation_office_id" onChange={(e)=>{ onChangeAction(e) }}>
+                                    <option value="0"> Select Office </option>
+                                    { state.filterQuarterMaster.length != 0 && state.filterQuarterMaster.map( (office, index) => (<option key={index} defaultValue={state.unit.quarter_master_id === office.id } value={office.id}> {office.quarter_name} </option>) )}
                                 </select>
                             </div>
                         </div>

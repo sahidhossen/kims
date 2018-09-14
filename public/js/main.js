@@ -8000,6 +8000,10 @@ var saveKitController = exports.saveKitController = function saveKitController(s
             endPoint = 'add_district_office';
             data = state.formation_office;
         }
+        if (actionType === 'quarter_master') {
+            endPoint = 'add_quarter_master_office';
+            data = state.quarter_master;
+        }
         if (actionType === 'unit') {
             endPoint = 'add_unit';
             data = state.unit;
@@ -8021,6 +8025,9 @@ var saveKitController = exports.saveKitController = function saveKitController(s
             }
             if (actionType === 'district') {
                 kitControllers.formation_offices.push(result);
+            }
+            if (actionType === 'quarter_master') {
+                kitControllers.quarters.push(result);
             }
             if (actionType === 'unit') {
                 kitControllers.units.push(result);
@@ -71939,6 +71946,108 @@ var KitControllerModal = exports.KitControllerModal = function KitControllerModa
                             )
                         )
                     ),
+                    actionType === "quarter_master" && _react2.default.createElement(
+                        "div",
+                        null,
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Quarter Office Name ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "x"
+                                ),
+                                " "
+                            ),
+                            _react2.default.createElement("input", { type: "text", className: "form-control", value: state.unit.quarter_name, placeholder: "Quarter Name", name: "quarter_name", onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } })
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Details "
+                            ),
+                            _react2.default.createElement("textarea", { name: "quarter_details", className: "form-control", value: state.unit.quarter_details, onChange: function onChange(e) {
+                                    onChangeAction(e);
+                                } })
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Select Central Office ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "x"
+                                )
+                            ),
+                            _react2.default.createElement(
+                                "select",
+                                { className: "form-control", name: "central_office_id", onChange: function onChange(e) {
+                                        onChangeAction(e);
+                                    } },
+                                _react2.default.createElement(
+                                    "option",
+                                    { value: "0" },
+                                    " Select Office "
+                                ),
+                                kitControllers.central_offices.length > 0 && kitControllers.central_offices.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        "option",
+                                        { key: index, defaultValue: state.unit.central_office_id === office.id, value: office.id },
+                                        " ",
+                                        office.central_name,
+                                        " "
+                                    );
+                                })
+                            )
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Select District Office ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "x"
+                                )
+                            ),
+                            _react2.default.createElement(
+                                "select",
+                                { className: "form-control", name: "formation_office_id", onChange: function onChange(e) {
+                                        onChangeAction(e);
+                                    } },
+                                _react2.default.createElement(
+                                    "option",
+                                    { value: "0" },
+                                    " Select Office "
+                                ),
+                                state.filterFormation.length != 0 && state.filterFormation.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        "option",
+                                        { key: index, defaultValue: state.unit.formation_office_id === office.id, value: office.id },
+                                        " ",
+                                        office.district_name,
+                                        " "
+                                    );
+                                })
+                            )
+                        )
+                    ),
                     actionType === "unit" && _react2.default.createElement(
                         "div",
                         null,
@@ -72035,6 +72144,40 @@ var KitControllerModal = exports.KitControllerModal = function KitControllerModa
                                         { key: index, defaultValue: state.unit.formation_office_id === office.id, value: office.id },
                                         " ",
                                         office.district_name,
+                                        " "
+                                    );
+                                })
+                            )
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "form-group" },
+                            _react2.default.createElement(
+                                "label",
+                                null,
+                                " Select Quarter Master Office ",
+                                _react2.default.createElement(
+                                    "span",
+                                    { className: "required" },
+                                    "x"
+                                )
+                            ),
+                            _react2.default.createElement(
+                                "select",
+                                { className: "form-control", name: "formation_office_id", onChange: function onChange(e) {
+                                        onChangeAction(e);
+                                    } },
+                                _react2.default.createElement(
+                                    "option",
+                                    { value: "0" },
+                                    " Select Office "
+                                ),
+                                state.filterQuarterMaster.length != 0 && state.filterQuarterMaster.map(function (office, index) {
+                                    return _react2.default.createElement(
+                                        "option",
+                                        { key: index, defaultValue: state.unit.quarter_master_id === office.id, value: office.id },
+                                        " ",
+                                        office.quarter_name,
                                         " "
                                     );
                                 })
@@ -72237,10 +72380,12 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
 }), (0, _recompose.withState)('state', 'setState', {
     central_office: { central_name: '', central_details: '' },
     formation_office: { district_name: '', district_details: '', central_office_id: 0 },
+    quarter_master: { quarter_name: '', quarter_details: '', central_office_id: 0, formation_office_id: 0 },
     unit: { unit_name: '', unit_details: '', central_office_id: 0, formation_office_id: 0 },
     company: { central_name: '', company_details: '', central_office_id: 0, formation_office_id: 0, unit_id: 0 },
     error: '',
     filterFormation: [],
+    filterQuarterMaster: [],
     filterUnits: []
 }), (0, _recompose.withHandlers)({
     hideModal: function hideModal(props) {
@@ -72256,10 +72401,12 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 kitControllers = props.kitControllers;
             var central_office = state.central_office,
                 formation_office = state.formation_office,
+                quarter_master = state.quarter_master,
                 unit = state.unit,
                 company = state.company,
                 error = state.error,
                 filterFormation = state.filterFormation,
+                filterQuarterMaster = state.filterQuarterMaster,
                 filterUnits = state.filterUnits;
 
 
@@ -72288,6 +72435,9 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 }
                 if (name === 'formation_office_id') {
                     unit.formation_office_id = value;
+                    filterQuarterMaster = kitControllers.quarters.filter(function (office) {
+                        return office.district_office_id === parseInt(value);
+                    });
                 }
             }
 
@@ -72308,6 +72458,23 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 }
                 if (name === 'unit_id') {
                     company.unit_id = value;
+                }
+            }
+
+            if (actionType === 'quarter_master') {
+                if (name === 'quarter_name') quarter_master.quarter_name = value;
+                if (name === 'quarter_details') company.quarter_details = value;
+                if (name === 'central_office_id') {
+                    company.central_office_id = value;
+                    filterFormation = kitControllers.formation_offices.filter(function (office) {
+                        return office.central_office_id === parseInt(value);
+                    });
+                }
+                if (name === 'formation_office_id') {
+                    company.formation_office_id = value;
+                    filterUnits = kitControllers.units.filter(function (office) {
+                        return office.district_office_id === parseInt(value);
+                    });
                 }
             }
 
@@ -72338,7 +72505,9 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
             if (actionType === 'district') {
                 error = formation_office.central_office_id === 0 || formation_office.district_name === '' ? 'Please full up the required field!' : '';
             }
-
+            if (actionType === 'quarter_master') {
+                error = unit.central_office_id === 0 || unit.formation_office_id === 0 || unit.quarter_name === '' ? 'Please full up the required field!' : '';
+            }
             if (actionType === 'unit') {
                 error = unit.central_office_id === 0 || unit.formation_office_id === 0 || unit.unit_name === '' ? 'Please full up the required field!' : '';
             }

@@ -33,7 +33,7 @@ Route::middleware('auth:api')->post('/kit_user_register', 'UserController@userRe
 Route::middleware('auth:api')->get('/kit_user_by_id', 'UserController@userById');
 Route::middleware('auth:api')->post('/kit_user_update', 'UserController@updateUser');
 Route::middleware('auth:api')->post('/update_user_role', 'UserController@updateOrAddRole');
-Route::middleware('auth:api')->get('/kit_user_by_comapny','UserController@getKitUserByCompany');
+Route::middleware('auth:api')->get('/kit_user_by_company','UserController@getKitUserByCompany'); //company_user_id (optional)
 
 Route::middleware('auth:api')->get('/get_roles', 'UserController@getRoles');
 Route::middleware('auth:api')->get('/get_kit_controllers', 'KitController@getKitControllers');
@@ -58,6 +58,15 @@ Route::middleware('auth:api')->post('/delete_district_office', 'DistrictControll
 Route::middleware('auth:api')->get('/district_offices', 'DistrictController@getAllDistrictOffice');
 Route::middleware('auth:api')->get('/district_office', 'DistrictController@getDistrictOfficeById');
 
+
+/*
+ * District Office API
+ */
+Route::middleware('auth:api')->post('/add_quarter_master_office', 'QuarterMaster@store');
+Route::middleware('auth:api')->post('/quarter_master_office', 'QuarterMaster@update');
+Route::middleware('auth:api')->post('/quarter_master_office', 'QuarterMaster@delete');
+Route::middleware('auth:api')->get('/quarter_master_offices', 'QuarterMaster@getAllQuarterMasterOffice');
+Route::middleware('auth:api')->get('/quarter_master_office', 'QuarterMaster@getQuarterMasterOfficeById');
 
 
 /*
