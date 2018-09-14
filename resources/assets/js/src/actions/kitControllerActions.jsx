@@ -45,7 +45,6 @@ export const saveKitController = (state, actionType ) => (dispatch, getState) =>
         endPoint = 'add_company'
         data = state.company
     }
-
     axios.post('/api/'+endPoint, data )
         .then(function (response) {
             if( response.success === false )

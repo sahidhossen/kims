@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\CentralOffice;
+use App\TermRelation;
 use Illuminate\Http\Request;
 use League\Flysystem\Exception;
 
@@ -52,7 +53,8 @@ class CentralController extends Controller
             $centralOffice->central_details = $request->input('central_details');
             if(!$centralOffice->save())
                 throw new Exception("Critical error when save central office data!");
-
+            $where = ['central_office_id'=>$centralOffice->id,'role'=>1];
+            $centralOffice->head = TermRelation::findMyAdmin($where);
             return ['success'=>true, 'message'=>'Cetnral office save success', 'data'=>$centralOffice];
 
         }catch (Exception $e){

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\TermRelation;
 use App\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -68,7 +69,8 @@ class UnitController extends Controller
             $Unit->unit_details = $request->input('unit_details');
             if(!$Unit->save())
                 throw new Exception("Critical error when save unit data!");
-
+            $where = ['unit_id'=>$Unit->id,'role'=>3];
+            $Unit->head = TermRelation::findMyAdmin($where);
             return ['success'=>true, 'message'=>'Unit save success', 'data'=>$Unit];
 
         }catch (Exception $e){

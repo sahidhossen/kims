@@ -8013,7 +8013,6 @@ var saveKitController = exports.saveKitController = function saveKitController(s
             endPoint = 'add_company';
             data = state.company;
         }
-
         _axios2.default.post('/api/' + endPoint, data).then(function (response) {
             if (response.success === false) return false;
             var store = getState();
@@ -72463,15 +72462,15 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
 
             if (actionType === 'quarter_master') {
                 if (name === 'quarter_name') quarter_master.quarter_name = value;
-                if (name === 'quarter_details') company.quarter_details = value;
+                if (name === 'quarter_details') quarter_master.quarter_details = value;
                 if (name === 'central_office_id') {
-                    company.central_office_id = value;
+                    quarter_master.central_office_id = value;
                     filterFormation = kitControllers.formation_offices.filter(function (office) {
                         return office.central_office_id === parseInt(value);
                     });
                 }
                 if (name === 'formation_office_id') {
-                    company.formation_office_id = value;
+                    quarter_master.formation_office_id = value;
                     filterUnits = kitControllers.units.filter(function (office) {
                         return office.district_office_id === parseInt(value);
                     });
@@ -72483,6 +72482,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 formation_office: formation_office,
                 unit: unit,
                 company: company,
+                quarter_master: quarter_master,
                 filterFormation: filterFormation,
                 filterUnits: filterUnits,
                 error: error
@@ -72499,6 +72499,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 formation_office = state.formation_office,
                 unit = state.unit,
                 company = state.company,
+                quarter_master = state.quarter_master,
                 error = state.error;
 
 
@@ -72506,7 +72507,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 error = formation_office.central_office_id === 0 || formation_office.district_name === '' ? 'Please full up the required field!' : '';
             }
             if (actionType === 'quarter_master') {
-                error = unit.central_office_id === 0 || unit.formation_office_id === 0 || unit.quarter_name === '' ? 'Please full up the required field!' : '';
+                error = quarter_master.central_office_id === 0 || quarter_master.formation_office_id === 0 || quarter_master.quarter_name === '' ? 'Please full up the required field!' : '';
             }
             if (actionType === 'unit') {
                 error = unit.central_office_id === 0 || unit.formation_office_id === 0 || unit.unit_name === '' ? 'Please full up the required field!' : '';

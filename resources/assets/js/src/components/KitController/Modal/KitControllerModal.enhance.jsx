@@ -95,13 +95,13 @@ export default compose(
                 if( name === 'quarter_name')
                     quarter_master.quarter_name = value
                 if( name === 'quarter_details' )
-                    company.quarter_details = value;
+                    quarter_master.quarter_details = value;
                 if( name === 'central_office_id' ) {
-                    company.central_office_id = value;
+                    quarter_master.central_office_id = value;
                     filterFormation = kitControllers.formation_offices.filter( office => office.central_office_id === parseInt(value) )
                 }
                 if( name === 'formation_office_id' ) {
-                    company.formation_office_id = value;
+                    quarter_master.formation_office_id = value;
                     filterUnits = kitControllers.units.filter( office => office.district_office_id === parseInt(value) )
                 }
             }
@@ -112,6 +112,7 @@ export default compose(
                 formation_office,
                 unit,
                 company,
+                quarter_master,
                 filterFormation,
                 filterUnits,
                 error
@@ -121,13 +122,13 @@ export default compose(
             event.preventDefault();
             let { actionType, state, setState } = props
 
-            let { central_office, formation_office, unit, company, error } = state
+            let { central_office, formation_office, unit, company, quarter_master, error } = state
 
             if( actionType === 'district' ){
                 error = formation_office.central_office_id === 0 || formation_office.district_name === '' ? 'Please full up the required field!' : ''
             }
             if( actionType === 'quarter_master' ){
-                error = unit.central_office_id === 0 || unit.formation_office_id === 0  || unit.quarter_name === '' ? 'Please full up the required field!' : ''
+                error = quarter_master.central_office_id === 0 || quarter_master.formation_office_id === 0  || quarter_master.quarter_name === '' ? 'Please full up the required field!' : ''
             }
             if( actionType === 'unit' ){
                 error = unit.central_office_id === 0 || unit.formation_office_id === 0  || unit.unit_name === '' ? 'Please full up the required field!' : ''

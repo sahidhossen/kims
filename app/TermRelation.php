@@ -188,8 +188,13 @@ class TermRelation extends Model
     public static function getCompanyUnitUser($unit_id){
         if(!$unit_id)
             return null;
-        $unitTerm = self::where(['unit_id'=>$unit_id,'role'=>3,'term_type'=>0])->first();
-        return $unitTerm;
+//        $unitTerm = self::where(['unit_id'=>$unit_id,'role'=>3,'term_type'=>0])->first();
+        $unitInfo = DB::table('term_relation')
+                    ->leftJoin('users','term_relation.user_id','=','users.id')
+                    ->leftJoin('units','term_relation.unit_id','=','units.id')
+                    ->where(['unit_id'=>$unit_id,'role'=>3,'term_type'=>0])
+                    ->first();
+        return $unitInfo;
     }
 
 
@@ -216,11 +221,12 @@ class TermRelation extends Model
     public static function retrieveUnitDistrict($district_office_id){
         if(!$district_office_id)
             return null;
-        $districtUser = self::where([
-                'district_office_id'=>$district_office_id,
-                'role'=>2,
-                'term_type'=>0
-            ])->first();
+
+        $districtUser = DB::table('term_relation')
+            ->leftJoin('users','term_relation.user_id','=','users.id')
+            ->leftJoin('district_offices','term_relation.district_office_id','=','district_offices.id')
+            ->where(['district_office_id'=>$district_office_id, 'role'=>2, 'term_type'=>0])
+            ->first();
         return $districtUser;
     }
 
@@ -230,11 +236,11 @@ class TermRelation extends Model
     public static function retrieveDistrictCentral($central_office_id){
         if(!$central_office_id)
             return null;
-        $CentralUser = self::where([
-            'central_office_id'=>$central_office_id,
-            'role'=>1,
-            'term_type'=>0
-        ])->first();
+        $CentralUser = DB::table('term_relation')
+            ->leftJoin('users','term_relation.user_id','=','users.id')
+            ->leftJoin('central_offices','term_relation.central_office_id','=','central_offices.id')
+            ->where([ 'central_office_id'=>$central_office_id, 'role'=>1, 'term_type'=>0])
+            ->first();
         return $CentralUser;
     }
     /*

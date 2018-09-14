@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\QuarterMaster;
-use Illuminate\Contracts\Validation\Validator;
+use App\TermRelation;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use League\Flysystem\Exception;
 
@@ -49,7 +50,7 @@ class QuarterMasterController extends Controller
             $validator = Validator::make($request->all(), [
                 'quarter_name' => 'required',
                 'central_office_id' => 'required',
-                'district_office_id' => 'required',
+                'formation_office_id' => 'required',
             ]);
 
             if( $validator->fails()){
@@ -65,10 +66,13 @@ class QuarterMasterController extends Controller
             $quarterMaster = new QuarterMaster();
             $quarterMaster->quarter_name = $request->input('quarter_name');
             $quarterMaster->central_office_id = $request->input('central_office_id');
-            $quarterMaster->district_office_id = $request->input('district_office_id');
+            $quarterMaster->formation_office_id = $request->input('formation_office_id');
             $quarterMaster->quarter_details = $request->input('quarter_details');
             if(!$quarterMaster->save())
                 throw new Exception("Critical error when save quarter office data!");
+
+            $where = ['quarter_master_id'=>$quarterMaster->id,'role'=>6];
+            $quarterMaster->head = TermRelation::findMyAdmin($where);
 
             return ['success'=>true, 'message'=>'Quarter master office save success', 'data'=>$quarterMaster];
 

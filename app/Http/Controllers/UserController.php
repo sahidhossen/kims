@@ -103,6 +103,12 @@ class UserController extends Controller
                 $currentUser->unit_id = $UserTerm->unit_id;
                 $currentUser->central_id = $UserTerm->central_office_id;
                 $currentUser->formation_id = $UserTerm->district_office_id;
+                $unit_info = TermRelation::getCompanyUnitUser($UserTerm->unit_id);
+                if($unit_info){
+                    $currentUser->unit_name = $unit_info->unit_name;
+                    $currentUser->unit_user_name = $unit_info->name;
+                    $currentUser->unit_device_id = $unit_info->device_id;
+                }
                 $companyTerms = TermRelation::retrieveCompanySoldersTerms($currentUser->id);
                 if (count($companyTerms) > 0) {
                     foreach ($companyTerms as $term) {
@@ -120,6 +126,12 @@ class UserController extends Controller
                 $currentUser->unit_id = $UserTerm->unit_id;
                 $currentUser->central_id = $UserTerm->central_office_id;
                 $currentUser->formation_id = $UserTerm->district_office_id;
+                $district_info = TermRelation::retrieveUnitDistrict($UserTerm->district_office_id);
+                if($district_info){
+                    $currentUser->formation_name = $district_info->district_name;
+                    $currentUser->formation_user_name = $district_info->name;
+                    $currentUser->formation_device_id = $district_info->device_id;
+                }
                 $unitTerms = TermRelation::retrieveUnitCompaniesTerms( $currentUser->id );
                 if( count( $unitTerms) > 0 ){
                     foreach( $unitTerms as $term ){
@@ -135,11 +147,6 @@ class UserController extends Controller
                                 array_push($unitCompanies, $user);
                             }
                         }
-//                        if(count($unitCompanies) > 0 ){
-//                            foreach( $unitCompanies as $key=>$company){
-//                                $unitCompanies[$key]['pending_request'] = count(KitItemRequest::getUnitItemPendingRequestByCompany($company->company_id, $company->unit_id));
-//                            }
-//                        }
                     }
 
             }
@@ -150,6 +157,12 @@ class UserController extends Controller
             if($currentUser->hasRole('formation')){
                 $currentUser->formation_id = $UserTerm->district_office_id;
                 $currentUser->central_id = $UserTerm->central_office_id;
+                $central_info = TermRelation::retrieveDistrictCentral($UserTerm->central_office_id);
+                if($central_info){
+                    $currentUser->cental_name = $central_info->central_name;
+                    $currentUser->central_user_name = $central_info->name;
+                    $currentUser->central_device_id = $central_info->device_id;
+                }
                 $unitTerms = TermRelation::retrieveDistrictUnitsTerms( $currentUser->id );
                 if( count( $unitTerms) > 0 ){
                     foreach( $unitTerms as $term ){
@@ -162,12 +175,6 @@ class UserController extends Controller
                             array_push($districtUnits, $user);
                         }
                     }
-                    // Get all pending request
-//                    if(count($districtUnits)>0){
-//                        foreach( $districtUnits as $key=>$company){
-//                            $districtUnits[$key]['pending_request'] = count(KitItemRequest::getDistrictItemPendingRequestByUnit($company->unit_id, $company->district_office_id));
-//                        }
-//                    }
                 }
             }
 
@@ -186,12 +193,6 @@ class UserController extends Controller
                             array_push($centralFormations, $user);
                         }
                     }
-                    // Get all pending request
-//                    if(count($centralFormations)>0){
-//                        foreach( $centralFormations as $key=>$company){
-//                            $centralFormations[$key]['pending_request'] = count(KitItemRequest::getCentralItemPendingRequestByDistrict($company->district_office_id, $company->central_office_id));
-//                        }
-//                    }
                 }
             }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Company;
+use App\TermRelation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
@@ -69,7 +70,8 @@ class CompanyController extends Controller
             $Company->company_details = $request->input('company_details');
             if(!$Company->save())
                 throw new Exception("Critical error when save company data!");
-
+            $where = ['company_id'=>$Company->id,'role'=>4];
+            $Company->head = TermRelation::findMyAdmin($where);
             return ['success'=>true, 'message'=>'Company save success', 'data'=>$Company];
 
         }catch (Exception $e){

@@ -62,11 +62,11 @@ Route::middleware('auth:api')->get('/district_office', 'DistrictController@getDi
 /*
  * District Office API
  */
-Route::middleware('auth:api')->post('/add_quarter_master_office', 'QuarterMaster@store');
-Route::middleware('auth:api')->post('/quarter_master_office', 'QuarterMaster@update');
-Route::middleware('auth:api')->post('/quarter_master_office', 'QuarterMaster@delete');
-Route::middleware('auth:api')->get('/quarter_master_offices', 'QuarterMaster@getAllQuarterMasterOffice');
-Route::middleware('auth:api')->get('/quarter_master_office', 'QuarterMaster@getQuarterMasterOfficeById');
+Route::middleware('auth:api')->post('/add_quarter_master_office', 'QuarterMasterController@store');
+Route::middleware('auth:api')->post('/quarter_master_office', 'QuarterMasterController@update');
+Route::middleware('auth:api')->post('/quarter_master_office', 'QuarterMasterController@delete');
+Route::middleware('auth:api')->get('/quarter_master_offices', 'QuarterMasterController@getAllQuarterMasterOffice');
+Route::middleware('auth:api')->get('/quarter_master_office', 'QuarterMasterController@getQuarterMasterOfficeById');
 
 
 /*

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DistrictOffice;
+use App\TermRelation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
@@ -67,7 +68,8 @@ class DistrictController extends Controller
             $districtOffice->district_details = $request->input('district_details');
             if(!$districtOffice->save())
                 throw new Exception("Critical error when save district office data!");
-
+            $where = ['district_office_id'=>$districtOffice->id,'role'=>2];
+            $districtOffice->head = TermRelation::findMyAdmin($where);
             return ['success'=>true, 'message'=>'Cetnral office save success', 'data'=>$districtOffice];
 
         }catch (Exception $e){
