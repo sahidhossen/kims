@@ -192,7 +192,7 @@ class TermRelation extends Model
         $unitInfo = DB::table('term_relation')
                     ->leftJoin('users','term_relation.user_id','=','users.id')
                     ->leftJoin('units','term_relation.unit_id','=','units.id')
-                    ->where(['unit_id'=>$unit_id,'role'=>3,'term_type'=>0])
+                    ->where(['term_relation.unit_id'=>$unit_id,'term_relation.role'=>3,'term_relation.term_type'=>0])
                     ->first();
         return $unitInfo;
     }
@@ -239,7 +239,7 @@ class TermRelation extends Model
         $CentralUser = DB::table('term_relation')
             ->leftJoin('users','term_relation.user_id','=','users.id')
             ->leftJoin('central_offices','term_relation.central_office_id','=','central_offices.id')
-            ->where([ 'central_office_id'=>$central_office_id, 'role'=>1, 'term_type'=>0])
+            ->where([ 'term_relation.central_office_id'=>$central_office_id, 'term_relation.role'=>1, 'term_relation.term_type'=>0])
             ->first();
         return $CentralUser;
     }
