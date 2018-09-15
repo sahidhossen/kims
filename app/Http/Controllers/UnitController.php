@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\TermRelation;
 use App\Unit;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
@@ -120,6 +121,42 @@ class UnitController extends Controller
 
             $Unit->delete();
             return ['success'=>true, 'message'=>"Unit delete successful!"];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
+
+    /*
+    * Get all companies by unit user id
+    */
+    public function getCompaniesByUnitId(Request $request){
+        try{
+            if(!$request->input('unit_id'))
+                throw new Exception("Unit user id required!");
+            $unitUser = User::find($request->input('unit_id'));
+            if(!$unitUser)
+                throw new Exception("Sorry unit user not found!");
+            if(!$unitUser->hasRole('unit'))
+                throw new Exception("You provide wrong id");
+            $unitTerms = TermRelation::retrieveUnitCompaniesTerms( $unitUser->id );
+            $unitCompanies = [];
+            if( count( $unitTerms) > 0 ){
+                foreach( $unitTerms as $term ){
+                    $user = User::find( $term->user_id );
+                    if(!$user){
+                        continue;
+                    }
+                    if($user->hasRole('company')) {
+                        $user->company_id = $term->company_id;
+                        $user->unit_id = $term->unit_id;
+                        $company = TermRelation::getCompanyInfoByUserId($user->id);
+                        $user->company_name = $company == null ? null : $company->company_name;
+                        array_push($unitCompanies, $user);
+                    }
+                }
+            }
+            return ['success'=>true, 'data'=>$unitCompanies];
+
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }

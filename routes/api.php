@@ -35,6 +35,7 @@ Route::middleware('auth:api')->post('/kit_user_update', 'UserController@updateUs
 Route::middleware('auth:api')->post('/update_user_role', 'UserController@updateOrAddRole');
 Route::middleware('auth:api')->get('/kit_user_by_company','UserController@getKitUserByCompany'); //company_user_id (optional)
 
+
 Route::middleware('auth:api')->get('/get_roles', 'UserController@getRoles');
 Route::middleware('auth:api')->get('/get_kit_controllers', 'KitController@getKitControllers');
 
@@ -67,7 +68,7 @@ Route::middleware('auth:api')->post('/quarter_master_office', 'QuarterMasterCont
 Route::middleware('auth:api')->post('/quarter_master_office', 'QuarterMasterController@delete');
 Route::middleware('auth:api')->get('/quarter_master_offices', 'QuarterMasterController@getAllQuarterMasterOffice');
 Route::middleware('auth:api')->get('/quarter_master_office', 'QuarterMasterController@getQuarterMasterOfficeById');
-
+Route::middleware('auth:api')->get('/units_by_quarter_master','QuarterMasterController@getUnitByQuarterMaster');
 
 /*
  * UNIT API
@@ -77,6 +78,7 @@ Route::middleware('auth:api')->post('/update_unit', 'UnitController@update');
 Route::middleware('auth:api')->post('/delete_company_office', 'UnitController@delete');
 Route::middleware('auth:api')->get('/units', 'UnitController@getAllUnit');
 Route::middleware('auth:api')->get('/unit', 'UnitController@getUnitById');
+Route::middleware('auth:api')->get('/companies_by_unit_id', 'UnitController@getCompaniesByUnitId');
 
 
 /*

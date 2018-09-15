@@ -191,7 +191,6 @@ class TermRelation extends Model
     public static function getCompanyUnitUser($unit_id){
         if(!$unit_id)
             return null;
-//        $unitTerm = self::where(['unit_id'=>$unit_id,'role'=>3,'term_type'=>0])->first();
         $unitInfo = DB::table('term_relation')
                     ->leftJoin('users','term_relation.user_id','=','users.id')
                     ->leftJoin('units','term_relation.unit_id','=','units.id')

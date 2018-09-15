@@ -130,4 +130,39 @@ class QuarterMasterController extends Controller
             return ['success'=>false, 'message'=>$e->getMessage()];
         }
     }
+
+    /*
+   * Get all units by quarter master user id
+   */
+    public function getUnitsByQuarterMasterUserId(Request $request){
+        try{
+            if(!$request->input('quarter_master_id'))
+                throw new Exception("Quarter master user id required!");
+            $unitUser = User::find($request->input('quarter_master_id'));
+            if(!$unitUser)
+                throw new Exception("Sorry quarter master user not found!");
+            if(!$unitUser->hasRole('quarter_master'))
+                throw new Exception("You provide wrong id");
+            $unitTerms = TermRelation::retrieveQuarterMasterUnitsTerms( $unitUser->id );
+            $unitCompanies = [];
+            if( count( $unitTerms) > 0 ){
+                foreach( $unitTerms as $term ){
+                    $user = User::find( $term->user_id );
+                    if(!$user){
+                        continue;
+                    }
+                    if($user->hasRole('unit')) {
+                        $user->unit_id = $term->unit_id;
+                        $company = TermRelation::getUnitInfoByUserId($user->id);
+                        $user->unit_name = $company == null ? null : $company->unit_name;
+                        array_push($unitCompanies, $user);
+                    }
+                }
+            }
+            return ['success'=>true, 'data'=>$unitCompanies];
+
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
 }
