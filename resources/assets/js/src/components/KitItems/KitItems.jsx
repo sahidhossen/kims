@@ -71,7 +71,7 @@ export const KitItem = ({
                                             <strong>Kit Name</strong>
                                         </div>
                                         <div className="flex-1">
-                                            <strong>Central Office</strong>
+                                            <strong>Total Items</strong>
                                         </div>
                                         <div className="operation-area">
                                             <strong> Actions </strong>
@@ -85,12 +85,10 @@ export const KitItem = ({
                                                 {item.kit_name}
                                             </div>
                                             <div className="flex-1">
-                                                {item.central_office_name}
+                                                {item.quantity}
                                             </div>
                                             <div className="operation-area">
-                                                {/*<div className="btn btn-info" onClick={(e)=> {kitTypeEditAction(e, index)}}> Edit </div>*/}
-                                                {/*&nbsp;*/}
-                                                {/*<div className="btn btn-danger" onClick={(e)=> {userDeleteAction(e, index)}}> Delete </div>*/}
+                                                <a href="#" className="btn btn-info"> Details View </a>
                                             </div>
                                         </div>
                                     </div>

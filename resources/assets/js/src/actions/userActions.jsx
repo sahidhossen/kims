@@ -24,7 +24,6 @@ export const fetchUser = () => dispatch => {
 export const fetchUserByCompany = () => dispatch => {
     axios.get('/api/kit_user_by_company' )
         .then(function (response) {
-            // console.log("user: ", response.data )
             if( response.data.success === true ) {
                 dispatch({type: constants.FETCH_USER, payload: response.data.data });
             }else {

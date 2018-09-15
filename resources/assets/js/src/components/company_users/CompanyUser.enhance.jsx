@@ -32,8 +32,8 @@ export default compose(
     }),
     lifecycle({
         componentDidMount(){
-            let{ users } = this.props 
-            if( users.fetched === false && users.users.length === 0 ){
+            let{ users } = this.props
+            if( users.users.length === 0 ){
                 this.props.dispatch(fetchUserByCompany());
             }
         },

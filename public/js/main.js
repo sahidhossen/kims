@@ -6952,7 +6952,6 @@ var fetchUser = exports.fetchUser = function fetchUser() {
 var fetchUserByCompany = exports.fetchUserByCompany = function fetchUserByCompany() {
     return function (dispatch) {
         _axios2.default.get('/api/kit_user_by_company').then(function (response) {
-            // console.log("user: ", response.data )
             if (response.data.success === true) {
                 dispatch({ type: constants.FETCH_USER, payload: response.data.data });
             } else {
@@ -33027,7 +33026,8 @@ var getKitItems = exports.getKitItems = function getKitItems() {
         dispatch({
             type: constants.FETCHING_KIT_ITEM
         });
-        _axios2.default.get('/api/kit_items').then(function (response) {
+        _axios2.default.get('/api/active_kit_items').then(function (response) {
+            console.log("res: ", response.data);
             dispatch({ type: constants.FETCH_KIT_ITEM, payload: response.data.data });
         }).catch(function (error) {
             console.log("kit item error: ", error);
@@ -33040,6 +33040,7 @@ var addKitItem = exports.addKitItem = function addKitItem(data) {
     return function (dispatch, getState) {
         dispatch({ type: constants.FETCHING_KIT_ITEM });
         _axios2.default.post('/api/add_kit_item', data).then(function (response) {
+
             if (response.data.success === true) {
                 var store = getState();
                 var kitItems = store.kitItems.kitItems;
@@ -64041,7 +64042,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
     componentDidMount: function componentDidMount() {
         var users = this.props.users;
 
-        if (users.fetched === false && users.users.length === 0) {
+        if (users.users.length === 0) {
             this.props.dispatch((0, _userActions.fetchUserByCompany)());
         }
     },
@@ -64628,7 +64629,7 @@ var UserDetails = exports.UserDetails = function UserDetails(_ref) {
                             _react2.default.createElement('hr', null),
                             _react2.default.createElement(
                                 'div',
-                                { className: 'd-flex flex-row justify-content-center' },
+                                { className: 'd-flex flex-row justify-content-center align-items-center' },
                                 _react2.default.createElement(
                                     'div',
                                     { className: 'issue-date-box' },
@@ -64647,7 +64648,7 @@ var UserDetails = exports.UserDetails = function UserDetails(_ref) {
                                 ),
                                 _react2.default.createElement(
                                     'div',
-                                    { className: 'issue-date-box' },
+                                    { className: 'issue-date-box offset-1' },
                                     'Expire Date'
                                 ),
                                 _react2.default.createElement(
@@ -71168,16 +71169,18 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
     },
     filterKitItem: function filterKitItem(props) {
         return function (kitItems) {
-            if (kitItems.length > 0) {
-                var state = props.state,
-                    setState = props.setState;
-                var kitItemOptions = state.kitItemOptions;
+            var state = props.state,
+                setState = props.setState;
 
+            if (kitItems.length > 0) {
+                var kitItemOptions = state.kitItemOptions;
 
                 kitItemOptions = kitItems.map(function (item) {
                     return { value: item.id, label: item.kit_name };
                 });
                 setState((0, _extends3.default)({}, state, { kitItemOptions: kitItemOptions }));
+            } else {
+                setState((0, _extends3.default)({}, state, { kitItemOptions: [] }));
             }
         };
     },
@@ -73390,7 +73393,7 @@ var KitItem = exports.KitItem = function KitItem(_ref) {
                                             _react2.default.createElement(
                                                 'strong',
                                                 null,
-                                                'Central Office'
+                                                'Total Items'
                                             )
                                         ),
                                         _react2.default.createElement(
@@ -73419,9 +73422,17 @@ var KitItem = exports.KitItem = function KitItem(_ref) {
                                             _react2.default.createElement(
                                                 'div',
                                                 { className: 'flex-1' },
-                                                item.central_office_name
+                                                item.quantity
                                             ),
-                                            _react2.default.createElement('div', { className: 'operation-area' })
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'operation-area' },
+                                                _react2.default.createElement(
+                                                    'a',
+                                                    { href: '#', className: 'btn btn-info' },
+                                                    ' Details View '
+                                                )
+                                            )
                                         )
                                     );
                                 })

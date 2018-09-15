@@ -107,6 +107,7 @@ Route::middleware('auth:api')->post('/update_kit_item', 'KitItemController@updat
 Route::middleware('auth:api')->get('/kit_items_by_central_office', 'KitItemController@kitItemsByQuery');
 Route::middleware('auth:api')->get('/kit_item', 'KitItemController@itemById');
 Route::middleware('auth:api')->get('/kit_items', 'KitItemController@getAllKitItems');
+Route::middleware('auth:api')->get('/active_kit_items', 'KitItemController@getAllActiveKitItems');
 Route::middleware('auth:api')->post('/delete_kit_item', 'KitItemController@delete');
 
 

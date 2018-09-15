@@ -5,8 +5,9 @@ export const getKitItems = () => dispatch => {
     dispatch({
         type: constants.FETCHING_KIT_ITEM
     })
-    axios.get('/api/kit_items')
+    axios.get('/api/active_kit_items')
         .then(function (response) {
+            console.log("res: ", response.data);
             dispatch({ type: constants.FETCH_KIT_ITEM, payload:response.data.data });
         })
         .catch(function (error) {
@@ -19,6 +20,7 @@ export const addKitItem = data => (dispatch, getState) => {
     dispatch({type: constants.FETCHING_KIT_ITEM })
     axios.post('/api/add_kit_item', data)
         .then(function (response) {
+
             if( response.data.success === true ) {
                 let store = getState()
                 let {kitItems: {kitItems}} = store

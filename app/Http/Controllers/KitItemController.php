@@ -141,8 +141,9 @@ class KitItemController extends Controller
     /*
      * Get All Kit Item
      */
-    public function getAllKitItems(){
+    public function getAllKitItems(Request $request){
         try{
+
             $kitItems = KitItem::orderBy('created_at', 'desc')->get();
             $result = [];
             if( count($kitItems) > 0 ){
@@ -153,6 +154,40 @@ class KitItemController extends Controller
                     $kitItemObj->status = $kitItem->status;
                     $kitItemObj->image = $kitItem->image;
                     array_push($result, $kitItemObj);
+                }
+            }
+            return ['success'=>true, 'message'=>"All kit items", 'data'=>$result];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
+
+    /*
+     * Get All Kit Item
+     */
+    public function getAllActiveKitItems(){
+        try{
+
+            $kitItems = KitItem::where(['status'=>0])->orderBy('created_at', 'desc')->get();
+            $result = [];
+            $collectedKitTypes = [];
+            if( count($kitItems) > 0 ){
+                foreach ($kitItems as $kitItem ){
+                    $kitItemObj = new \stdClass();
+                    $kitItemObj->kit_name = $kitItem->ItemType->type_name;
+                    $kitItemObj->central_office_name = $kitItem->centralOffice->central_name;
+                    $kitItemObj->status = $kitItem->status;
+                    $kitItemObj->image = $kitItem->image;
+                    if(isset($collectedKitTypes[$kitItemObj->kit_name])){
+                        array_push($collectedKitTypes[$kitItemObj->kit_name], $kitItemObj);
+                    }else {
+                        $collectedKitTypes[$kitItemObj->kit_name] = array($kitItemObj);
+                    }
+                }
+                if(count($collectedKitTypes) > 0 ){
+                    foreach( $collectedKitTypes as $type_name=>$types ){
+                        array_push($result, ['kit_name'=>$type_name,'quantity'=>count($types), 'items'=>$types]);
+                    }
                 }
             }
             return ['success'=>true, 'message'=>"All kit items", 'data'=>$result];

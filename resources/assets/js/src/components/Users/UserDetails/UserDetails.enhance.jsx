@@ -43,12 +43,13 @@ export default compose(
             }
         },
         filterKitItem:  props => kitItems => {
+            let { state, setState } = props
             if( kitItems.length > 0 ){
-                let { state, setState } = props
                 let { kitItemOptions } = state
-
                 kitItemOptions = kitItems.map( item => ({value: item.id, label: item.kit_name }))
                 setState({ ...state, kitItemOptions })
+            }else {
+                setState({ ...state, kitItemOptions:[] })
             }
         },
         removeSelectedKitItem: props => () => {

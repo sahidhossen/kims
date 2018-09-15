@@ -52,7 +52,7 @@ export const UserDetails = ({
                                 </div>
                             </div>
                             <hr/>
-                            <div className="d-flex flex-row justify-content-center">
+                            <div className="d-flex flex-row justify-content-center align-items-center">
                                 <div className="issue-date-box">
                                     Issue Date
                                 </div>
@@ -64,7 +64,7 @@ export const UserDetails = ({
                                         onChange={(date)=>{onChangeAction(date, "issue_date")}}
                                     />
                                 </div>
-                                <div className="issue-date-box">
+                                <div className="issue-date-box offset-1">
                                     Expire Date
                                 </div>
                                 <div className="flex-1 box-1">
