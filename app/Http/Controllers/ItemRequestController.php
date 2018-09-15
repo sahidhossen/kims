@@ -58,6 +58,7 @@ class ItemRequestController extends Controller
            $newRequest->user_id = $terms->user_id;
            $newRequest->company_id = $terms->company_id;
            $newRequest->solder_kit_id = $request->input('solder_kit_id');
+           $newRequest->problem_list = $request->input('kit_problem');
            $newRequest->comments = $request->input('comments');
            if( $request->input('request_type') === 'company' )
                $newRequest->status = 1; // Request for new item and approve from company
@@ -147,6 +148,7 @@ class ItemRequestController extends Controller
 
                     $item_property->id = $p_item->id;
                     $item_property->type_name = $itemType->type_name;
+                    $item_property->kit_problem = $p_item->problem_list;
                     $item_property->user_name = User::getParams($p_item->user_id, 'name');
                     $item_property->user_device_id = User::getParams($p_item->user_id, 'device_id');
                     $item_property->status = $p_item->status;
@@ -202,7 +204,7 @@ class ItemRequestController extends Controller
                 throw new Exception("Sorry condemnation not found!");
 
             $company_term = TermRelation::where(['user_id'=>$companyUser->id,'role'=>4, 'term_type'=>0])->first();
-
+            
             // Get all solder request that approve by company
             $allPendingRequest = SolderItemRequest::where([
                 'company_id'=>$company_term->company_id,
