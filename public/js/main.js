@@ -6978,7 +6978,7 @@ var fetchUser = exports.fetchUser = function fetchUser() {
 
 var fetchUserByCompany = exports.fetchUserByCompany = function fetchUserByCompany() {
     return function (dispatch) {
-        _axios2.default.get('/api/kit_user_by_comapny').then(function (response) {
+        _axios2.default.get('/api/kit_user_by_company').then(function (response) {
             // console.log("user: ", response.data )
             if (response.data.success === true) {
                 dispatch({ type: constants.FETCH_USER, payload: response.data.data });
@@ -7955,7 +7955,7 @@ module.exports = {};
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.saveKitController = exports.getKitController = undefined;
+exports.saveKitControllerAdministrator = exports.saveKitController = exports.getKitController = undefined;
 
 var _actionType = __webpack_require__(9);
 
@@ -8040,6 +8040,10 @@ var saveKitController = exports.saveKitController = function saveKitController(s
             // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
         });
     };
+};
+
+var saveKitControllerAdministrator = exports.saveKitControllerAdministrator = function saveKitControllerAdministrator(actionType, data) {
+    return function (dispatch, getState) {};
 };
 
 /***/ }),
@@ -8581,6 +8585,7 @@ Object.defineProperty(exports, "__esModule", {
 var DASHBOARD = exports.DASHBOARD = '/dashboard';
 var USERS = exports.USERS = '/dashboard/users';
 var USER_DETAILS = exports.USER_DETAILS = '/dashboard/user/:id';
+var CONTROLLER_DETAILS = exports.CONTROLLER_DETAILS = '/dashboard/:controller_type/:id';
 var CONTROLLER = exports.CONTROLLER = '/dashboard/controller';
 var KIT_ITEMS = exports.KIT_ITEMS = '/dashboard/kit_items';
 var ITEM_TYPES = exports.ITEM_TYPES = '/dashboard/item_types';
@@ -57654,7 +57659,7 @@ var routes = [{
         component: _NotFound2.default
     }]
 }];
-
+// import KitControllerDetails from './KitController/KitControllerDetails'
 exports.default = routes;
 
 /***/ }),
@@ -71340,12 +71345,19 @@ var _Modal = __webpack_require__(469);
 
 var _Modal2 = _interopRequireDefault(_Modal);
 
+var _KitControllerDetails = __webpack_require__(495);
+
+var _KitControllerDetails2 = _interopRequireDefault(_KitControllerDetails);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var KitController = exports.KitController = function KitController(_ref) {
     var kitControllers = _ref.kitControllers,
         addKitController = _ref.addKitController,
         toggleModal = _ref.toggleModal,
+        toggleRoleModal = _ref.toggleRoleModal,
+        hideRoleModal = _ref.hideRoleModal,
+        goNext = _ref.goNext,
         state = _ref.state;
     return _react2.default.createElement(
         'div',
@@ -71367,7 +71379,7 @@ var KitController = exports.KitController = function KitController(_ref) {
                         _react2.default.createElement(
                             'span',
                             { className: 'font-weight-semibold' },
-                            'User'
+                            'Central Office'
                         ),
                         ' - Dashboard'
                     ),
@@ -71434,15 +71446,14 @@ var KitController = exports.KitController = function KitController(_ref) {
                                                 { className: 'operation-area' },
                                                 _react2.default.createElement(
                                                     'div',
-                                                    { className: 'btn btn-info' },
-                                                    ' Edit User '
+                                                    { className: 'btn btn-info', onClick: function onClick(e) {
+                                                            toggleRoleModal('central', office);
+                                                        } },
+                                                    ' ',
+                                                    office.head === null ? "Add Admin" : " Update Admin",
+                                                    ' '
                                                 ),
-                                                '\xA0',
-                                                _react2.default.createElement(
-                                                    'div',
-                                                    { className: 'btn btn-danger' },
-                                                    ' Delete '
-                                                )
+                                                '\xA0'
                                             )
                                         )
                                     );
@@ -71505,15 +71516,14 @@ var KitController = exports.KitController = function KitController(_ref) {
                                                 { className: 'operation-area' },
                                                 _react2.default.createElement(
                                                     'div',
-                                                    { className: 'btn btn-info' },
-                                                    ' Edit User '
+                                                    { className: 'btn btn-info', onClick: function onClick(e) {
+                                                            toggleRoleModal('formation', office);
+                                                        } },
+                                                    ' ',
+                                                    office.head === null ? "Add Admin" : "View Admin",
+                                                    ' '
                                                 ),
-                                                '\xA0',
-                                                _react2.default.createElement(
-                                                    'div',
-                                                    { className: 'btn btn-danger' },
-                                                    ' Delete '
-                                                )
+                                                '\xA0'
                                             )
                                         )
                                     );
@@ -71575,15 +71585,14 @@ var KitController = exports.KitController = function KitController(_ref) {
                                                 { className: 'operation-area' },
                                                 _react2.default.createElement(
                                                     'div',
-                                                    { className: 'btn btn-info' },
-                                                    ' Details '
+                                                    { className: 'btn btn-info', onClick: function onClick(e) {
+                                                            toggleRoleModal('quarter_master', office);
+                                                        } },
+                                                    ' ',
+                                                    office.head === null ? "Add Admin" : "View Admin",
+                                                    ' '
                                                 ),
-                                                '\xA0',
-                                                _react2.default.createElement(
-                                                    'div',
-                                                    { className: 'btn btn-danger' },
-                                                    ' Delete '
-                                                )
+                                                '\xA0'
                                             )
                                         )
                                     );
@@ -71645,15 +71654,14 @@ var KitController = exports.KitController = function KitController(_ref) {
                                                 { className: 'operation-area' },
                                                 _react2.default.createElement(
                                                     'div',
-                                                    { className: 'btn btn-info' },
-                                                    ' Edit User '
+                                                    { className: 'btn btn-info', onClick: function onClick(e) {
+                                                            toggleRoleModal('unit', office);
+                                                        } },
+                                                    ' ',
+                                                    office.head === null ? "Add Admin" : "View Admin",
+                                                    ' '
                                                 ),
-                                                '\xA0',
-                                                _react2.default.createElement(
-                                                    'div',
-                                                    { className: 'btn btn-danger' },
-                                                    ' Delete '
-                                                )
+                                                '\xA0'
                                             )
                                         )
                                     );
@@ -71715,15 +71723,14 @@ var KitController = exports.KitController = function KitController(_ref) {
                                                 { className: 'operation-area' },
                                                 _react2.default.createElement(
                                                     'div',
-                                                    { className: 'btn btn-info' },
-                                                    ' Edit User '
+                                                    { className: 'btn btn-info', onClick: function onClick(e) {
+                                                            toggleRoleModal('company', office);
+                                                        } },
+                                                    ' ',
+                                                    office.head === null ? "Add Admin" : "View Admin",
+                                                    ' '
                                                 ),
-                                                '\xA0',
-                                                _react2.default.createElement(
-                                                    'div',
-                                                    { className: 'btn btn-danger' },
-                                                    ' Delete '
-                                                )
+                                                '\xA0'
                                             )
                                         )
                                     );
@@ -71734,6 +71741,13 @@ var KitController = exports.KitController = function KitController(_ref) {
                 )
             )
         ),
+        state.isRoleModalOn && _react2.default.createElement(_KitControllerDetails2.default, {
+            closeModal: function closeModal() {
+                hideRoleModal();
+            },
+            roleType: state.roleType,
+            office: state.office
+        }),
         state.isModalOn && _react2.default.createElement(_Modal2.default, {
             closeModal: function closeModal() {
                 toggleModal();
@@ -71747,6 +71761,9 @@ KitController.propTypes = {
     kitControllers: _propTypes2.default.object,
     addKitController: _propTypes2.default.func,
     toggleModal: _propTypes2.default.func,
+    hideRoleModal: _propTypes2.default.func,
+    toggleRoleModal: _propTypes2.default.func,
+    goNext: _propTypes2.default.func,
     state: _propTypes2.default.object
 };
 
@@ -72576,13 +72593,35 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) {
     return { kitControllers: store.kitControllers };
-}), _services.userIsAuthenticated, (0, _recompose.withState)('state', 'setState', { actionType: '', isModalOn: false }), (0, _recompose.withHandlers)({
+}), _services.userIsAuthenticated, (0, _recompose.withState)('state', 'setState', {
+    actionType: '',
+    isModalOn: false,
+    isRoleModalOn: false,
+    roleType: null,
+    office: null
+}), (0, _recompose.withHandlers)({
     addKitController: function addKitController(props) {
         return function (type) {
             var state = props.state,
                 setState = props.setState;
 
             setState((0, _extends3.default)({}, state, { actionType: type, isModalOn: true }));
+        };
+    },
+    toggleRoleModal: function toggleRoleModal(props) {
+        return function (type, office) {
+            var state = props.state,
+                setState = props.setState;
+
+            setState((0, _extends3.default)({}, state, { isRoleModalOn: !state.isRoleModalOn, roleType: type, office: office }));
+        };
+    },
+    hideRoleModal: function hideRoleModal(props) {
+        return function () {
+            var state = props.state,
+                setState = props.setState;
+
+            setState((0, _extends3.default)({}, state, { isRoleModalOn: false, roleType: null, office: null }));
         };
     },
     toggleModal: function toggleModal(props) {
@@ -72592,6 +72631,16 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
 
             setState((0, _extends3.default)({}, state, { isModalOn: !state.isModalOn, actionType: '' }));
         };
+    },
+    goNext: function goNext(props) {
+        return function (type, office) {
+            var push = props.history.push;
+
+            push({
+                pathname: '/dashboard/' + type + '/' + office.id,
+                state: { office: office }
+            });
+        };
     }
 
 }), (0, _recompose.lifecycle)({
@@ -72599,7 +72648,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
         this.props.dispatch((0, _kitControllerActions.getKitController)());
     },
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-        console.log("next: ", nextProps);
+        // console.log("next: ", nextProps)
     }
 }), _recompose.pure);
 
@@ -74645,6 +74694,538 @@ var NotFound = exports.NotFound = function NotFound() {
 };
 
 exports.default = NotFound;
+
+/***/ }),
+/* 494 */,
+/* 495 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _KitControllerDetails = __webpack_require__(496);
+
+var _KitControllerDetails2 = _interopRequireDefault(_KitControllerDetails);
+
+var _KitControllerDetails3 = __webpack_require__(497);
+
+var _KitControllerDetails4 = _interopRequireDefault(_KitControllerDetails3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = (0, _KitControllerDetails4.default)(_KitControllerDetails2.default);
+
+/***/ }),
+/* 496 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.KitControllerDetails = undefined;
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _UserForm = __webpack_require__(499);
+
+var _UserForm2 = _interopRequireDefault(_UserForm);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var KitControllerDetails = exports.KitControllerDetails = function KitControllerDetails(_ref) {
+    var deleteAdmin = _ref.deleteAdmin,
+        hideModal = _ref.hideModal,
+        onChangeAction = _ref.onChangeAction,
+        saveUser = _ref.saveUser,
+        toggleModal = _ref.toggleModal,
+        addUser = _ref.addUser,
+        office = _ref.office,
+        state = _ref.state;
+    return _react2.default.createElement(
+        'div',
+        { className: 'kit-modal-box-shadow' },
+        _react2.default.createElement(
+            'div',
+            { className: 'kit-modal-box' },
+            _react2.default.createElement(
+                'div',
+                { className: 'modal-header d-flex' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'flex-1' },
+                    _react2.default.createElement(
+                        'h3',
+                        { className: 'modal-title' },
+                        ' ',
+                        state.office_name,
+                        ' Administrator '
+                    )
+                ),
+                _react2.default.createElement(
+                    'span',
+                    { className: 'close-modal', onClick: function onClick() {
+                            hideModal();
+                        } },
+                    ' ',
+                    _react2.default.createElement('i', { className: 'fa fa-close' }),
+                    ' '
+                )
+            ),
+            _react2.default.createElement(
+                'div',
+                { className: 'modal-body' },
+                office.head === null && _react2.default.createElement(_UserForm2.default, {
+                    error: state.error,
+                    user: state.user,
+                    addUser: function addUser() {
+                        saveUser();
+                    },
+                    onChangeAction: onChangeAction() }),
+                office.head !== null && _react2.default.createElement(
+                    'div',
+                    { className: 'admin-info' },
+                    _react2.default.createElement(
+                        'p',
+                        null,
+                        _react2.default.createElement(
+                            'strong',
+                            null,
+                            ' Admin Name : '
+                        ),
+                        ' ',
+                        _react2.default.createElement(
+                            'span',
+                            null,
+                            ' ',
+                            office.head.name,
+                            ' '
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        null,
+                        _react2.default.createElement(
+                            'strong',
+                            null,
+                            ' Secret Id : '
+                        ),
+                        ' ',
+                        _react2.default.createElement(
+                            'span',
+                            null,
+                            ' ',
+                            office.head.secret_id,
+                            ' '
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        null,
+                        _react2.default.createElement(
+                            'strong',
+                            null,
+                            ' Designation : '
+                        ),
+                        ' ',
+                        _react2.default.createElement(
+                            'span',
+                            null,
+                            ' ',
+                            office.head.designation,
+                            ' '
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        null,
+                        _react2.default.createElement(
+                            'strong',
+                            null,
+                            ' Mobile : '
+                        ),
+                        ' ',
+                        _react2.default.createElement(
+                            'span',
+                            null,
+                            ' ',
+                            office.head.mobile,
+                            ' '
+                        )
+                    )
+                )
+            ),
+            office.head !== null && _react2.default.createElement(
+                'div',
+                { className: 'modal-footer' },
+                _react2.default.createElement(
+                    'p',
+                    { className: 'text-right' },
+                    _react2.default.createElement(
+                        'a',
+                        { href: '#', className: 'btn btn-danger' },
+                        ' Remove Administrator '
+                    )
+                )
+            )
+        )
+    );
+};
+
+KitControllerDetails.propTypes = {
+    state: _propTypes2.default.object,
+    office: _propTypes2.default.object,
+    deleteAdmin: _propTypes2.default.func,
+    onChangeAction: _propTypes2.default.func,
+    saveUser: _propTypes2.default.func,
+    hideModal: _propTypes2.default.func,
+    addUser: _propTypes2.default.func
+};
+
+exports.default = KitControllerDetails;
+
+/***/ }),
+/* 497 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(4);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _redux = __webpack_require__(5);
+
+var _recompose = __webpack_require__(7);
+
+var _reactRedux = __webpack_require__(6);
+
+var _kitControllerActions = __webpack_require__(40);
+
+var _services = __webpack_require__(10);
+
+var _userActions = __webpack_require__(15);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) {
+    return { users: store.users };
+}), _services.userIsAuthenticated, (0, _recompose.withState)('state', 'setState', {
+    user: {
+        name: '',
+        professional: '',
+        designation: '',
+        mobile: '',
+        secret_id: '',
+        password: '',
+        role: '',
+        central_office_id: 0,
+        district_office_id: 0,
+        unit_id: 0,
+        company_id: 0
+    },
+    office_name: '',
+    error: '',
+    isModalOn: false
+}), (0, _recompose.withHandlers)({
+    hideModal: function hideModal(props) {
+        return function () {
+            props.closeModal();
+        };
+    },
+
+    onChangeAction: function onChangeAction(props) {
+        return function () {
+            return function (event) {
+                var user = props.state.user,
+                    setState = props.setState;
+
+
+                var name = event.target.name;
+                var value = event.target.value;
+
+                if (name === 'u_name') user.name = value;
+                if (name === 'professional') user.professional = value;
+                if (name === 'designation') user.designation = value;
+                if (name === 'mobile') user.mobile = value;
+                if (name === 'secret_id') user.secret_id = value;
+                if (name === 'password') user.password = value;
+
+                setState((0, _extends3.default)({}, props.state, { user: user }));
+            };
+        };
+    },
+    saveUser: function saveUser(props) {
+        return function () {
+            var state = props.state,
+                setState = props.setState;
+
+
+            if (state.error === '') {
+                state.error = state.user.name === '' || state.user.position === '' || state.user.designation === '' || state.user.mobile === '' || state.user.secret_id === '' ? "Please fill required field!" : "";
+            }
+
+            if (state.error !== "") {
+                setState((0, _extends3.default)({}, state));
+            } else {
+                props.dispatch((0, _userActions.addUser)(state.user));
+            }
+        };
+    }
+
+}), (0, _recompose.lifecycle)({
+    componentDidMount: function componentDidMount() {
+        var _props = this.props,
+            office = _props.office,
+            roleType = _props.roleType,
+            state = _props.state,
+            setState = _props.setState;
+        var user = state.user,
+            office_name = state.office_name;
+
+        if (roleType === 'central') {
+            user.role = 'central';
+            user.central_office_id = office.id;
+            office_name = office.central_name;
+        }
+        if (roleType === 'formation') {
+            user.role = 'formation';
+            user.central_office_id = office.central_office_id;
+            user.district_office_id = office.id;
+            office_name = office.district_name;
+        }
+        if (roleType === 'quarter_master') {
+            user.role = 'quarter_master';
+            user.central_office_id = office.central_office_id;
+            user.district_office_id = office.formation_office_id;
+            user.quarter_master_id = office.id;
+            office_name = office.quarter_name;
+        }
+        if (roleType === 'unit') {
+            user.role = 'unit';
+            user.central_office_id = office.central_office_id;
+            user.district_office_id = office.formation_office_id;
+            user.quarter_master_id = office.quarter_master_id;
+            user.unit_id = office.id;
+            office_name = office.unit_name;
+        }
+        if (roleType === 'company') {
+            user.role = 'company';
+            user.central_office_id = office.central_office_id;
+            user.district_office_id = office.formation_office_id;
+            user.unit_id = office.unit_id;
+            user.company_id = office.id;
+            office_name = office.company_name;
+        }
+        setState((0, _extends3.default)({}, state, { user: user, office_name: office_name }));
+    },
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        var users = nextProps.users;
+
+        if (!_.isEqual(users, this.props.users)) {
+            // let { state, setState } = this.props
+            window.location.reload();
+        }
+    }
+}), _recompose.pure);
+
+/***/ }),
+/* 498 */,
+/* 499 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.UserForm = undefined;
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var UserForm = exports.UserForm = function UserForm(_ref) {
+    var error = _ref.error,
+        user = _ref.user,
+        onChangeAction = _ref.onChangeAction,
+        addUser = _ref.addUser;
+    return _react2.default.createElement(
+        'div',
+        null,
+        error !== '' && _react2.default.createElement(
+            'div',
+            { className: 'alert-box' },
+            ' ',
+            _react2.default.createElement(
+                'p',
+                { className: 'alert-danger' },
+                ' ',
+                error
+            ),
+            ' '
+        ),
+        _react2.default.createElement(
+            'div',
+            { className: 'kit-form-body' },
+            _react2.default.createElement(
+                'div',
+                { className: 'form-group' },
+                _react2.default.createElement(
+                    'label',
+                    null,
+                    ' Name ',
+                    _react2.default.createElement(
+                        'span',
+                        { className: 'required' },
+                        '*'
+                    )
+                ),
+                _react2.default.createElement('input', { type: 'text', className: 'form-control', value: user.name, placeholder: 'Full Name', name: 'u_name', onChange: function onChange(e) {
+                        onChangeAction(e);
+                    } })
+            ),
+            _react2.default.createElement(
+                'div',
+                { className: 'form-group' },
+                _react2.default.createElement(
+                    'label',
+                    null,
+                    ' Mobile ',
+                    _react2.default.createElement(
+                        'span',
+                        { className: 'required' },
+                        '*'
+                    )
+                ),
+                _react2.default.createElement('input', { type: 'text', className: 'form-control', value: user.mobile, placeholder: 'Mobile', name: 'mobile', onChange: function onChange(e) {
+                        onChangeAction(e);
+                    } })
+            ),
+            _react2.default.createElement(
+                'div',
+                { className: 'd-flex flex-row' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'form-group flex-1' },
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        ' Designation ',
+                        _react2.default.createElement(
+                            'span',
+                            { className: 'required' },
+                            '*'
+                        )
+                    ),
+                    _react2.default.createElement('input', { type: 'text', className: 'form-control', value: user.designation, placeholder: 'Designation', name: 'designation', onChange: function onChange(e) {
+                            onChangeAction(e);
+                        } })
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'form-group flex-1 px-1' },
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        ' Professional ',
+                        _react2.default.createElement(
+                            'span',
+                            { className: 'required' },
+                            '*'
+                        )
+                    ),
+                    _react2.default.createElement('input', { type: 'text', className: 'form-control', value: user.professional, placeholder: 'Professional', name: 'professional', onChange: function onChange(e) {
+                            onChangeAction(e);
+                        } })
+                )
+            ),
+            _react2.default.createElement(
+                'div',
+                { className: 'd-flex flex-row' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'form-group flex-1' },
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        ' Password ',
+                        _react2.default.createElement(
+                            'span',
+                            { className: 'required' },
+                            '*'
+                        )
+                    ),
+                    _react2.default.createElement('input', { type: 'password', className: 'form-control', value: user.password, placeholder: 'Password', name: 'password', onChange: function onChange(e) {
+                            onChangeAction(e);
+                        } })
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'form-group flex-1 px-1' },
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        ' Secret ID ',
+                        _react2.default.createElement(
+                            'span',
+                            { className: 'required' },
+                            '*'
+                        ),
+                        ' '
+                    ),
+                    _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Secret ID', value: user.secret_id, name: 'secret_id', onChange: function onChange(e) {
+                            onChangeAction(e);
+                        } })
+                )
+            ),
+            _react2.default.createElement(
+                'div',
+                { className: 'button-submit-area text-right' },
+                _react2.default.createElement(
+                    'button',
+                    { type: 'submit', className: 'btn btn-primary', onClick: function onClick(e) {
+                            addUser(e);
+                        } },
+                    'Add User'
+                )
+            )
+        )
+    );
+};
+
+UserForm.propTypes = {
+    user: _propTypes2.default.object,
+    error: _propTypes2.default.string,
+    onChangeAction: _propTypes2.default.func,
+    addUser: _propTypes2.default.func
+};
+
+exports.default = UserForm;
 
 /***/ })
 /******/ ]);

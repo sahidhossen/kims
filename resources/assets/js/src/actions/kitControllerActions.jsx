@@ -75,3 +75,7 @@ export const saveKitController = (state, actionType ) => (dispatch, getState) =>
             // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
         });
 }
+
+export const saveKitControllerAdministrator = (actionType, data) => (dispatch, getState ) => {
+
+}

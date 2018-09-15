@@ -76,6 +76,9 @@ class TermRelation extends Model
             if( isset($data['district_office_id']) && $data['district_office_id']){
                 $newRelation->district_office_id = $data['district_office_id'];
             }
+            if( isset($data['quarter_master_id']) && $data['quarter_master_id']){
+                $newRelation->quarter_master_id = $data['quarter_master_id'];
+            }
             if( isset($data['unit_id']) && $data['unit_id']){
                 $newRelation->unit_id = $data['unit_id'];
             }

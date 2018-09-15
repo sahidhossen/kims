@@ -36,6 +36,9 @@ class QuarterMasterController extends Controller
             if( !$quarterMaster )
                 throw new Exception("quarter master office not found with this ID");
 
+            $where = ['quarter_master_id'=>$quarterMaster->id,'role'=>6];
+            $quarterMaster->head = TermRelation::findMyAdmin($where);
+
             return ['success'=>true ,'data'=>$quarterMaster, 'message'=>"Found quarter office"];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];

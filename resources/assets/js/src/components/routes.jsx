@@ -8,6 +8,7 @@ import CompanyUsers from './company_users'
 import AddSoldier from './AddSoldier'
 import UserDetails from './Users/UserDetails'
 import KitController from './KitController'
+// import KitControllerDetails from './KitController/KitControllerDetails'
 import KitItems from './KitItems'
 import ItemTypes from './ItemTypes'
 import Condemnation from './Condemnation'
@@ -55,6 +56,7 @@ const routes = [{
                     exact: true,
                     component: KitController
                 },
+
                 {
                     path: route.KIT_ITEMS,
                     exact: true,

@@ -24,7 +24,6 @@ class KitController extends Controller
             $kitController->formation_offices =  DistrictOffice::getOfficesWithAdmin();
             $kitController->units = Unit::getOfficesWithAdmin();
             $kitController->quarters = QuarterMaster::getOfficeWithAdmin();
-            $kitController->demo = 'asdfasdf';
             return ['success'=>true ,'message'=>"Get all kit controllers ", 'data'=> $kitController ];
 
         }catch (Exception $e){

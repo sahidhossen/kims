@@ -9,15 +9,36 @@ export default compose(
         return { kitControllers: store.kitControllers }
     }),
     userIsAuthenticated,
-    withState('state', 'setState', { actionType:'', isModalOn: false }),
+    withState('state', 'setState', {
+        actionType:'',
+        isModalOn: false,
+        isRoleModalOn: false,
+        roleType:null,
+        office: null
+    }),
     withHandlers({
         addKitController: props => type => {
             let {state, setState } = props
             setState({ ...state, actionType: type, isModalOn: true })
         },
+        toggleRoleModal: props => (type, office) => {
+            let { state, setState } = props
+            setState({ ...state, isRoleModalOn: !state.isRoleModalOn, roleType: type, office: office })
+        },
+        hideRoleModal: props => () => {
+            let { state, setState } = props
+            setState({ ...state, isRoleModalOn: false, roleType: null, office: null })
+        },
         toggleModal: props => () => {
             let { state, setState } = props
             setState({ ...state, isModalOn: !state.isModalOn, actionType: '' })
+        },
+        goNext: props => (type, office) => {
+            let {history:{push} } = props
+            push({
+                pathname: `/dashboard/${type}/${office.id}`,
+                state: { office: office }
+            })
         }
 
     }),
@@ -26,7 +47,7 @@ export default compose(
             this.props.dispatch(getKitController())
         },
         componentWillReceiveProps(nextProps){
-            console.log("next: ", nextProps)
+            // console.log("next: ", nextProps)
         }
 
     }),

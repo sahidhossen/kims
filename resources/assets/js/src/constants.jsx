@@ -1,6 +1,7 @@
 export const DASHBOARD = '/dashboard'
 export const USERS = '/dashboard/users'
 export const USER_DETAILS = '/dashboard/user/:id'
+export const CONTROLLER_DETAILS = '/dashboard/:controller_type/:id'
 export const CONTROLLER = '/dashboard/controller'
 export const KIT_ITEMS = '/dashboard/kit_items'
 export const ITEM_TYPES = '/dashboard/item_types'

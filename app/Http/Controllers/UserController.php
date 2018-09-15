@@ -428,6 +428,7 @@ class UserController extends Controller
                 $relationTableData = [];
                 $relationTableData['central_office_id'] = $request->input('central_office_id');
                 $relationTableData['district_office_id'] = $request->input('district_office_id');
+                $relationTableData['quarter_master_id'] = $request->input('quarter_master_id');
                 $relationTableData['unit_id'] = $request->input('unit_id');
                 $relationTableData['company_id'] = $request->input('company_id');
                 $relationTableData['user_id'] = $user->id;
@@ -437,6 +438,13 @@ class UserController extends Controller
                 TermRelation::createRelation( $relationTableData );
             }
             $user->whoami = $request->input('role');
+
+            // Will manage with later
+            if($request->input('user_type')){
+                $user_type = $request->input('user_type');
+
+            }
+
             return [ 'success' => true, 'data' => $user, 'message'=>'Add user successfully!'];
         }catch(Exception $e){
             return ['success'=>false, 'message'=> $e->getMessage()];
