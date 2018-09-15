@@ -440,14 +440,11 @@ class ItemRequestController extends Controller
      */
     public function quarterMasterPendingRequest(Request $request){
         try{
-            if(!$request->input('condemnation_id'))
-                throw new Exception("Condemnation Id required");
             $quarterMasterUser = $request->user();
             if(!$quarterMasterUser || !$quarterMasterUser->hasRole('quarter_master'))
                 throw new Exception("Please try to login as Quarter Master user!");
             $pendingRequest = KitItemRequest::where([
                 'quarter_master_user_id'=>$quarterMasterUser->id,
-                'condemnation_id'=>$request->input('condemnation_id'),
                 'status'=>2
             ])->whereIn('stage', array(1,2,4,5))->get();
 
@@ -528,15 +525,12 @@ class ItemRequestController extends Controller
 
     public function requestQuarterMasterToDistrict(Request $request){
         try{
-            if(!$request->input('condemnation_id'))
-                throw new Exception("Condemnation Id is required");
             $quarterMaster = $request->user(); // Get from auth
             if(!$quarterMaster || !$quarterMaster->hasRole('quarter_master'))
                 throw new Exception("You need to logged in as quarter master level!");
             $terms = TermRelation::where(['user_id'=>$quarterMaster->id])->first();
             $quarterBoss = TermRelation::retrieveUnitDistrict($terms->district_office_id);
             $pendingRequest = KitItemRequest::where([
-                'condemnation_id'=> $request->input('condemnation_id'),
                 'quarter_master_user_id'=>$quarterMaster->id,
                 'stage'=>2,
                 'status'=>2
@@ -588,15 +582,12 @@ class ItemRequestController extends Controller
     */
     public function formationLevelPendingRequest(Request $request){
         try{
-            if(!$request->input('condemnation_id'))
-                throw new Exception("Condemnation Id required");
             $formationUser = $request->user();
             if(!$formationUser || !$formationUser->hasRole('formation'))
                 throw new Exception("Please try to login as formation user!");
 
             $pendingRequest = KitItemRequest::where([
                 'district_user_id'=>$formationUser->id,
-                'condemnation_id'=>$request->input('condemnation_id'),
                 'status'=> 3 //formation
             ])->whereIn('stage', array(1,2,4,5))->get();
 

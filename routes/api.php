@@ -130,16 +130,17 @@ Route::middleware('auth:api')->post('/request_company_to_unit', 'ItemRequestCont
  * ============UNIT LEVEL==========
  */
 Route::middleware('auth:api')->get('/get_unit_level_request', 'ItemRequestController@unitLevelPendingRequest');
-Route::middleware('auth:api')->post('/request_unit_to_quarter_master', 'ItemRequestController@requestUnitToQuarterMaster');
 Route::middleware('auth:api')->post('/company_request_approve', 'ItemRequestController@approveCompanyRequestByUnit');
 Route::middleware('auth:api')->post('/company_request_cancel', 'ItemRequestController@cancelCompanyRequestByUnit');
+Route::middleware('auth:api')->post('/request_unit_to_quarter_master', 'ItemRequestController@requestUnitToQuarterMaster');
 
 /*
  * ============ QUARTER MASTER ===========
  *
  */
 Route::middleware('auth:api')->get('/get_quarter_master_pending_request', 'ItemRequestController@quarterMasterPendingRequest');
-Route::middleware('auth:api')->get('/unit_request_approve', 'ItemRequestController@quarterMasterPendingRequest');
+Route::middleware('auth:api')->post('/unit_request_approve', 'ItemRequestController@approveUnitRequestByQuarterMaster');
+Route::middleware('auth:api')->post('/unit_request_cancel', 'ItemRequestController@cancelUnitRequestByQuarterMaster');
 Route::middleware('auth:api')->post('/request_quarter_master_to_district', 'ItemRequestController@requestQuarterMasterToDistrict');
 
 
