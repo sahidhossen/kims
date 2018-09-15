@@ -148,6 +148,7 @@ class ItemRequestController extends Controller
                     $item_property->id = $p_item->id;
                     $item_property->type_name = $itemType->type_name;
                     $item_property->user_name = User::getParams($p_item->user_id, 'name');
+                    $item_property->user_device_id = User::getParams($p_item->user_id, 'device_id');
                     $item_property->status = $p_item->status;
                     $item_property->issue_date = $item->issue_date;
                     $item_property->expire_date = $item->expire_date;
@@ -413,6 +414,7 @@ class ItemRequestController extends Controller
                 'condemnation_id'=>$request->input('condemnation_id'),
                 'status'=>1
             ])->whereIn('stage', array(1,2,4,5))->get();
+
             if(count($pendingRequest) > 0 ){
                 foreach($pendingRequest as $pRequest){
                     $pRequest->kit_items = \GuzzleHttp\json_decode($pRequest->kit_items);

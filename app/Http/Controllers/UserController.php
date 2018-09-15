@@ -151,6 +151,31 @@ class UserController extends Controller
 
             }
 
+            //Quarter master level data
+            $QuarterMasterUnits = [];
+            if($currentUser->hasRole('quarter_master')){
+                $currentUser->formation_id = $UserTerm->district_office_id;
+                $currentUser->central_id = $UserTerm->central_office_id;
+                $formation_info = TermRelation::retrieveQuarterFormation($UserTerm->district_office_id);
+                if($formation_info){
+                    $currentUser->cental_name = $formation_info->district_name;
+                    $currentUser->central_user_name = $formation_info->name;
+                    $currentUser->central_device_id = $formation_info->device_id;
+                }
+                $unitTerms = TermRelation::retrieveQuarterMasterUnitsTerms( $currentUser->id );
+                if( count( $unitTerms) > 0 ){
+                    foreach( $unitTerms as $term ){
+                        $user = User::find( $term->user_id );
+                        if($user->hasRole('unit')) {
+                            $user->district_office_id = $term->district_office_id;
+                            $user->unit_id = $term->unit_id;
+                            $unit = TermRelation::getUnitInfoByUserId($user->id);
+                            $user->unit_name = $unit->unit_name;
+                            array_push($QuarterMasterUnits, $user);
+                        }
+                    }
+                }
+            }
 
             //Formation level data
             $districtUnits = [];
@@ -200,6 +225,7 @@ class UserController extends Controller
                 'success' => true,
                 'solders'=>$companySolders,
                 'unit_companies'=>$unitCompanies,
+                'quarter_master_units'=>$QuarterMasterUnits,
                 'formation_units'=>$districtUnits,
                 'central_formations'=>$centralFormations,
                 'items' => $itemResult,

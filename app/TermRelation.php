@@ -233,6 +233,36 @@ class TermRelation extends Model
         return $districtUser;
     }
 
+
+    /*
+   * Get Quarter Master Units Terms
+   */
+    public static function retrieveQuarterMasterUnitsTerms($user_id){
+        if(!$user_id)
+            return null;
+        $unitTerms = self::where('user_id',$user_id)->first();
+        $unitSolderTerms = self::where(
+            [
+                'quarter_master_id'=>$unitTerms->district_office_id,
+                'term_type'=>0,
+                'role'=> 3
+            ]
+        )->where('user_id','!=',$user_id)->get();
+        return $unitSolderTerms;
+    }
+
+    public static function retrieveQuarterFormation($district_office_id){
+        if(!$district_office_id)
+            return null;
+
+        $districtUser = DB::table('term_relation')
+            ->leftJoin('users','term_relation.user_id','=','users.id')
+            ->leftJoin('district_offices','term_relation.district_office_id','=','district_offices.id')
+            ->where(['term_relation.district_office_id'=>$district_office_id, 'term_relation.role'=>2, 'term_relation.term_type'=>0])
+            ->first();
+        return $districtUser;
+    }
+
     /*
     * Find district Central
     */
