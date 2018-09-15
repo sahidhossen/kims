@@ -1,11 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Select from 'react-select';
+import ListModal from './ListModal'
 
 export const KitItem = ({
     kitItems,
     addItem,
     onChangeAction,
+    toggleModal,
+    closeModal,
     state
 }) => (
     <div className="Homepage">
@@ -88,7 +91,7 @@ export const KitItem = ({
                                                 {item.quantity}
                                             </div>
                                             <div className="operation-area">
-                                                <a href="#" className="btn btn-info"> Details View </a>
+                                                <a href="#" className="btn btn-info" onClick={(e)=>{toggleModal(e,item.items)}}> Details View </a>
                                             </div>
                                         </div>
                                     </div>
@@ -100,11 +103,17 @@ export const KitItem = ({
                 </div>
             </div>
         </div>
+        {state.isModalOn &&
+            <ListModal
+                onClose={()=>{closeModal()}}
+                items={state.items} /> }
     </div>
 )
 
 KitItem.propTypes = {
     kitItems: PropTypes.object,
+    toggleModal: PropTypes.func,
+    closeModal: PropTypes.func,
     addItem: PropTypes.func,
     onChangeAction: PropTypes.func,
     state: PropTypes.object

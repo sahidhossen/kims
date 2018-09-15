@@ -116,7 +116,9 @@ Route::middleware('auth:api')->post('/assign_kit_item', 'UserController@assignKi
 /*
  * Request API's
  */
-
+/*
+ * ============= SOLDER AND COMPANY==========
+ */
 Route::middleware('auth:api')->get('/company_pending_request', 'ItemRequestController@solderPendingRequest');
 Route::middleware('auth:api')->post('/request_solder_to_company', 'ItemRequestController@SolderRequest');
 Route::middleware('auth:api')->post('/cancel_solder_to_company_request', 'ItemRequestController@cancelRequest');
@@ -124,15 +126,33 @@ Route::middleware('auth:api')->post('/approve_solder_to_company_request', 'ItemR
 
 Route::middleware('auth:api')->post('/request_company_to_unit', 'ItemRequestController@requestCompanyToUnit');
 
+/*
+ * ============UNIT LEVEL==========
+ */
 Route::middleware('auth:api')->get('/get_unit_level_request', 'ItemRequestController@unitLevelPendingRequest');
-Route::middleware('auth:api')->post('/request_unit_to_district', 'ItemRequestController@requestUnitToDistrict');
+Route::middleware('auth:api')->post('/request_unit_to_quarter_master', 'ItemRequestController@requestUnitToQuarterMaster');
 Route::middleware('auth:api')->post('/company_request_approve', 'ItemRequestController@approveCompanyRequestByUnit');
 Route::middleware('auth:api')->post('/company_request_cancel', 'ItemRequestController@cancelCompanyRequestByUnit');
 
+/*
+ * ============ QUARTER MASTER ===========
+ *
+ */
+Route::middleware('auth:api')->get('/get_quarter_master_pending_request', 'ItemRequestController@quarterMasterPendingRequest');
+Route::middleware('auth:api')->get('/unit_request_approve', 'ItemRequestController@quarterMasterPendingRequest');
+Route::middleware('auth:api')->post('/request_quarter_master_to_district', 'ItemRequestController@requestQuarterMasterToDistrict');
+
+
+/*
+ * ================ FORMATION LEVEL ==========
+ */
 Route::middleware('auth:api')->get('/get_formation_level_request', 'ItemRequestController@formationLevelPendingRequest');
 Route::middleware('auth:api')->post('/request_formation_to_central', 'ItemRequestController@requestDistrictToCentral');
-Route::middleware('auth:api')->post('/unit_request_approve', 'ItemRequestController@approveUnitRequestByDistrict');
+Route::middleware('auth:api')->post('/quarter_master_request_approve', 'ItemRequestController@approveQuarterMasterRequestByDistrict');
 
+/*
+ * ============ CENTRAL LEVEL ============
+ */
 Route::middleware('auth:api')->get('/get_central_level_request', 'ItemRequestController@centralLevelPendingRequest');
 Route::middleware('auth:api')->get('/central_review_pending_request', 'ItemRequestController@reviewPendingRequestById');
 Route::middleware('auth:api')->post('/central_approve_request', 'ItemRequestController@acceptPendingRequestForDistrict');

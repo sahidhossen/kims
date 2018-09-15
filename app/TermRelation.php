@@ -218,6 +218,23 @@ class TermRelation extends Model
         return $unitCompanyTerms;
     }
 
+
+    /*
+    * Find unit quarter master
+    */
+    public static function retrieveUnitQuarterMaster($quarter_master_id){
+        if(!$quarter_master_id)
+            return null;
+
+        $districtUser = DB::table('term_relation')
+            ->leftJoin('users','term_relation.user_id','=','users.id')
+            ->leftJoin('quarter_master','term_relation.quarter_master_id','=','quarter_master.id')
+            ->where(['term_relation.quarter_master_id'=>$quarter_master_id, 'term_relation.role'=>6, 'term_relation.term_type'=>0])
+            ->first();
+        return $districtUser;
+    }
+
+
     /*
      * Find unit district
      */
@@ -332,6 +349,17 @@ class TermRelation extends Model
             ->where(['term_relation.user_id'=>$user_id,'term_relation.term_type'=>0,'term_relation.role'=>3])
             ->first();
         return $unit;
+    }
+
+    /*
+     * Get Quarter master Information by user Id
+     */
+    public static function getQuarterMasterInfoByUserId($user_id){
+        $district = DB::table('term_relation')
+            ->leftJoin('quarter_master', 'term_relation.quarter_master_id','=','quarter_master.id')
+            ->where(['term_relation.user_id'=>$user_id,'term_relation.term_type'=>0,'term_relation.role'=>6])
+            ->first();
+        return $district;
     }
 
     /*

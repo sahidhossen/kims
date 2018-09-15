@@ -174,6 +174,8 @@ class KitItemController extends Controller
             if( count($kitItems) > 0 ){
                 foreach ($kitItems as $kitItem ){
                     $kitItemObj = new \stdClass();
+                    $kitItemObj->id = $kitItem->id;
+                    $kitItemObj->created_at = $kitItem->created_at;
                     $kitItemObj->kit_name = $kitItem->ItemType->type_name;
                     $kitItemObj->central_office_name = $kitItem->centralOffice->central_name;
                     $kitItemObj->status = $kitItem->status;

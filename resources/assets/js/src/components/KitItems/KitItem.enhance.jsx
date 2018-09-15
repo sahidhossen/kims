@@ -23,7 +23,9 @@ export default compose(
         kitItem:{
             central_office_id: 0,
             item_type_id: 0
-        }
+        },
+        items: null,
+        isModalOn: false
     }),
     withHandlers({
         filterCentralOffice: props => centralOffice => {
@@ -72,6 +74,15 @@ export default compose(
            }
 
            setState({ ...state , kitItem , kitSelectOption, centralOfficeSelectedOption})
+        },
+        toggleModal: props => (e, items) => {
+            e.preventDefault()
+            let { state, setState } = props
+            setState({...state, items: items, isModalOn: !state.isModalOn })
+        },
+        closeModal: props => () => {
+            let { state, setState } = props
+            setState({...state, isModalOn: false, items: null })
         }
     }),
 

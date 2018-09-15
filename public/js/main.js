@@ -4936,35 +4936,6 @@ module.exports = {
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _assign = __webpack_require__(329);
-
-var _assign2 = _interopRequireDefault(_assign);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = _assign2.default || function (target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];
-
-    for (var key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        target[key] = source[key];
-      }
-    }
-  }
-
-  return target;
-};
-
-/***/ }),
-/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5567,6 +5538,35 @@ if ("development" !== 'production' && typeof isCrushed.name === 'string' && isCr
 
 
 /***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _assign = __webpack_require__(329);
+
+var _assign2 = _interopRequireDefault(_assign);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _assign2.default || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
+/***/ }),
 /* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5633,7 +5633,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setObservableConfig", function() { return configureObservable; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_extends__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_fbjs_lib_shallowEqual__ = __webpack_require__(103);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_fbjs_lib_shallowEqual___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_fbjs_lib_shallowEqual__);
@@ -6738,7 +6738,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Authentication = exports.userIsAuthenticated = undefined;
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
@@ -6911,7 +6911,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.retriveAuthUser = exports.fetchAuthUser = exports.logout = exports.fetchOauthToken = exports.getUserRole = exports.getAssignedItems = exports.assignItemToSolder = exports.addUser = exports.fetchUserById = exports.fetchUserByCompany = exports.fetchUser = undefined;
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
@@ -54227,7 +54227,7 @@ function shallowEqual(objA, objB) {
 /* unused harmony export whenMapDispatchToPropsIsFunction */
 /* unused harmony export whenMapDispatchToPropsIsMissing */
 /* unused harmony export whenMapDispatchToPropsIsObject */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_redux__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_redux__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__wrapMapToProps__ = __webpack_require__(108);
 
 
@@ -56636,7 +56636,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _reduxThunk = __webpack_require__(327);
 
@@ -56733,11 +56733,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.injectReducer = exports.makeRootReducer = undefined;
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _location = __webpack_require__(336);
 
@@ -56976,7 +56976,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
@@ -57114,7 +57114,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
@@ -57170,7 +57170,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
@@ -57247,7 +57247,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
@@ -57317,7 +57317,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
@@ -57388,7 +57388,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
@@ -57461,7 +57461,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
@@ -57568,23 +57568,23 @@ var _KitItems = __webpack_require__(477);
 
 var _KitItems2 = _interopRequireDefault(_KitItems);
 
-var _ItemTypes = __webpack_require__(480);
+var _ItemTypes = __webpack_require__(483);
 
 var _ItemTypes2 = _interopRequireDefault(_ItemTypes);
 
-var _Condemnation = __webpack_require__(486);
+var _Condemnation = __webpack_require__(489);
 
 var _Condemnation2 = _interopRequireDefault(_Condemnation);
 
-var _Login = __webpack_require__(490);
+var _Login = __webpack_require__(493);
 
 var _Login2 = _interopRequireDefault(_Login);
 
-var _Register = __webpack_require__(493);
+var _Register = __webpack_require__(496);
 
 var _Register2 = _interopRequireDefault(_Register);
 
-var _NotFound = __webpack_require__(496);
+var _NotFound = __webpack_require__(499);
 
 var _NotFound2 = _interopRequireDefault(_NotFound);
 
@@ -57682,7 +57682,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouterConfig = __webpack_require__(44);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _reactRedux = __webpack_require__(6);
 
@@ -58596,7 +58596,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouterConfig = __webpack_require__(44);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _reactRedux = __webpack_require__(6);
 
@@ -59425,7 +59425,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -59882,7 +59882,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -60477,7 +60477,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -62871,7 +62871,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -63550,11 +63550,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _reactRedux = __webpack_require__(6);
 
@@ -63712,11 +63712,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -63995,11 +63995,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -64350,11 +64350,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -71107,11 +71107,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -72379,11 +72379,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _reactRedux = __webpack_require__(6);
 
@@ -72959,11 +72959,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -73108,11 +73108,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -73200,7 +73200,7 @@ var _KitItems = __webpack_require__(478);
 
 var _KitItems2 = _interopRequireDefault(_KitItems);
 
-var _KitItem = __webpack_require__(479);
+var _KitItem = __webpack_require__(482);
 
 var _KitItem2 = _interopRequireDefault(_KitItem);
 
@@ -73232,12 +73232,18 @@ var _reactSelect = __webpack_require__(96);
 
 var _reactSelect2 = _interopRequireDefault(_reactSelect);
 
+var _ListModal = __webpack_require__(479);
+
+var _ListModal2 = _interopRequireDefault(_ListModal);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var KitItem = exports.KitItem = function KitItem(_ref) {
     var kitItems = _ref.kitItems,
         addItem = _ref.addItem,
         onChangeAction = _ref.onChangeAction,
+        toggleModal = _ref.toggleModal,
+        closeModal = _ref.closeModal,
         state = _ref.state;
     return _react2.default.createElement(
         'div',
@@ -73429,7 +73435,9 @@ var KitItem = exports.KitItem = function KitItem(_ref) {
                                                 { className: 'operation-area' },
                                                 _react2.default.createElement(
                                                     'a',
-                                                    { href: '#', className: 'btn btn-info' },
+                                                    { href: '#', className: 'btn btn-info', onClick: function onClick(e) {
+                                                            toggleModal(e, item.items);
+                                                        } },
                                                     ' Details View '
                                                 )
                                             )
@@ -73441,12 +73449,19 @@ var KitItem = exports.KitItem = function KitItem(_ref) {
                     )
                 )
             )
-        )
+        ),
+        state.isModalOn && _react2.default.createElement(_ListModal2.default, {
+            onClose: function onClose() {
+                closeModal();
+            },
+            items: state.items })
     );
 };
 
 KitItem.propTypes = {
     kitItems: _propTypes2.default.object,
+    toggleModal: _propTypes2.default.func,
+    closeModal: _propTypes2.default.func,
     addItem: _propTypes2.default.func,
     onChangeAction: _propTypes2.default.func,
     state: _propTypes2.default.object
@@ -73462,14 +73477,193 @@ exports.default = KitItem;
 
 
 Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _ListModal = __webpack_require__(480);
+
+var _ListModal2 = _interopRequireDefault(_ListModal);
+
+var _ListModal3 = __webpack_require__(481);
+
+var _ListModal4 = _interopRequireDefault(_ListModal3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = (0, _ListModal4.default)(_ListModal2.default);
+
+/***/ }),
+/* 480 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ListModal = undefined;
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var ListModal = exports.ListModal = function ListModal(_ref) {
+    var hideModal = _ref.hideModal,
+        deleteItem = _ref.deleteItem,
+        state = _ref.state,
+        items = _ref.items;
+    return _react2.default.createElement(
+        'div',
+        { className: 'kit-modal-box-shadow' },
+        _react2.default.createElement(
+            'div',
+            { className: 'kit-modal-box' },
+            _react2.default.createElement(
+                'div',
+                { className: 'modal-header d-flex' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'flex-1' },
+                    _react2.default.createElement(
+                        'h3',
+                        { className: 'modal-title' },
+                        ' Kit Item List '
+                    )
+                ),
+                _react2.default.createElement(
+                    'span',
+                    { className: 'close-modal', onClick: function onClick() {
+                            hideModal();
+                        } },
+                    ' ',
+                    _react2.default.createElement('i', { className: 'fa fa-close' }),
+                    ' '
+                )
+            ),
+            _react2.default.createElement(
+                'div',
+                { className: 'modal-body' },
+                state.items !== null && state.items.map(function (item, index) {
+                    return _react2.default.createElement(
+                        'div',
+                        { className: 'bg-slate py-2 px-3 rounded-top  border-top-1 ', key: index },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'flex-row d-flex align-items-center' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'id p-2' },
+                                item.id
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'flex-1' },
+                                item.kit_name
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'operation-area' },
+                                _react2.default.createElement(
+                                    'a',
+                                    { href: '#', className: 'btn btn-danger', onClick: function onClick(e) {
+                                            deleteItem(e, item, index);
+                                        } },
+                                    ' Delete '
+                                )
+                            )
+                        )
+                    );
+                })
+            )
+        )
+    );
+};
+
+ListModal.propTypes = {
+    state: _propTypes2.default.object,
+    hideModal: _propTypes2.default.func,
+    deleteItem: _propTypes2.default.func
+};
+
+exports.default = ListModal;
+
+/***/ }),
+/* 481 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
+
+var _recompose = __webpack_require__(7);
+
+var _reactRedux = __webpack_require__(6);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) {
+    return {};
+}), (0, _recompose.withState)('state', 'setState', { items: null }), (0, _recompose.withHandlers)({
+    hideModal: function hideModal(props) {
+        return function () {
+            var closeModal = props.closeModal;
+
+            closeModal();
+        };
+    },
+    deleteItem: function deleteItem(props) {
+        return function (e, item, index) {
+            e.preventDefault();
+            var items = props.items,
+                state = props.state,
+                setState = props.setState;
+            // Need to create delete action for item
+        };
+    }
+}), (0, _recompose.lifecycle)({
+    componentDidMount: function componentDidMount() {
+        var _props = this.props,
+            items = _props.items,
+            state = _props.state,
+            setState = _props.setState;
+
+        setState((0, _extends3.default)({}, state, { items: items }));
+    },
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {}
+}), _recompose.pure);
+
+/***/ }),
+/* 482 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(5);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -73500,7 +73694,9 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
     kitItem: {
         central_office_id: 0,
         item_type_id: 0
-    }
+    },
+    items: null,
+    isModalOn: false
 }), (0, _recompose.withHandlers)({
     filterCentralOffice: function filterCentralOffice(props) {
         return function (centralOffice) {
@@ -73570,6 +73766,23 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
 
             setState((0, _extends3.default)({}, state, { kitItem: kitItem, kitSelectOption: kitSelectOption, centralOfficeSelectedOption: centralOfficeSelectedOption }));
         };
+    },
+    toggleModal: function toggleModal(props) {
+        return function (e, items) {
+            e.preventDefault();
+            var state = props.state,
+                setState = props.setState;
+
+            setState((0, _extends3.default)({}, state, { items: items, isModalOn: !state.isModalOn }));
+        };
+    },
+    closeModal: function closeModal(props) {
+        return function () {
+            var state = props.state,
+                setState = props.setState;
+
+            setState((0, _extends3.default)({}, state, { isModalOn: false, items: null }));
+        };
     }
 }), (0, _recompose.lifecycle)({
     componentDidMount: function componentDidMount() {
@@ -73608,7 +73821,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
 }), _recompose.pure);
 
 /***/ }),
-/* 480 */
+/* 483 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73618,11 +73831,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _ItemType = __webpack_require__(481);
+var _ItemType = __webpack_require__(484);
 
 var _ItemType2 = _interopRequireDefault(_ItemType);
 
-var _ItemType3 = __webpack_require__(485);
+var _ItemType3 = __webpack_require__(488);
 
 var _ItemType4 = _interopRequireDefault(_ItemType3);
 
@@ -73631,7 +73844,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = (0, _ItemType4.default)(_ItemType2.default);
 
 /***/ }),
-/* 481 */
+/* 484 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73650,7 +73863,7 @@ var _propTypes = __webpack_require__(2);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _ItemProblem = __webpack_require__(482);
+var _ItemProblem = __webpack_require__(485);
 
 var _ItemProblem2 = _interopRequireDefault(_ItemProblem);
 
@@ -73864,7 +74077,7 @@ KitItem.propTypes = {
 exports.default = KitItem;
 
 /***/ }),
-/* 482 */
+/* 485 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73874,11 +74087,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _ItemProblem = __webpack_require__(483);
+var _ItemProblem = __webpack_require__(486);
 
 var _ItemProblem2 = _interopRequireDefault(_ItemProblem);
 
-var _ItemProblem3 = __webpack_require__(484);
+var _ItemProblem3 = __webpack_require__(487);
 
 var _ItemProblem4 = _interopRequireDefault(_ItemProblem3);
 
@@ -73887,7 +74100,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = (0, _ItemProblem4.default)(_ItemProblem2.default);
 
 /***/ }),
-/* 483 */
+/* 486 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74029,7 +74242,7 @@ ItemProblem.propTypes = {
 exports.default = ItemProblem;
 
 /***/ }),
-/* 484 */
+/* 487 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74039,11 +74252,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -74129,7 +74342,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
 }), _recompose.pure);
 
 /***/ }),
-/* 485 */
+/* 488 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74139,11 +74352,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -74227,7 +74440,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
 }), _recompose.pure);
 
 /***/ }),
-/* 486 */
+/* 489 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74237,11 +74450,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _Condemnation = __webpack_require__(487);
+var _Condemnation = __webpack_require__(490);
 
 var _Condemnation2 = _interopRequireDefault(_Condemnation);
 
-var _Condemnation3 = __webpack_require__(488);
+var _Condemnation3 = __webpack_require__(491);
 
 var _Condemnation4 = _interopRequireDefault(_Condemnation3);
 
@@ -74250,7 +74463,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = (0, _Condemnation4.default)(_Condemnation2.default);
 
 /***/ }),
-/* 487 */
+/* 490 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74657,7 +74870,7 @@ Condemnation.propTypes = {
 exports.default = Condemnation;
 
 /***/ }),
-/* 488 */
+/* 491 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74667,11 +74880,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -74685,7 +74898,7 @@ var _services = __webpack_require__(10);
 
 var _kitControllerActions = __webpack_require__(30);
 
-var _condemnationActions = __webpack_require__(489);
+var _condemnationActions = __webpack_require__(492);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -74826,7 +75039,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
 }), _recompose.pure);
 
 /***/ }),
-/* 489 */
+/* 492 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74906,7 +75119,7 @@ var deleteCondemnation = exports.deleteCondemnation = function deleteCondemnatio
 };
 
 /***/ }),
-/* 490 */
+/* 493 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74916,11 +75129,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _Login = __webpack_require__(491);
+var _Login = __webpack_require__(494);
 
 var _Login2 = _interopRequireDefault(_Login);
 
-var _Login3 = __webpack_require__(492);
+var _Login3 = __webpack_require__(495);
 
 var _Login4 = _interopRequireDefault(_Login3);
 
@@ -74929,7 +75142,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = (0, _Login4.default)(_Login2.default);
 
 /***/ }),
-/* 491 */
+/* 494 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75031,7 +75244,7 @@ Login.propTypes = {
 exports.default = Login;
 
 /***/ }),
-/* 492 */
+/* 495 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75041,11 +75254,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends2 = __webpack_require__(4);
+var _extends2 = __webpack_require__(5);
 
 var _extends3 = _interopRequireDefault(_extends2);
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -75104,7 +75317,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
 }), _recompose.pure);
 
 /***/ }),
-/* 493 */
+/* 496 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75114,11 +75327,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _Register = __webpack_require__(494);
+var _Register = __webpack_require__(497);
 
 var _Register2 = _interopRequireDefault(_Register);
 
-var _Register3 = __webpack_require__(495);
+var _Register3 = __webpack_require__(498);
 
 var _Register4 = _interopRequireDefault(_Register3);
 
@@ -75127,7 +75340,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = (0, _Register4.default)(_Register2.default);
 
 /***/ }),
-/* 494 */
+/* 497 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75163,7 +75376,7 @@ var Register = exports.Register = function Register() {
 exports.default = Register;
 
 /***/ }),
-/* 495 */
+/* 498 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75173,7 +75386,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _redux = __webpack_require__(5);
+var _redux = __webpack_require__(4);
 
 var _recompose = __webpack_require__(7);
 
@@ -75186,7 +75399,7 @@ exports.default = (0, _redux.compose)(
 }), _recompose.pure);
 
 /***/ }),
-/* 496 */
+/* 499 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75196,7 +75409,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _NotFound = __webpack_require__(497);
+var _NotFound = __webpack_require__(500);
 
 var _NotFound2 = _interopRequireDefault(_NotFound);
 
@@ -75205,7 +75418,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _NotFound2.default;
 
 /***/ }),
-/* 497 */
+/* 500 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

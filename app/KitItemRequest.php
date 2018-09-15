@@ -35,8 +35,9 @@ class KitItemRequest extends Model
      *
      * =======STATUS=======
      * 1 = unit
-     * 2 = formation
-     * 3 = center
+     * 2 = quarter master
+     * 3 = formation
+     * 4 = center
      *
      */
     protected $fillable = [

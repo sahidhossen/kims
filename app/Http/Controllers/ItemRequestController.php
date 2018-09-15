@@ -348,7 +348,7 @@ class ItemRequestController extends Controller
      * status = 1
      */
 
-    public function requestUnitToDistrict(Request $request){
+    public function requestUnitToQuarterMaster(Request $request){
         try{
             if(!$request->input('condemnation_id'))
                 throw new Exception("Condemnation Id is required");
@@ -356,7 +356,7 @@ class ItemRequestController extends Controller
             if(!$unitUser || !$unitUser->hasRole('unit'))
                 throw new Exception("You need to logged in as unit level!");
             $terms = TermRelation::where(['user_id'=>$unitUser->id])->first();
-            $unitBoss = TermRelation::retrieveUnitDistrict($terms->district_office_id);
+            $unitBoss = TermRelation::retrieveUnitQuarterMaster($terms->quarter_master_id);
             $pendingRequest = KitItemRequest::where([
                     'condemnation_id'=> $request->input('condemnation_id'),
                     'unit_user_id'=>$unitUser->id,
@@ -383,7 +383,7 @@ class ItemRequestController extends Controller
             $newRequest = new KitItemRequest();
             $newRequest->condemnation_id = $condemnation_id;
             $newRequest->unit_user_id = $unitUser->id;
-            $newRequest->district_user_id = $unitBoss->user_id;
+            $newRequest->quarter_master_user_id = $unitBoss->user_id;
             $newRequest->stage = 1;
             $newRequest->status = 2;
             $newRequest->parent_ids = $parentIds;
@@ -432,6 +432,151 @@ class ItemRequestController extends Controller
         }
     }
 
+
+    /*
+     * ==============
+     * QUARTER MASTER
+     * ==============
+     */
+    public function quarterMasterPendingRequest(Request $request){
+        try{
+            if(!$request->input('condemnation_id'))
+                throw new Exception("Condemnation Id required");
+            $quarterMasterUser = $request->user();
+            if(!$quarterMasterUser || !$quarterMasterUser->hasRole('quarter_master'))
+                throw new Exception("Please try to login as Quarter Master user!");
+            $pendingRequest = KitItemRequest::where([
+                'quarter_master_user_id'=>$quarterMasterUser->id,
+                'condemnation_id'=>$request->input('condemnation_id'),
+                'status'=>2
+            ])->whereIn('stage', array(1,2,4,5))->get();
+
+            foreach( $pendingRequest as $pRequest){
+                $kitItems = \GuzzleHttp\json_decode($pRequest->kit_items);
+                $pRequest->unit_office = TermRelation::getUnitInfoByUserId($pRequest->unit_user_id);
+                if(count($kitItems) > 0 ){
+                    foreach ($kitItems as $key=>$item ){
+                        $kitItems[$key]->company = TermRelation::getCompanyInfoByUserId($item->company_user_id);
+                    }
+                }
+                $pRequest->kit_items = $kitItems;
+            }
+            return ['success'=>true,'data'=>$pendingRequest];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
+    /*
+    * Approve request for unit level
+    */
+    public function approveUnitRequestByQuarterMaster(Request $request){
+        try{
+            $quarterMaster = $request->user();
+            if(!$quarterMaster || !$quarterMaster->hasRole('quarter_master'))
+                throw new Exception("You need to logged in as quarter master level!");
+            if(!$request->input('request_id'))
+                throw new Exception("Must be need request Id");
+            $PendingRequest = KitItemRequest::where([
+                'id'=>$request->input('request_id'),
+                'quarter_master_user_id'=>$quarterMaster->id,
+                'stage'=>1,
+                'status'=>2
+            ])->first();
+            if(!$PendingRequest)
+                throw new Exception("This request not found");
+            $PendingRequest->stage = 2; // Approve
+            $PendingRequest->save();
+            // Send notification to the company
+            return ['success'=>true, 'message'=> "Request approve success!"];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
+
+    /*
+    * Approve request for unit level
+    */
+    public function cancelUnitRequestByQuarterMaster(Request $request){
+        try{
+            $quarterMaster = $request->user();
+            if(!$quarterMaster || !$quarterMaster->hasRole('quarter_master'))
+                throw new Exception("You need to logged in as quarter master level!");
+            if(!$request->input('request_id'))
+                throw new Exception("Must be need request Id");
+            $PendingRequest = KitItemRequest::where([
+                'id'=>$request->input('request_id'),
+                'quarter_master_user_id'=>$quarterMaster->id,
+                'stage'=>1,
+                'status'=>2
+            ])->first();
+            if(!$PendingRequest)
+                throw new Exception("This request not found");
+            $PendingRequest->stage = 3; // Approve
+            $PendingRequest->save();
+            // Send notification to the company
+            return ['success'=>true, 'message'=> "Request cencel success!"];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
+
+    /*
+    * Send request quarter master to district/formation level
+    * Check unit level request by user_id and stage=(1-5)
+    * status = 3
+    */
+
+    public function requestQuarterMasterToDistrict(Request $request){
+        try{
+            if(!$request->input('condemnation_id'))
+                throw new Exception("Condemnation Id is required");
+            $quarterMaster = $request->user(); // Get from auth
+            if(!$quarterMaster || !$quarterMaster->hasRole('quarter_master'))
+                throw new Exception("You need to logged in as quarter master level!");
+            $terms = TermRelation::where(['user_id'=>$quarterMaster->id])->first();
+            $quarterBoss = TermRelation::retrieveUnitDistrict($terms->district_office_id);
+            $pendingRequest = KitItemRequest::where([
+                'condemnation_id'=> $request->input('condemnation_id'),
+                'quarter_master_user_id'=>$quarterMaster->id,
+                'stage'=>2,
+                'status'=>2
+            ])->get();
+
+            if(count($pendingRequest) == 0)
+                throw new Exception("Quarter master have not any accepted request");
+
+            $districtLevelRequest = [];
+            $parentIds = '';
+            $condemnation_id = 0;
+            $requestItems = 0;
+            foreach($pendingRequest as $key=>$pRequest){
+                $districtLevelRequest[$key]['unit_user_id'] = $pRequest->unit_user_id;
+                $districtLevelRequest[$key]['kit_items'] = \GuzzleHttp\json_decode($pRequest->kit_items);
+                $parentIds = $parentIds == '' ? $pRequest->id : $parentIds.','.$pRequest->id;
+                $pRequest->stage = 4;
+                $condemnation_id = $pRequest->condemnation_id;
+                $requestItems +=$pRequest->request_items;
+                $pRequest->save();
+            }
+            $newRequest = new KitItemRequest();
+            $newRequest->condemnation_id = $condemnation_id;
+            $newRequest->quarter_master_user_id = $quarterMaster->id;
+            $newRequest->district_user_id = $quarterBoss->user_id;
+            $newRequest->stage = 1;
+            $newRequest->status = 3;
+            $newRequest->parent_ids = $parentIds;
+            $newRequest->request_items = $requestItems;
+            $newRequest->kit_items = \GuzzleHttp\json_encode($districtLevelRequest);
+
+            $newRequest->save();
+            return ['success'=> true, 'message'=>"Request send to formation level!", 'data'=>$pendingRequest];
+
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+
+    }
+
     /*
      * ================
      * DISTRICT LEVEL
@@ -448,12 +593,11 @@ class ItemRequestController extends Controller
             $formationUser = $request->user();
             if(!$formationUser || !$formationUser->hasRole('formation'))
                 throw new Exception("Please try to login as formation user!");
-            $unitTerms = TermRelation::retrieveDistrictUnitsTerms($formationUser->id);
 
             $pendingRequest = KitItemRequest::where([
                 'district_user_id'=>$formationUser->id,
                 'condemnation_id'=>$request->input('condemnation_id'),
-                'status'=> 2 //formation
+                'status'=> 3 //formation
             ])->whereIn('stage', array(1,2,4,5))->get();
 
             if(count($pendingRequest) == 0 ){
@@ -462,15 +606,20 @@ class ItemRequestController extends Controller
 
             foreach( $pendingRequest as $pRequest){
                 $kitItems = \GuzzleHttp\json_decode($pRequest->kit_items);
-                $pRequest->unit_office = TermRelation::getUnitInfoByUserId($pRequest->unit_user_id);
+                $pRequest->quarter_master_office = TermRelation::getQuarterMasterInfoByUserId($pRequest->quarter_master_user_id);
                 if(count($kitItems) > 0 ){
                     foreach ($kitItems as $key=>$item ){
-                        $kitItems[$key]->company = TermRelation::getCompanyInfoByUserId($item->company_user_id);
+                        $kitItems[$key]->unit_office = TermRelation::getUnitInfoByUserId($item->unit_user_id);
+                        if(count($item->kit_items) > 0 ) {
+                            foreach($item->kit_items as $k=>$sItem) {
+                                $item->kit_items[$k]->company = TermRelation::getCompanyInfoByUserId($sItem->company_user_id);
+                            }
+                        }
                     }
                 }
                 $pRequest->kit_items = $kitItems;
             }
-            return ['success'=>true,'data'=>$pendingRequest, 'terms'=>$unitTerms];
+            return ['success'=>true,'data'=>$pendingRequest];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }
@@ -479,7 +628,7 @@ class ItemRequestController extends Controller
     /*
      * Approve request for unit level
      */
-    public function approveUnitRequestByDistrict(Request $request){
+    public function approveQuarterMasterRequestByDistrict(Request $request){
         try{
             $formation = $request->user();
             if(!$formation || !$formation->hasRole('formation'))
@@ -490,7 +639,7 @@ class ItemRequestController extends Controller
                 'id'=>$request->input('request_id'),
                 'district_user_id'=>$formation->id,
                 'stage'=>1,
-                'status'=>2
+                'status'=>3
             ])->first();
             if(!$PendingRequest)
                 throw new Exception("This request not found");
@@ -519,7 +668,7 @@ class ItemRequestController extends Controller
             $pendingRequest = KitItemRequest::where([
                 'district_user_id'=>$formationUser->id,
                 'stage'=>2,
-                'status'=>2
+                'status'=>3
             ])->get();
 
             if(count($pendingRequest) == 0)
@@ -544,7 +693,7 @@ class ItemRequestController extends Controller
             $newRequest->district_user_id = $formationUser->id;
             $newRequest->central_user_id = $districtBoss->user_id;
             $newRequest->stage = 1;
-            $newRequest->status = 3;
+            $newRequest->status = 4;
             $newRequest->parent_ids = $parentIds;
             $newRequest->request_items = $requestItems;
             $newRequest->kit_items = \GuzzleHttp\json_encode($districtLevelRequest);
@@ -588,7 +737,7 @@ class ItemRequestController extends Controller
 
             $pendingRequest = KitItemRequest::where([
                 'central_user_id'=>$centralUser->id,
-                'status'=> 3 //formation
+                'status'=> 4 //formation
             ])->whereIn('stage', array(1,2,3))->get();
 
             if(count($pendingRequest) == 0 ){
@@ -628,7 +777,7 @@ class ItemRequestController extends Controller
                 throw new Exception("Please logged in as a central level");
             $pendingRequest = KitItemRequest::where([
                 'id'=>$request->input('request_id'),
-                'status'=> 3 //formation
+                'status'=> 4 //formation
             ])->whereIn('stage', array(1,2))->first();
             if(!$pendingRequest)
                 throw new Exception("Sorry pending request not found");
@@ -659,7 +808,7 @@ class ItemRequestController extends Controller
 
             $pendingRequest = KitItemRequest::where([
                 'id'=>$request->input('request_id'),
-                'status'=> 3 //formation
+                'status'=> 4 //formation
             ])->whereIn('stage', array(1,2))->first();
 
             $centralTerms = TermRelation::where(['user_id'=>$centralUser->id,'role'=>1,'term_type'=>0])->first();
@@ -674,7 +823,7 @@ class ItemRequestController extends Controller
             $confirmToDistrictOffice = KitItemRequest::where([
                 'id'=>$pendingRequest->parent_ids,
                 'stage'=>4,
-                'status'=>2
+                'status'=>3
             ])->first();
             $confirmToDistrictOffice->approval_items = $deliveryItems;
             $confirmToDistrictOffice->stage = 5;
