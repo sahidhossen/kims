@@ -119,7 +119,7 @@ export default compose(
             let { users } = nextProps
             if(!_.isEqual(users, this.props.users)){
                 // let { state, setState } = this.props
-                window.location.reload()
+                // window.location.reload()
             }
         }
 
