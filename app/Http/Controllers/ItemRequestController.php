@@ -246,7 +246,6 @@ class ItemRequestController extends Controller
             }
 
 
-
             $companyUnitUser = TermRelation::getCompanyUnitUser($company_term->unit_id);
             if( count($requestJsonData) > 0 ) {
                 $requestJsonData = (object) $requestJsonData;
@@ -421,6 +420,7 @@ class ItemRequestController extends Controller
                     $company = TermRelation::getCompanyInfoByUserId($pRequest->company_user_id);
                     if($company) {
                         $pRequest->company_name = $company->company_name;
+                        $pRequest->company_device_id = $company->company_device_id;
                         $pRequest->company_user_name = $company->user_name;
                         $pRequest->user_designation = $company->designation;
                     }

@@ -334,7 +334,7 @@ class TermRelation extends Model
             ->leftJoin('company', 'term_relation.company_id','=','company.id')
             ->leftJoin('users', 'users.id','=','term_relation.user_id')
             ->where(['term_relation.user_id'=>$user_id,'term_relation.term_type'=>0,'term_relation.role'=>4])
-            ->select('term_relation.*','company.*','users.id as c_user_id','users.name as user_name','users.designation')
+            ->select('term_relation.*','company.*','users.id as c_user_id','users.name as user_name','users.designation','users.device_id as company_device_id')
             ->first();
         return $company;
     }

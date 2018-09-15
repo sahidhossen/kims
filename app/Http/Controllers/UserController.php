@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\CentralOffice;
+use App\Company;
+use App\DistrictOffice;
 use App\ItemType;
 use App\KitItem;
 use App\KitItemRequest;
+use App\QuarterMaster;
 use App\SolderKits;
 use App\TermRelation;
+use App\Unit;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -100,6 +104,7 @@ class UserController extends Controller
             $companySolders = [];
             if ($currentUser->hasRole('company')) {
                 $currentUser->company_id = $UserTerm->company_id;
+                $currentUser->company_name = Company::find($UserTerm->company_id)->company_name;
                 $currentUser->unit_id = $UserTerm->unit_id;
                 $currentUser->central_id = $UserTerm->central_office_id;
                 $currentUser->formation_id = $UserTerm->district_office_id;
@@ -124,6 +129,7 @@ class UserController extends Controller
             $unitCompanies = [];
             if($currentUser->hasRole('unit')){
                 $currentUser->unit_id = $UserTerm->unit_id;
+                $currentUser->unit_name = Unit::find($UserTerm->unit_id)->unit_name;
                 $currentUser->central_id = $UserTerm->central_office_id;
                 $currentUser->formation_id = $UserTerm->district_office_id;
                 $district_info = TermRelation::retrieveUnitDistrict($UserTerm->district_office_id);
@@ -154,6 +160,7 @@ class UserController extends Controller
             //Quarter master level data
             $QuarterMasterUnits = [];
             if($currentUser->hasRole('quarter_master')){
+                $currentUser->quarter_master_name = QuarterMaster::find($UserTerm->quarter_master_id)->quarter_name;
                 $currentUser->formation_id = $UserTerm->district_office_id;
                 $currentUser->central_id = $UserTerm->central_office_id;
                 $formation_info = TermRelation::retrieveQuarterFormation($UserTerm->district_office_id);
@@ -180,6 +187,7 @@ class UserController extends Controller
             //Formation level data
             $districtUnits = [];
             if($currentUser->hasRole('formation')){
+                $currentUser->formation_name = DistrictOffice::find($UserTerm->district_office_id)->district_name;
                 $currentUser->formation_id = $UserTerm->district_office_id;
                 $currentUser->central_id = $UserTerm->central_office_id;
                 $central_info = TermRelation::retrieveDistrictCentral($UserTerm->central_office_id);
@@ -206,6 +214,7 @@ class UserController extends Controller
             //Central level data
             $centralFormations = [];
             if($currentUser->hasRole('central')){
+                $currentUser->central_name = CentralOffice::find($UserTerm->central_office_id)->central_name;
                 $currentUser->central_id = $UserTerm->central_office_id;
                 $unitTerms = TermRelation::retrieveCentralDistrictTerms( $currentUser->id );
                 if( count( $unitTerms) > 0 ){
