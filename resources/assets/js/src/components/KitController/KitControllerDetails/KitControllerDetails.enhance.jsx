@@ -52,7 +52,7 @@ export default compose(
             if( name === 'password')
                 user.password = value
 
-            setState({...props.state, user: user })
+            setState({...props.state, user: user, error: '' })
         },
         saveUser: props => () => {
             let { state, setState } = props
@@ -118,8 +118,7 @@ export default compose(
         componentWillReceiveProps(nextProps){
             let { users } = nextProps
             if(!_.isEqual(users, this.props.users)){
-                // let { state, setState } = this.props
-                // window.location.reload()
+                window.location.reload()
             }
         }
 

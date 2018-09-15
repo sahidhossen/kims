@@ -73017,7 +73017,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 if (name === 'secret_id') user.secret_id = value;
                 if (name === 'password') user.password = value;
 
-                setState((0, _extends3.default)({}, props.state, { user: user }));
+                setState((0, _extends3.default)({}, props.state, { user: user, error: '' }));
             };
         };
     },
@@ -73089,8 +73089,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
         var users = nextProps.users;
 
         if (!_.isEqual(users, this.props.users)) {
-            // let { state, setState } = this.props
-            // window.location.reload()
+            window.location.reload();
         }
     }
 }), _recompose.pure);
