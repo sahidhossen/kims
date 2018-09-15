@@ -346,7 +346,9 @@ class TermRelation extends Model
     public static function getUnitInfoByUserId($user_id){
         $unit = DB::table('term_relation')
             ->leftJoin('units', 'term_relation.unit_id','=','units.id')
+            ->leftJoin('users', 'users.id','=','term_relation.user_id')
             ->where(['term_relation.user_id'=>$user_id,'term_relation.term_type'=>0,'term_relation.role'=>3])
+            ->select('term_relation.*','units.*','users.id as c_user_id','users.name as user_name','users.designation')
             ->first();
         return $unit;
     }
@@ -357,7 +359,9 @@ class TermRelation extends Model
     public static function getQuarterMasterInfoByUserId($user_id){
         $district = DB::table('term_relation')
             ->leftJoin('quarter_master', 'term_relation.quarter_master_id','=','quarter_master.id')
+            ->leftJoin('users', 'users.id','=','term_relation.user_id')
             ->where(['term_relation.user_id'=>$user_id,'term_relation.term_type'=>0,'term_relation.role'=>6])
+            ->select('term_relation.*','quarter_master.*','users.id as c_user_id','users.name as user_name','users.designation')
             ->first();
         return $district;
     }
@@ -368,7 +372,9 @@ class TermRelation extends Model
     public static function getFormationInfoByUserId($user_id){
         $district = DB::table('term_relation')
             ->leftJoin('district_offices', 'term_relation.district_office_id','=','district_offices.id')
+            ->leftJoin('users', 'users.id','=','term_relation.user_id')
             ->where(['term_relation.user_id'=>$user_id,'term_relation.term_type'=>0,'term_relation.role'=>2])
+            ->select('term_relation.*','district_offices.*','users.id as c_user_id','users.name as user_name','users.designation')
             ->first();
         return $district;
     }
@@ -378,7 +384,9 @@ class TermRelation extends Model
     public static function getCentralInfoByUserId($user_id){
         $central = DB::table('term_relation')
             ->leftJoin('central_offices', 'term_relation.central_office_id','=','central_offices.id')
+            ->leftJoin('users', 'users.id','=','term_relation.user_id')
             ->where(['term_relation.user_id'=>$user_id,'term_relation.term_type'=>0,'term_relation.role'=>1])
+            ->select('term_relation.*','central_offices.*','users.id as c_user_id','users.name as user_name','users.designation')
             ->first();
         return $central;
     }
