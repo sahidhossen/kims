@@ -53,7 +53,7 @@ class UserController extends Controller
             $currentUser->whoami = $currentUser->roles->first()->name;
             $UserTerm = TermRelation::where('user_id', $currentUser->id)->first();
             $solderKit = SolderKits::where('user_id', $currentUser->id)
-                ->where('status', '!=', 3)->orderByRaw('item_type_id ASC')->get();
+                ->where('status', '!=', -1)->orderByRaw('item_type_id ASC')->get();
             $items = [];
             $itemResult = [];
             if (count($solderKit) > 0) {
