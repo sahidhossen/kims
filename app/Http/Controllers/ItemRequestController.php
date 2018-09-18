@@ -32,7 +32,7 @@ class ItemRequestController extends Controller
      * Create solder request for new product
      * request_type = company | solder
      *
-     * @fields(solder_kit_id, request_type, comments)
+     * @fields(solder_kit_id, request_type, comments, kit_problem)
      */
    public function SolderRequest(Request $request){
        try{
@@ -91,6 +91,7 @@ class ItemRequestController extends Controller
             if( !$currentRequest )
                 throw new Exception("Sorry didn't find your request data");
             $currentRequest->status = 1;
+            $currentRequest->soldier_device_id= User::find($currentRequest->user_id)->device_id;
             $currentRequest->save();
             return ['success'=>true ,'message'=>'Approve successful!'];
         }catch (Exception $e){
@@ -115,7 +116,8 @@ class ItemRequestController extends Controller
            $currentRequest->status = 3;
            $currentRequest->save();
            $actionItem = SolderKits::find( $currentRequest->solder_kit_id );
-           $actionItem->status = 0;
+           $actionItem->soldier_device_id = User::find($actionItem->user_id)->device_id;
+           $actionItem->status = 3; // cancel and re-usable
            $actionItem->save();
            return ['success'=>true ,'message'=>'Item request cancel!'];
        }catch (Exception $e){
@@ -204,7 +206,7 @@ class ItemRequestController extends Controller
                 throw new Exception("Sorry condemnation not found!");
 
             $company_term = TermRelation::where(['user_id'=>$companyUser->id,'role'=>4, 'term_type'=>0])->first();
-            
+
             // Get all solder request that approve by company
             $allPendingRequest = SolderItemRequest::where([
                 'company_id'=>$company_term->company_id,

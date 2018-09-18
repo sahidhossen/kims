@@ -14,6 +14,6 @@ class SolderKits extends Model
         'item_type_id',
         'issue_date',
         'expire_date',
-        'status' //0=new, 1=wait(for review), 2=pending, 0=approve, 3=dump
+        'status' //0=new, 1=wait(for review), 2=pending, 0=approve, -1=dump, 3=cancel/re-use
     ];
 }
