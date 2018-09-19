@@ -131,6 +131,7 @@ class TermRelation extends Model
             return null;
         $companyInfo = DB::table('users')
                     ->leftJoin('term_relation','term_relation.user_id','=','users.id')
+                    ->leftJoin('company','term_relation.company_id','=','company.id')
                     ->where(['term_relation.company_id'=>$company_id,'term_relation.role'=>4])
                     ->first();
         return $companyInfo;
@@ -347,7 +348,7 @@ class TermRelation extends Model
             ->leftJoin('units', 'term_relation.unit_id','=','units.id')
             ->leftJoin('users', 'users.id','=','term_relation.user_id')
             ->where(['term_relation.user_id'=>$user_id,'term_relation.term_type'=>0,'term_relation.role'=>3])
-            ->select('term_relation.*','units.*','users.id as c_user_id','users.name as user_name','users.designation')
+            ->select('term_relation.*','units.*','users.id as c_user_id','users.name as user_name','users.designation','users.device_id as unit_device_id')
             ->first();
         return $unit;
     }

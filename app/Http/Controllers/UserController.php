@@ -94,6 +94,7 @@ class UserController extends Controller
                     $companyHeadInfo = new \stdClass();
                     $companyHeadInfo->device_id = $companyHead->device_id;
                     $companyHeadInfo->name = $companyHead->name;
+                    $companyHeadInfo->company_name = $companyHead->company_name;
                     $currentUser->company_head = $companyHeadInfo;
                 }else{
                     $currentUser->company_head = null;
@@ -132,11 +133,12 @@ class UserController extends Controller
                 $currentUser->unit_name = Unit::find($UserTerm->unit_id)->unit_name;
                 $currentUser->central_id = $UserTerm->central_office_id;
                 $currentUser->formation_id = $UserTerm->district_office_id;
-                $district_info = TermRelation::retrieveUnitDistrict($UserTerm->district_office_id);
-                if($district_info){
-                    $currentUser->formation_name = $district_info->district_name;
-                    $currentUser->formation_user_name = $district_info->name;
-                    $currentUser->formation_device_id = $district_info->device_id;
+                $currentUser->qa_id = $UserTerm->quarter_master_id;
+                $quarter_master_info = TermRelation::retrieveUnitQuarterMaster($UserTerm->quarter_master_id);
+                if($quarter_master_info){
+                    $currentUser->qa_name = $quarter_master_info->quarter_name;
+                    $currentUser->qa_master_user_name = $quarter_master_info->name;
+                    $currentUser->qa_device_id = $quarter_master_info->device_id;
                 }
                 $unitTerms = TermRelation::retrieveUnitCompaniesTerms( $currentUser->id );
                 if( count( $unitTerms) > 0 ){

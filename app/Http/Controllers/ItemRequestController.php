@@ -91,9 +91,9 @@ class ItemRequestController extends Controller
             if( !$currentRequest )
                 throw new Exception("Sorry didn't find your request data");
             $currentRequest->status = 1;
-            $currentRequest->soldier_device_id= User::find($currentRequest->user_id)->device_id;
             $currentRequest->save();
-            return ['success'=>true ,'message'=>'Approve successful!'];
+            $currentRequest->soldier_device_id= User::find($currentRequest->user_id)->device_id;
+            return ['success'=>true ,'message'=>'Approve successful!','data'=>$currentRequest];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }
@@ -116,10 +116,11 @@ class ItemRequestController extends Controller
            $currentRequest->status = 3;
            $currentRequest->save();
            $actionItem = SolderKits::find( $currentRequest->solder_kit_id );
-           $actionItem->soldier_device_id = User::find($actionItem->user_id)->device_id;
            $actionItem->status = 3; // cancel and re-usable
            $actionItem->save();
-           return ['success'=>true ,'message'=>'Item request cancel!'];
+           $actionItem->soldier_device_id = User::find($actionItem->user_id)->device_id;
+
+           return ['success'=>true ,'message'=>'Item request cancel!', 'data'=>$actionItem];
        }catch (Exception $e){
            return ['success'=>false, 'message'=>$e->getMessage()];
        }
@@ -393,6 +394,7 @@ class ItemRequestController extends Controller
             $newRequest->request_items = $requestItems;
             $newRequest->kit_items = \GuzzleHttp\json_encode($districtLevelRequest);
             $newRequest->save();
+            $newRequest->qa_device_id = $unitBoss->device_id;
             return ['success'=> true, 'message'=>"Request send to formation level!", 'data'=>$pendingRequest];
 
         }catch (Exception $e){
@@ -411,7 +413,6 @@ class ItemRequestController extends Controller
             $unitUser = $request->user();
             if(!$unitUser || !$unitUser->hasRole('unit'))
                 throw new Exception("Please try to login as unit user!");
-            $unitTerms = TermRelation::retrieveUnitCompaniesTerms($unitUser->id);
             $pendingRequest = KitItemRequest::where([
                 'unit_user_id'=>$unitUser->id,
                 'condemnation_id'=>$request->input('condemnation_id'),
@@ -430,7 +431,7 @@ class ItemRequestController extends Controller
                     }
                 }
             }
-            return ['success'=>true,'data'=>$pendingRequest, 'terms'=>$unitTerms];
+            return ['success'=>true,'data'=>$pendingRequest];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }
