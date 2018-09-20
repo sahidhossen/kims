@@ -28,12 +28,34 @@ class ItemTypeController extends Controller
             $itemType->type_name = $request->input('type_name');
             $itemType->type_slug = strtolower(str_replace(' ','_',$request->input('type_name')));
             $itemType->details = $request->input('details');
+
             $itemType->status =  $request->input('status') ? $request->input('status') : 0;
             $itemType->save();
             return ['success'=>true, 'data'=>$itemType, 'message'=>'Item Type Save!'];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }
+    }
+
+    /*
+     * Move uploaded product to products directory
+     * @return boolean
+     * @params FILE, code
+     */
+    private function moveProductImage( $file, $type_name ){
+        $user = Auth::user();
+        $image_name = $file->getClientOriginalName();
+        $extension = explode('.', $image_name);
+        $extension = end($extension);
+        $filter_name = str_replace(' ','_',$type_name) . '.' . $extension;
+        $image_path = $user->id . '/' . Redis::get('agent_code_'.$user->id) . '/'.$filter_name;
+        if(Storage::disk('uploads')->put($image_path, file_get_contents($file))) {
+            return  $image_path;
+
+        }
+
+        return false;
+
     }
 
     public function update(Request $request){

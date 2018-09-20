@@ -126,13 +126,19 @@ class TermRelation extends Model
     /*
      * Get Solder Company Head Information
      */
-    public static function getSolderCompanyHead($company_id){
+    public static function getSolderHead($company_id){
         if(!$company_id)
             return null;
         $companyInfo = DB::table('users')
                     ->leftJoin('term_relation','term_relation.user_id','=','users.id')
                     ->leftJoin('company','term_relation.company_id','=','company.id')
+                    ->leftJoin('units','term_relation.unit_id','=','units.id')
                     ->where(['term_relation.company_id'=>$company_id,'term_relation.role'=>4])
+                    ->select('term_relation.*',
+                        'users.id as user_id','users.device_id as c_device_id','users.name as c_user_name',
+                        'company.id as company_id','company.company_name as company_name',
+                        'units.id as unit_id','units.unit_name as unit_name'
+                    )
                     ->first();
         return $companyInfo;
     }
