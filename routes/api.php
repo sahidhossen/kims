@@ -121,8 +121,12 @@ Route::middleware('auth:api')->post('/assign_kit_item', 'UserController@assignKi
 /*
  * ============= SOLDER AND COMPANY==========
  */
-Route::middleware('auth:api')->get('/company_pending_request', 'ItemRequestController@solderPendingRequest');
-Route::middleware('auth:api')->post('/request_solder_to_company', 'ItemRequestController@SolderRequest');
+Route::middleware('auth:api')->get('/solder_pending_request', 'ItemRequestController@solderPendingRequest');
+Route::middleware('auth:api')->post('/solder_cancel_request', 'ItemRequestController@soldierCancelRequest');
+Route::middleware('auth:api')->post('/create_soldier_request', 'ItemRequestController@SolderRequest');
+Route::middleware('auth:api')->post('/request_solder_to_company', 'ItemRequestController@SolderToCompanyRequest');
+
+Route::middleware('auth:api')->get('/company_pending_request', 'ItemRequestController@companyPendingRequest');
 Route::middleware('auth:api')->post('/cancel_solder_to_company_request', 'ItemRequestController@cancelRequest');
 Route::middleware('auth:api')->post('/approve_solder_to_company_request', 'ItemRequestController@companyApproveRequest');
 

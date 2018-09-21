@@ -76,6 +76,96 @@ class ItemRequestController extends Controller
        }
    }
 
+   public function solderPendingRequest(Request $request){
+       try{
+           $solder = $request->user();
+           if(!$solder || !$solder->hasRole('solder'))
+               throw new Exception("This request only for solder");
+           $allPendingRequest = SolderItemRequest::where([
+               'user_id'=>$solder->id,
+               'status' => 0
+           ])->get();
+           //->whereIn('status', [0])
+           $result = [];
+           if(count($allPendingRequest) > 0 ){
+               foreach( $allPendingRequest as $p_item ){
+                   $item = SolderKits::find( $p_item->solder_kit_id );
+                   $itemType = ItemType::find($item->item_type_id);
+
+                   $item_property = new \stdClass();
+
+                   $item_property->id = $p_item->id;
+                   $item_property->type_name = $itemType->type_name;
+                   $item_property->kit_problem = $p_item->problem_list;
+                   $item_property->user_name = User::getParams($p_item->user_id, 'name');
+                   $item_property->user_device_id = User::getParams($p_item->user_id, 'device_id');
+                   $item_property->status = $p_item->status;
+                   $item_property->issue_date = $item->issue_date;
+                   $item_property->expire_date = $item->expire_date;
+                   $type_name = strtolower(str_replace(' ','_',$itemType->type_name));
+                   if(isset($result[$type_name])){
+                       array_push($result[$type_name], $item_property );
+                   }else {
+                       $result[$type_name] = array($item_property);
+                   }
+               }
+           }
+           return ['success'=>true, 'data'=>$result];
+       }catch (Exception $e){
+           return ['success'=>false, 'message'=>$e->getMessage()];
+       }
+   }
+
+   /*
+    * Soldier can cancel their request
+    * If soldier cancel the request then delete the requested id
+    */
+
+   public function soldierCancelRequest(Request $request){
+       try{
+           $soldier = $request->user();
+           if(!$soldier || !$soldier->hasRole('solder'))
+               throw new Exception("You need to logged in as soldier");
+           if( !$request->input('solider_request_id'))
+               throw new Exception("Must be need request ID");
+           $currentRequest = SolderItemRequest::find( $request->input('soldier_request_id'));
+           if( !$currentRequest )
+               throw new Exception("Sorry didn't find your request data");
+           $actionItem = SolderKits::find( $currentRequest->solder_kit_id );
+           $actionItem->status = 1; // cancel and re-usable
+           $actionItem->save();
+           $currentRequest->delete();
+           return ['success'=>true ,'message'=>'Item request cancel!', 'data'=>$actionItem];
+       }catch (Exception $e){
+           return ['success'=>false, 'message'=>$e->getMessage()];
+       }
+   }
+
+
+   public function SolderToCompanyRequest(Request $request){
+       try{
+           $soldier = $request->user();
+           if(!$soldier || !$soldier->hasRole('solder'))
+               throw new Exception("You need to logged in as soldier");
+           if( !$request->input('soldier_request_ids'))
+               throw new Exception("Must be need request ID's");
+            $ids = explode(',', $request->input('soldier_request_ids'));
+            $pendingRequest = SolderItemRequest::findMany($ids);
+           if(count($pendingRequest)>0){
+               foreach($pendingRequest as $pRequest){
+                   $pRequest->status = 1;
+                   $pRequest->save();
+               }
+           }else{
+               throw new Exception("Did't find any request!");
+           }
+           return ['success'=>true ,'message'=>'Request send to company!'];
+
+       }catch (Exception $e){
+           return ['success'=>false, 'message'=>$e->getMessage()];
+       }
+   }
+
     /*
     * Approve solder to company request by company user
     */
@@ -137,14 +227,14 @@ class ItemRequestController extends Controller
      * status =1 (company approved)
      * status = 0 (company
     */
-    public function solderPendingRequest(Request $request){
+    public function companyPendingRequest(Request $request){
         try{
             if(!$request->input('company_id'))
                 throw new Exception("Company Id required!");
 
             $allPendingRequest = SolderItemRequest::where([
                 'company_id'=>$request->input('company_id')
-            ])->whereIn('status', [0,1])->get();
+            ])->whereIn('status', [1,2])->get();
             $result = [];
             if(count($allPendingRequest) > 0 ){
                 foreach( $allPendingRequest as $p_item ){
@@ -247,6 +337,8 @@ class ItemRequestController extends Controller
                 }
 
                 $requestItems += 1;
+                $pendingRequest->status = 2;
+                $pendingRequest->save();
             }
             if(count($collectedKitTypes)>0){
                 foreach($collectedKitTypes as $type_name=>$quantity ){
