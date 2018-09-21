@@ -61,6 +61,7 @@ class UserController extends Controller
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
                     $itemType = ItemType::find($kit->item_type_id);
                     $solderInformation->item_name = $itemType->type_name;
+                    $solderInformation->image = $itemType->image;
                     $solderInformation->problems = ($itemType->problems == null) ? [] : \GuzzleHttp\json_decode($itemType->problems);
                     $solderInformation->status = $kit->status;
                     $solderInformation->issue_date = $kit->issue_date;
@@ -91,14 +92,15 @@ class UserController extends Controller
                 $currentUser->formation_id = $UserTerm->district_office_id;
                 $companyHead = TermRelation::getSolderHead($UserTerm->company_id);
                 if($companyHead != null ){
-                    $companyHeadInfo = new \stdClass();
-                    $companyHeadInfo->device_id = $companyHead->c_device_id;
-                    $companyHeadInfo->name = $companyHead->c_user_name;
-                    $companyHeadInfo->company_name = $companyHead->company_name;
-                    $currentUser->company_head = $companyHeadInfo;
+                    $currentUser->company_device_id = $companyHead->c_device_id;
+                    $currentUser->company_admin_name = $companyHead->c_user_name;
+                    $currentUser->company_name = $companyHead->company_name;
                     $currentUser->unit_name = $companyHead->unit_name;
                 }else{
-                    $currentUser->company_head = null;
+                    $currentUser->company_device_id = null;
+                    $currentUser->company_admin_name = null;
+                    $currentUser->company_name = null;
+                    $currentUser->unit_name = null;
                 }
             }
 

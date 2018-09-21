@@ -86,6 +86,7 @@ class ItemRequestController extends Controller
                'status' => 0
            ])->get();
            //->whereIn('status', [0])
+           $items = [];
            $result = [];
            if(count($allPendingRequest) > 0 ){
                foreach( $allPendingRequest as $p_item ){
@@ -103,13 +104,23 @@ class ItemRequestController extends Controller
                    $item_property->issue_date = $item->issue_date;
                    $item_property->expire_date = $item->expire_date;
                    $type_name = strtolower(str_replace(' ','_',$itemType->type_name));
-                   if(isset($result[$type_name])){
-                       array_push($result[$type_name], $item_property );
+                   if(isset($items[$type_name])){
+                       array_push($items[$type_name], $item_property );
                    }else {
-                       $result[$type_name] = array($item_property);
+                       $items[$type_name] = array($item_property);
                    }
                }
+               if(count($items) > 0 ){
+                   foreach( $items as $type_name=>$item){
+                       $newItem = [];
+                       $newItem['item_name'] = $type_name;
+                       $newItem['items'] = $item;
+                       array_push($result, $newItem);
+                   }
+               }
+
            }
+
            return ['success'=>true, 'data'=>$result];
        }catch (Exception $e){
            return ['success'=>false, 'message'=>$e->getMessage()];
