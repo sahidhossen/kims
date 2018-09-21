@@ -14,7 +14,7 @@ export default compose(
         central_office: {central_name:'', central_details: '' },
         formation_office: {district_name:'', district_details: '', central_office_id:0 },
         quarter_master: {quarter_name:'', quarter_details: '', central_office_id:0, formation_office_id:0 },
-        unit: {unit_name:'', unit_details: '', central_office_id:0, formation_office_id: 0 },
+        unit: {unit_name:'', unit_details: '', central_office_id:0, formation_office_id: 0, quarter_master_id:0 },
         company: {central_name:'', company_details: '',central_office_id:0, formation_office_id: 0, unit_id:0  },
         error: '',
         filterFormation:[],
@@ -69,7 +69,11 @@ export default compose(
                 }
                 if( name === 'formation_office_id' ) {
                     unit.formation_office_id = value;
-                    filterQuarterMaster = kitControllers.quarters.filter( office => office.district_office_id === parseInt(value) )
+                    filterQuarterMaster = kitControllers.quarters.filter( office => office.formation_office_id === parseInt(value) )
+                    console.log(filterQuarterMaster, value)
+                }
+                if( name === 'quarter_master_id'){
+                    unit.quarter_master_id = value
                 }
             }
 
@@ -114,6 +118,7 @@ export default compose(
                 company,
                 quarter_master,
                 filterFormation,
+                filterQuarterMaster,
                 filterUnits,
                 error
             })
@@ -141,7 +146,6 @@ export default compose(
             if( actionType === 'central' ){
                 error = central_office.central_name === '' ? "Please fill up the required field!" : '';
             }
-
             if( error !== '' ){
                 setState({ ...state, error })
                 return false;

@@ -50,7 +50,8 @@ class UnitController extends Controller
             $validator = Validator::make($request->all(), [
                 'unit_name' => 'required',
                 'central_office_id' => 'required',
-                'formation_office_id' => 'required'
+                'formation_office_id' => 'required',
+                'quarter_master_id' => 'required'
             ]);
 
             if( $validator->fails()){
@@ -67,6 +68,7 @@ class UnitController extends Controller
             $Unit->unit_name = $request->input('unit_name');
             $Unit->central_office_id = $request->input('central_office_id');
             $Unit->district_office_id = $request->input('formation_office_id');
+            $Unit->quarter_master_id = $request->input('quarter_master_id');
             $Unit->unit_details = $request->input('unit_details');
             if(!$Unit->save())
                 throw new Exception("Critical error when save unit data!");

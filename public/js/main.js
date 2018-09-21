@@ -72184,7 +72184,7 @@ var KitControllerModal = exports.KitControllerModal = function KitControllerModa
                             ),
                             _react2.default.createElement(
                                 "select",
-                                { className: "form-control", name: "formation_office_id", onChange: function onChange(e) {
+                                { className: "form-control", name: "quarter_master_id", onChange: function onChange(e) {
                                         onChangeAction(e);
                                     } },
                                 _react2.default.createElement(
@@ -72401,7 +72401,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
     central_office: { central_name: '', central_details: '' },
     formation_office: { district_name: '', district_details: '', central_office_id: 0 },
     quarter_master: { quarter_name: '', quarter_details: '', central_office_id: 0, formation_office_id: 0 },
-    unit: { unit_name: '', unit_details: '', central_office_id: 0, formation_office_id: 0 },
+    unit: { unit_name: '', unit_details: '', central_office_id: 0, formation_office_id: 0, quarter_master_id: 0 },
     company: { central_name: '', company_details: '', central_office_id: 0, formation_office_id: 0, unit_id: 0 },
     error: '',
     filterFormation: [],
@@ -72456,8 +72456,12 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 if (name === 'formation_office_id') {
                     unit.formation_office_id = value;
                     filterQuarterMaster = kitControllers.quarters.filter(function (office) {
-                        return office.district_office_id === parseInt(value);
+                        return office.formation_office_id === parseInt(value);
                     });
+                    console.log(filterQuarterMaster, value);
+                }
+                if (name === 'quarter_master_id') {
+                    unit.quarter_master_id = value;
                 }
             }
 
@@ -72505,6 +72509,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 company: company,
                 quarter_master: quarter_master,
                 filterFormation: filterFormation,
+                filterQuarterMaster: filterQuarterMaster,
                 filterUnits: filterUnits,
                 error: error
             }));
@@ -72541,7 +72546,6 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
             if (actionType === 'central') {
                 error = central_office.central_name === '' ? "Please fill up the required field!" : '';
             }
-
             if (error !== '') {
                 setState((0, _extends3.default)({}, state, { error: error }));
                 return false;

@@ -111,7 +111,7 @@ export const KitControllerModal = (
                             </div>
                             <div className="form-group">
                                 <label> Select Quarter Master Office <span className="required">x</span></label>
-                                <select className="form-control" name="formation_office_id" onChange={(e)=>{ onChangeAction(e) }}>
+                                <select className="form-control" name="quarter_master_id" onChange={(e)=>{ onChangeAction(e) }}>
                                     <option value="0"> Select Office </option>
                                     { state.filterQuarterMaster.length != 0 && state.filterQuarterMaster.map( (office, index) => (<option key={index} defaultValue={state.unit.quarter_master_id === office.id } value={office.id}> {office.quarter_name} </option>) )}
                                 </select>
