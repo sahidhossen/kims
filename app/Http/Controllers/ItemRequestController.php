@@ -93,6 +93,10 @@ class ItemRequestController extends Controller
             $currentRequest->status = 1;
             $currentRequest->save();
             $currentRequest->soldier_device_id= User::find($currentRequest->user_id)->device_id;
+            $actionItem = SolderKits::find( $currentRequest->solder_kit_id );
+            $actionItem->status = 1; // cancel and re-usable
+            $actionItem->save();
+
             return ['success'=>true ,'message'=>'Approve successful!','data'=>$currentRequest];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];

@@ -367,7 +367,7 @@ class TermRelation extends Model
             ->leftJoin('quarter_master', 'term_relation.quarter_master_id','=','quarter_master.id')
             ->leftJoin('users', 'users.id','=','term_relation.user_id')
             ->where(['term_relation.user_id'=>$user_id,'term_relation.term_type'=>0,'term_relation.role'=>6])
-            ->select('term_relation.*','quarter_master.*','users.id as c_user_id','users.name as user_name','users.designation')
+            ->select('term_relation.*','quarter_master.*','users.id as c_user_id','users.name as user_name','users.designation', 'users.device_id as qa_device_id')
             ->first();
         return $district;
     }
