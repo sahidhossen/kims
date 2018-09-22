@@ -1,7 +1,7 @@
 import { compose } from 'redux'
 import { pure, lifecycle, withState, withHandlers } from 'recompose'
 import { connect } from 'react-redux'
-import { getKitController } from '../../actions/kitControllerActions'
+import { getKitController, deleteKitController } from '../../actions/kitControllerActions'
 import { userIsAuthenticated } from '../../utils/services'
 
 export default compose(
@@ -39,6 +39,9 @@ export default compose(
                 pathname: `/dashboard/${type}/${office.id}`,
                 state: { office: office }
             })
+        },
+        deleteController: props => (type, office, index)=>{
+            props.dispatch(deleteKitController(type, office, index))
         }
 
     }),

@@ -116,9 +116,12 @@ class CompanyController extends Controller
                 throw new Exception("Company Id required for delete company");
 
             $Company = Company::find( $request->input('company_id'));
+
             if( !$Company )
                 throw new Exception("Company not found with this id");
-
+            $termRelation = TermRelation::where(['status'=>4, 'company_id'=>$Company->id])->first();
+            if($termRelation )
+                throw new Exception("This company has administrator. You have to delete first his administrator");
             $Company->delete();
             return ['success'=>true, 'message'=>"Company delete successful!"];
         }catch (Exception $e){

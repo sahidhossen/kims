@@ -76,6 +76,50 @@ export const saveKitController = (state, actionType ) => (dispatch, getState) =>
         });
 }
 
-export const saveKitControllerAdministrator = (actionType, data) => (dispatch, getState ) => {
+export const deleteKitController = (type, data, index) => (dispatch, getState) => {
+    let url = ''
+    if(type === 'company') {
+        url = '/api/delete_company_office'
+    }
+    if(type === 'unit') {
+        url = '/api/delete_unit_office'
+    }
+    if(type === 'quarter_master') {
+        url = '/api/delete_quarter_master_office'
+    }
+    if(type === 'formation') {
+        url = '/api/delete_district_office'
+    }
+    if(type === 'central') {
+        url = '/api/delete_central_office'
+    }
 
+
+    let store = getState()
+    let kitControllers = store.kitControllers
+
+    axios.post(url, data)
+        .then(function (response) {
+            if(type === 'company'){
+                kitControllers.companies.splice(index,1)
+            }
+            if(type === 'unit'){
+                kitControllers.units.splice(index,1)
+            }
+            if(type === 'quarter_master'){
+                kitControllers.quarters.splice(index,1)
+            }
+            if(type === 'formation'){
+                kitControllers.formation_offices.splice(index,1)
+            }
+            if(type === 'central'){
+                kitControllers.central_offices.splice(index,1)
+            }
+
+            dispatch({ type: constants.FETCH_KIT_CONTROLLER, payload:kitControllers });
+        })
+        .catch(function (error) {
+            console.log("kit controller error: ",error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
 }

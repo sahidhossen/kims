@@ -65,7 +65,7 @@ Route::middleware('auth:api')->get('/district_office', 'DistrictController@getDi
  */
 Route::middleware('auth:api')->post('/add_quarter_master_office', 'QuarterMasterController@store');
 Route::middleware('auth:api')->post('/quarter_master_office', 'QuarterMasterController@update');
-Route::middleware('auth:api')->post('/quarter_master_office', 'QuarterMasterController@delete');
+Route::middleware('auth:api')->post('/delete_quarter_master_office', 'QuarterMasterController@delete');
 Route::middleware('auth:api')->get('/quarter_master_offices', 'QuarterMasterController@getAllQuarterMasterOffice');
 Route::middleware('auth:api')->get('/quarter_master_office', 'QuarterMasterController@getQuarterMasterOfficeById');
 Route::middleware('auth:api')->get('/units_by_quarter_master','QuarterMasterController@getUnitByQuarterMaster');
@@ -75,7 +75,7 @@ Route::middleware('auth:api')->get('/units_by_quarter_master','QuarterMasterCont
  */
 Route::middleware('auth:api')->post('/add_unit', 'UnitController@store');
 Route::middleware('auth:api')->post('/update_unit', 'UnitController@update');
-Route::middleware('auth:api')->post('/delete_company_office', 'UnitController@delete');
+Route::middleware('auth:api')->post('/delete_unit_office', 'UnitController@delete');
 Route::middleware('auth:api')->get('/units', 'UnitController@getAllUnit');
 Route::middleware('auth:api')->get('/unit', 'UnitController@getUnitById');
 Route::middleware('auth:api')->get('/companies_by_unit_id', 'UnitController@getCompaniesByUnitId');

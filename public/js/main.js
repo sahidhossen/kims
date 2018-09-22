@@ -7537,7 +7537,7 @@ module.exports = function (it) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.saveKitControllerAdministrator = exports.saveKitController = exports.getKitController = undefined;
+exports.deleteKitController = exports.saveKitController = exports.getKitController = undefined;
 
 var _actionType = __webpack_require__(9);
 
@@ -7624,8 +7624,51 @@ var saveKitController = exports.saveKitController = function saveKitController(s
     };
 };
 
-var saveKitControllerAdministrator = exports.saveKitControllerAdministrator = function saveKitControllerAdministrator(actionType, data) {
-    return function (dispatch, getState) {};
+var deleteKitController = exports.deleteKitController = function deleteKitController(type, data, index) {
+    return function (dispatch, getState) {
+        var url = '';
+        if (type === 'company') {
+            url = '/api/delete_company_office';
+        }
+        if (type === 'unit') {
+            url = '/api/delete_unit_office';
+        }
+        if (type === 'quarter_master') {
+            url = '/api/delete_quarter_master_office';
+        }
+        if (type === 'formation') {
+            url = '/api/delete_district_office';
+        }
+        if (type === 'central') {
+            url = '/api/delete_central_office';
+        }
+
+        var store = getState();
+        var kitControllers = store.kitControllers;
+
+        _axios2.default.post(url, data).then(function (response) {
+            if (type === 'company') {
+                kitControllers.companies.splice(index, 1);
+            }
+            if (type === 'unit') {
+                kitControllers.units.splice(index, 1);
+            }
+            if (type === 'quarter_master') {
+                kitControllers.quarters.splice(index, 1);
+            }
+            if (type === 'formation') {
+                kitControllers.formation_offices.splice(index, 1);
+            }
+            if (type === 'central') {
+                kitControllers.central_offices.splice(index, 1);
+            }
+
+            dispatch({ type: constants.FETCH_KIT_CONTROLLER, payload: kitControllers });
+        }).catch(function (error) {
+            console.log("kit controller error: ", error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
+    };
 };
 
 /***/ }),
@@ -71380,6 +71423,7 @@ var KitController = exports.KitController = function KitController(_ref) {
         toggleModal = _ref.toggleModal,
         toggleRoleModal = _ref.toggleRoleModal,
         hideRoleModal = _ref.hideRoleModal,
+        deleteController = _ref.deleteController,
         goNext = _ref.goNext,
         state = _ref.state;
     return _react2.default.createElement(
@@ -71467,6 +71511,14 @@ var KitController = exports.KitController = function KitController(_ref) {
                                             _react2.default.createElement(
                                                 'div',
                                                 { className: 'operation-area' },
+                                                office.head === null && _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-danger', onClick: function onClick(e) {
+                                                            deleteController('central', office, index);
+                                                        } },
+                                                    ' Delete '
+                                                ),
+                                                '\xA0',
                                                 _react2.default.createElement(
                                                     'div',
                                                     { className: 'btn btn-info', onClick: function onClick(e) {
@@ -71537,6 +71589,14 @@ var KitController = exports.KitController = function KitController(_ref) {
                                             _react2.default.createElement(
                                                 'div',
                                                 { className: 'operation-area' },
+                                                office.head === null && _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-danger', onClick: function onClick(e) {
+                                                            deleteController('formation', office, index);
+                                                        } },
+                                                    ' Delete '
+                                                ),
+                                                '\xA0',
                                                 _react2.default.createElement(
                                                     'div',
                                                     { className: 'btn btn-info', onClick: function onClick(e) {
@@ -71606,6 +71666,14 @@ var KitController = exports.KitController = function KitController(_ref) {
                                             _react2.default.createElement(
                                                 'div',
                                                 { className: 'operation-area' },
+                                                office.head === null && _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-danger', onClick: function onClick(e) {
+                                                            deleteController('quarter_master', office, index);
+                                                        } },
+                                                    ' Delete '
+                                                ),
+                                                '\xA0',
                                                 _react2.default.createElement(
                                                     'div',
                                                     { className: 'btn btn-info', onClick: function onClick(e) {
@@ -71675,6 +71743,14 @@ var KitController = exports.KitController = function KitController(_ref) {
                                             _react2.default.createElement(
                                                 'div',
                                                 { className: 'operation-area' },
+                                                office.head === null && _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-danger', onClick: function onClick(e) {
+                                                            deleteController('unit', office, index);
+                                                        } },
+                                                    ' Delete '
+                                                ),
+                                                '\xA0',
                                                 _react2.default.createElement(
                                                     'div',
                                                     { className: 'btn btn-info', onClick: function onClick(e) {
@@ -71744,6 +71820,14 @@ var KitController = exports.KitController = function KitController(_ref) {
                                             _react2.default.createElement(
                                                 'div',
                                                 { className: 'operation-area' },
+                                                office.head === null && _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'btn btn-danger', onClick: function onClick(e) {
+                                                            deleteController('company', office, index);
+                                                        } },
+                                                    ' Delete '
+                                                ),
+                                                '\xA0',
                                                 _react2.default.createElement(
                                                     'div',
                                                     { className: 'btn btn-info', onClick: function onClick(e) {
@@ -71752,8 +71836,7 @@ var KitController = exports.KitController = function KitController(_ref) {
                                                     ' ',
                                                     office.head === null ? "Add Admin" : "View Admin",
                                                     ' '
-                                                ),
-                                                '\xA0'
+                                                )
                                             )
                                         )
                                     );
@@ -71787,6 +71870,7 @@ KitController.propTypes = {
     hideRoleModal: _propTypes2.default.func,
     toggleRoleModal: _propTypes2.default.func,
     goNext: _propTypes2.default.func,
+    deleteController: _propTypes2.default.func,
     state: _propTypes2.default.object
 };
 
@@ -73196,6 +73280,11 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 pathname: '/dashboard/' + type + '/' + office.id,
                 state: { office: office }
             });
+        };
+    },
+    deleteController: function deleteController(props) {
+        return function (type, office, index) {
+            props.dispatch((0, _kitControllerActions.deleteKitController)(type, office, index));
         };
     }
 

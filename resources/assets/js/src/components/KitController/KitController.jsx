@@ -10,6 +10,7 @@ export const KitController = ({
         toggleModal,
         toggleRoleModal,
         hideRoleModal,
+        deleteController,
         goNext,
         state
     }) => (
@@ -41,6 +42,8 @@ export const KitController = ({
                                                {office.central_name}
                                            </div>
                                            <div className="operation-area">
+                                               {office.head === null && <div className="btn btn-danger" onClick={(e)=>{deleteController('central',office, index)}}> Delete </div>}
+                                               &nbsp;
                                                <div className="btn btn-info" onClick={(e)=>{toggleRoleModal('central',office)}}> {office.head === null  ? "Add Admin" : " Update Admin"} </div>
                                                &nbsp;
                                            </div>
@@ -72,6 +75,8 @@ export const KitController = ({
                                                 {office.district_name}
                                             </div>
                                             <div className="operation-area">
+                                                {office.head === null && <div className="btn btn-danger" onClick={(e)=>{deleteController('formation',office, index)}}> Delete </div>}
+                                                &nbsp;
                                                 <div className="btn btn-info" onClick={(e)=>{toggleRoleModal('formation',office)}}> {office.head === null  ? "Add Admin" : "View Admin"} </div>
                                                 &nbsp;
                                             </div>
@@ -102,6 +107,8 @@ export const KitController = ({
                                                 {office.quarter_name}
                                             </div>
                                             <div className="operation-area">
+                                                {office.head === null && <div className="btn btn-danger" onClick={(e)=>{deleteController('quarter_master',office, index)}}> Delete </div>}
+                                                &nbsp;
                                                 <div className="btn btn-info" onClick={(e)=>{toggleRoleModal('quarter_master',office)}}> {office.head === null  ? "Add Admin" : "View Admin"} </div>
                                                 &nbsp;
                                             </div>
@@ -132,6 +139,8 @@ export const KitController = ({
                                                 {office.unit_name}
                                             </div>
                                             <div className="operation-area">
+                                                {office.head === null && <div className="btn btn-danger" onClick={(e)=>{deleteController('unit',office, index)}}> Delete </div>}
+                                                &nbsp;
                                                 <div className="btn btn-info" onClick={(e)=>{toggleRoleModal('unit',office)}}> {office.head === null  ? "Add Admin" : "View Admin"} </div>
                                                 &nbsp;
                                             </div>
@@ -162,8 +171,9 @@ export const KitController = ({
                                                 {office.company_name}
                                             </div>
                                             <div className="operation-area">
-                                                <div className="btn btn-info" onClick={(e)=>{toggleRoleModal('company',office)}}> {office.head === null  ? "Add Admin" : "View Admin"} </div>
+                                                {office.head === null && <div className="btn btn-danger" onClick={(e)=>{deleteController('company',office, index)}}> Delete </div>}
                                                 &nbsp;
+                                                <div className="btn btn-info" onClick={(e)=>{toggleRoleModal('company',office)}}> {office.head === null  ? "Add Admin" : "View Admin"} </div>
                                             </div>
                                         </div>
                                     </div>
@@ -197,6 +207,7 @@ KitController.propTypes = {
     hideRoleModal: PropTypes.func,
     toggleRoleModal: PropTypes.func,
     goNext: PropTypes.func,
+    deleteController: PropTypes.func,
     state: PropTypes.object
 }
 
