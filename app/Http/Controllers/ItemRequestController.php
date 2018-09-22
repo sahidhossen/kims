@@ -12,10 +12,8 @@ use App\SolderKits;
 use App\TermRelation;
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
-use phpDocumentor\Reflection\Types\Object_;
 
 class ItemRequestController extends Controller
 {
@@ -316,7 +314,7 @@ class ItemRequestController extends Controller
             // Get all solder request that approve by company
             $allPendingRequest = SolderItemRequest::where([
                 'company_id'=>$company_term->company_id,
-                'status'=>1
+                'status'=>2
             ])->get();
 
             if(count($allPendingRequest) === 0 )
@@ -623,7 +621,7 @@ class ItemRequestController extends Controller
             $PendingRequest->stage = 3; // Approve
             $PendingRequest->save();
             // Send notification to the company
-            return ['success'=>true, 'message'=> "Request cencel success!"];
+            return ['success'=>true, 'message'=> "Request cancel success!"];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }
@@ -829,7 +827,7 @@ class ItemRequestController extends Controller
      */
 
     /*
-    * Get all pending request by condemnation id
+    * Get all pending request for central
     */
     public function centralLevelPendingRequest(Request $request){
         try{

@@ -26,8 +26,8 @@ export default compose(
                     central_office_id: central_id,
                     district_office_id: formation_id,
                     unit_id,
-                    role:'solder'};
-            // console.log("add solder: ", user)
+                    role:'solder'
+            };
             props.dispatch(addUser(user))
         },
         onFieldChange: props => event => {
