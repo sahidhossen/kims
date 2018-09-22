@@ -117,15 +117,15 @@ class QuarterMasterController extends Controller
      */
     public function delete( Request $request ){
         try{
-            if( !$request->input('district_id'))
-                throw new Exception("district Id required for delete district office");
+            if( !$request->input('id'))
+                throw new Exception("Id required for delete district office");
 
-            $quarterMaster = QuarterMaster::find( $request->input('district_id'));
+            $quarterMaster = QuarterMaster::find( $request->input('id'));
             if( !$quarterMaster )
-                throw new Exception("district office not found with this id");
+                throw new Exception("quarter master office not found with this id");
 
             $quarterMaster->delete();
-            return ['success'=>true, 'message'=>"district office delete successful!"];
+            return ['success'=>true, 'message'=>"quarter master office delete successful!"];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }

@@ -110,10 +110,10 @@ class DistrictController extends Controller
      */
     public function delete( Request $request ){
         try{
-            if( !$request->input('district_id'))
+            if( !$request->input('id'))
                 throw new Exception("district Id required for delete district office");
 
-            $districtOffice = DistrictOffice::find( $request->input('district_id'));
+            $districtOffice = DistrictOffice::find( $request->input('id'));
             if( !$districtOffice )
                 throw new Exception("district office not found with this id");
 

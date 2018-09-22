@@ -95,10 +95,10 @@ class CentralController extends Controller
      */
     public function delete( Request $request ){
         try{
-            if( !$request->input('central_id'))
+            if( !$request->input('id'))
                 throw new Exception("Central Id required for delete central office");
 
-            $centralOffice = CentralOffice::find( $request->input('central_id'));
+            $centralOffice = CentralOffice::find( $request->input('id'));
             if( !$centralOffice )
                 throw new Exception("Central office not found with this id");
 

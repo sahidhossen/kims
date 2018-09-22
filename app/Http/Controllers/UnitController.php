@@ -114,10 +114,10 @@ class UnitController extends Controller
      */
     public function delete( Request $request ){
         try{
-            if( !$request->input('unit_id'))
+            if( !$request->input('id'))
                 throw new Exception("Unit Id required for delete unit");
 
-            $Unit = Unit::find($request->input('unit_id'));
+            $Unit = Unit::find($request->input('id'));
             if( !$Unit )
                 throw new Exception("Unit not found with this id");
 

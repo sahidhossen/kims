@@ -112,14 +112,14 @@ class CompanyController extends Controller
      */
     public function delete( Request $request ){
         try{
-            if( !$request->input('company_id'))
+            if( !$request->input('id'))
                 throw new Exception("Company Id required for delete company");
 
-            $Company = Company::find( $request->input('company_id'));
+            $Company = Company::find( $request->input('id'));
 
             if( !$Company )
                 throw new Exception("Company not found with this id");
-            $termRelation = TermRelation::where(['status'=>4, 'company_id'=>$Company->id])->first();
+            $termRelation = TermRelation::where(['role'=>4, 'term_type'=>0, 'company_id'=>$Company->id])->first();
             if($termRelation )
                 throw new Exception("This company has administrator. You have to delete first his administrator");
             $Company->delete();
