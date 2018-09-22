@@ -22,7 +22,7 @@ const kitTypes = function reducer(
         case constants.FETCH_KIT_TYPE: {
             return {
                 ...state,
-                fetching: true,
+                fetching: false,
                 error: null,
                 fetched: true,
                 kitTypes: action.payload,

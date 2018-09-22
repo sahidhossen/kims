@@ -191,11 +191,11 @@ class ItemRequestController extends Controller
             $currentRequest = SolderItemRequest::find( $request->input('solder_request_id'));
             if( !$currentRequest )
                 throw new Exception("Sorry didn't find your request data");
-            $currentRequest->status = 1;
+            $currentRequest->status = 2;
             $currentRequest->save();
             $currentRequest->soldier_device_id= User::find($currentRequest->user_id)->device_id;
             $actionItem = SolderKits::find( $currentRequest->solder_kit_id );
-            $actionItem->status = 1; // cancel and re-usable
+            $actionItem->status = 2; // cancel and re-usable
             $actionItem->save();
 
             return ['success'=>true ,'message'=>'Approve successful!','data'=>$currentRequest];

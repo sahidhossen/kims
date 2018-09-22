@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ItemProblem from './ItemProblem'
+import Dropzone from 'react-dropzone';
 
 export const KitItem = ({
     kitTypes,
@@ -8,6 +9,8 @@ export const KitItem = ({
     openModal,
     onChangeAction,
     kitTypeEditAction,
+    onImageDrop,
+    onImageRemove,
     state
 }) => (
     <div className="Homepage">
@@ -39,15 +42,37 @@ export const KitItem = ({
                         </div>
                         <div className="card-body">
                             <div className="add-kit-types-box flex-row d-flex">
-                                <div className="flex-1 input-box">
-                                    <input type="text" className="form-control" placeholder="Kit Name" defaultValue={state.kitType.type_name} name="type_name" onChange={(e)=>{onChangeAction(e)}} />
+                                <div className="type-image-upload-box">
+                                    { state.img_upload_status ? <span className="category-img-remove-btn" onClick={(e)=>{onImageRemove()}}> ✕ </span> : null }
+                                    <Dropzone
+                                        className="itemTypeImageUpload"
+                                        multiple={false}
+                                        accept="image/*"
+                                        onDrop={(e) => {onImageDrop(e)}}>
+                                        <div className="dropArea">
+                                            {state.kitType.image !== null &&
+                                            <img id="uploadImageId"
+                                                 src={state.img_upload_status ? state.kitType.image : "/uploads/"+state.kitType.image}
+                                                 alt="type Image"/>
+                                            }
+                                            { !state.img_upload_status || state.kitType.image !== null && <span className="fa fa-camera camera-icon"></span> }
+                                        </div>
+                                    </Dropzone>
                                 </div>
                                 <div className="flex-1 details-input-box">
-                                    <input type="text" className="form-control" placeholder="Kit Details (optional)" value={state.kitType.details} name="details" onChange={(e)=>{onChangeAction(e)}}/>
+                                    <div className="input-box">
+                                        <label htmlFor="typeName"> Type Name</label>
+                                        <input type="text" className="form-control" placeholder="Kit Name" value={state.kitType.type_name} name="type_name" onChange={(e)=>{onChangeAction(e)}} />
+                                    </div>
+                                    <div className="input-box">
+                                        <label htmlFor="typeName"> Type Details </label>
+                                        <input type="text" className="form-control" placeholder="Kit Details (optional)" value={state.kitType.details} name="details" onChange={(e)=>{onChangeAction(e)}}/>
+                                    </div>
+                                    <div className="input-box text-right">
+                                        <div className="btn btn-info" onClick={(e)=>{ addKitType(e)}}> Save </div>
+                                    </div>
                                 </div>
-                                <div className="action-btn">
-                                    <div className="btn btn-info" onClick={(e)=>{ addKitType(e)}}> + Add </div>
-                                </div>
+
                             </div>
                             <div className="d-flex flex-column bg-light border rounded p-2">
                                 <div className="bg-teal-400 py-3 px-2  border-top-1 list-header">
@@ -102,6 +127,8 @@ KitItem.propTypes = {
     onChangeAction: PropTypes.func,
     kitTypeEditAction: PropTypes.func,
     openModal: PropTypes.func,
+    onImageDrop: PropTypes.func,
+    onImageRemove: PropTypes.func,
     state: PropTypes.object
 }
 

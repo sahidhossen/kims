@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\ItemType;
+use App\TermRelation;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use League\Flysystem\Exception;
@@ -10,6 +12,8 @@ use League\Flysystem\Exception;
 class ItemTypeController extends Controller
 {
     public function store(Request $request){
+        $centralUser = $request->user();
+
         try{
             $validator = Validator::make($request->all(), [
                 'type_name' => 'required|min:2|max:30',
@@ -24,13 +28,17 @@ class ItemTypeController extends Controller
                 }
                 throw new Exception(implode(' ',$validatorErrors));
             }
+            $centralInfo = TermRelation::getCentralInfoByUserId($centralUser->id);
             $itemType = new ItemType();
             $itemType->type_name = $request->input('type_name');
             $itemType->type_slug = strtolower(str_replace(' ','_',$request->input('type_name')));
             $itemType->details = $request->input('details');
-
             $itemType->status =  $request->input('status') ? $request->input('status') : 0;
+            $imagePath = $this->moveProductImage($request->file('file'), $itemType->type_slug, $centralInfo->central_name);
+            if($imagePath)
+                $itemType->image = $imagePath;
             $itemType->save();
+            $itemType->problems = null;
             return ['success'=>true, 'data'=>$itemType, 'message'=>'Item Type Save!'];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
@@ -42,16 +50,31 @@ class ItemTypeController extends Controller
      * @return boolean
      * @params FILE, code
      */
-    private function moveProductImage( $file, $type_name ){
-        $user = Auth::user();
+    private function moveProductImage( $file, $type_name, $central_name ){
         $image_name = $file->getClientOriginalName();
         $extension = explode('.', $image_name);
         $extension = end($extension);
-        $filter_name = str_replace(' ','_',$type_name) . '.' . $extension;
-        $image_path = $user->id . '/' . Redis::get('agent_code_'.$user->id) . '/'.$filter_name;
+        $filter_name = str_replace(' ','_',strtolower($type_name)) . '.' . $extension;
+        $image_path = str_replace(' ','_',strtolower($central_name)).'/'.$filter_name;
         if(Storage::disk('uploads')->put($image_path, file_get_contents($file))) {
             return  $image_path;
+        }
+        return false;
+    }
 
+    /*
+     * Delete image if exists
+     *
+     */
+    /*
+      * Delete product image from folder after delete the product
+      */
+    private function deleteProductImage( $image_path ){
+
+        if( Storage::disk('uploads')->exists($image_path) == true )
+        {
+            if(Storage::disk('uploads')->delete($image_path));
+            return true;
         }
 
         return false;
@@ -60,6 +83,7 @@ class ItemTypeController extends Controller
 
     public function update(Request $request){
         try{
+            $centralUser = $request->user();
             if( !$request->input('id'))
                 throw new Exception("Type Id must be need");
             $itemType = ItemType::find( $request->input('id'));
@@ -68,12 +92,21 @@ class ItemTypeController extends Controller
             if( $typeName == '' )
                 throw new Exception("Minimum type name length need 2");
 
+            $centralInfo = TermRelation::getCentralInfoByUserId($centralUser->id);
+
             $itemType->type_name = $typeName;
             $itemType->details = $request->input('details') ? $request->input('details')  : $itemType->details;
             $itemType->problems = $request->input('problems') ? \GuzzleHttp\json_encode($request->input('problems')) : $itemType->problems;
             $itemType->status =  $request->input('status') ? $request->input('status') : $itemType->status;
+            if($request->file('file')){
+                if($itemType->image != null )
+                    $this->deleteProductImage($itemType->image);
+                $imagePath = $this->moveProductImage($request->file('file'), $itemType->type_slug, $centralInfo->central_name);
+                if($imagePath)
+                    $itemType->image = $imagePath;
+            }
             $itemType->save();
-            $itemType->problems = \GuzzleHttp\json_decode($itemType->problems);
+            $itemType->problems = $itemType->problems ? \GuzzleHttp\json_decode($itemType->problems) : NULL;
             return ['success'=>true, 'data'=>$itemType, 'message'=>'Item Type Update!'];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];

@@ -1,6 +1,7 @@
 import { compose } from 'redux'
 import { pure, lifecycle, withState, withHandlers } from 'recompose'
 import { connect } from 'react-redux'
+
 import { userIsAuthenticated } from '../../utils/services'
 import { getKitTypes, addKitType } from '../../actions/kitTypeActions'
 
@@ -10,8 +11,9 @@ export default compose(
     }),
     userIsAuthenticated,
     withState('state', 'setState', {
-        kitType: { type_name: '', details:'', id:0 },
+        kitType: { type_name: '', details:'', problems: null, id:0, image:null, image_file:null, index:null },
         error: '',
+        img_upload_status: false,
         isUpdate: false,
         selected_type: null,
         isItemProblemModal: false,
@@ -35,7 +37,7 @@ export default compose(
             event.preventDefault();
             let { state, setState } = props
             let { kitType, error } = state
-            error = kitType.kit_name === '' ? 'Kit Type required field!' : ''
+            error = kitType.kit_name === '' || kitType.image === null ? 'Please check kit name or image!' : ''
             if(error === '') {
                 props.dispatch(addKitType(kitType))
             }else {
@@ -44,12 +46,29 @@ export default compose(
         },
         kitTypeEditAction: props => (e, index) => {
             let { kitTypes, state, setState } = props
-            setState({...state, kitType: kitTypes.kitTypes[index], isUpdate: true })
+            let {kitType} = state
+            kitType = kitTypes.kitTypes[index]
+            kitType.index = index
+            setState({...state, kitType , isUpdate: true })
             window.scrollTo(0,0)
         },
         openModal: props => index => {
             let { state, setState, kitTypes: {kitTypes} } = props;
             setState({...state, isItemProblemModal: !state.isItemProblemModal, selected_type: kitTypes[index], type_index: index })
+        },
+        onImageRemove: props => () => {
+            let { state, setState } = props
+            let {kitType } = state
+            kitType.image = null
+            kitType.image_file = null
+            setState({ kitType, img_upload_status: false });
+        },
+        onImageDrop: props => file => {
+            let { state, setState } = props
+            let {kitType} = state
+            kitType.image = file[0].preview
+            kitType.image_file = file[0]
+            setState({ kitType, img_upload_status: true })
         }
     }),
     lifecycle({
@@ -58,7 +77,15 @@ export default compose(
                 this.props.dispatch(getKitTypes())
         },
         componentWillReceiveProps(nextProps){
-            // console.log("kit types: ", nextProps)
+            let {kitTypes} = nextProps
+            let { state, setState } = this.props
+            if( !_.isEqual(kitTypes, this.props.kitTypes) && state.kitType.type_name !== ''){
+                if(kitTypes.fetched === true ){
+                    let { kitType } = state
+                    kitType = { type_name: '', details:'', id:0, image:null, problems: null, image_file:null, index:null },
+                    setState({...state, kitType, img_upload_status: false  })
+                }
+            }
         }
 
     }),
