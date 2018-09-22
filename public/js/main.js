@@ -64447,7 +64447,19 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 formation_id = _props$oauth$user.formation_id,
                 unit_id = _props$oauth$user.unit_id;
 
-            var user = { name: name, secret_id: secret_id, password: password, designation: designation, professional: professional, mobile: mobile, company_id: company_id, central_id: central_id, formation_id: formation_id, unit_id: unit_id, role: 'solder' };
+            var user = {
+                name: name,
+                secret_id: secret_id,
+                password: password,
+                designation: designation,
+                professional: professional,
+                mobile: mobile,
+                company_id: company_id,
+                central_office_id: central_id,
+                district_office_id: formation_id,
+                unit_id: unit_id,
+                role: 'solder' };
+            // console.log("add solder: ", user)
             props.dispatch((0, _userActions.addUser)(user));
         };
     },

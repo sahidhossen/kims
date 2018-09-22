@@ -15,7 +15,19 @@ export default compose(
             event.preventDefault()
             let { state:{name,secret_id, password,designation,professional,mobile }} = props 
             let {company_id,central_id,formation_id,unit_id} = props.oauth.user
-            const user = {name,secret_id, password,designation,professional,mobile ,company_id,central_id,formation_id,unit_id,role:'solder'};
+            const user = {
+                    name,
+                    secret_id,
+                    password,
+                    designation,
+                    professional,
+                    mobile ,
+                    company_id,
+                    central_office_id: central_id,
+                    district_office_id: formation_id,
+                    unit_id,
+                    role:'solder'};
+            // console.log("add solder: ", user)
             props.dispatch(addUser(user))
         },
         onFieldChange: props => event => {
