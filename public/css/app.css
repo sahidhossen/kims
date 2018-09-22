@@ -270,6 +270,14 @@
   cursor: pointer;
 }
 
+.item-image {
+  position: relative;
+}
+
+.item-image img {
+  width: 50px;
+}
+
 .kit-form-body .required {
   color: #ffbdb9;
 }

@@ -81,7 +81,10 @@ export const KitItem = ({
                                             <strong>Kit Name</strong>
                                         </div>
                                         <div className="flex-1">
-                                            <strong>Central Office</strong>
+                                            <strong> Details</strong>
+                                        </div>
+                                        <div className="flex-1">
+                                            <strong> Image </strong>
                                         </div>
                                         <div className="operation-area">
                                             <strong> Actions </strong>
@@ -96,6 +99,9 @@ export const KitItem = ({
                                             </div>
                                             <div className="flex-1">
                                                 {type.details}
+                                            </div>
+                                            <div className="flex-1 item-image">
+                                                {type.image !== null && <img className="img-responsive" src={`/uploads/`+type.image}/> }
                                             </div>
                                             <div className="operation-area">
                                                 <div className="btn btn-info" onClick={(e)=> {kitTypeEditAction(e, index)}}> Edit </div>

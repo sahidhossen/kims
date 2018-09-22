@@ -198,7 +198,12 @@
     }
   }
 }
-
+.item-image {
+  position: relative;
+  img {
+    width: 50px;
+  }
+}
 .list-header {
 
 }

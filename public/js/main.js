@@ -74067,7 +74067,16 @@ var KitItem = exports.KitItem = function KitItem(_ref) {
                                             _react2.default.createElement(
                                                 'strong',
                                                 null,
-                                                'Central Office'
+                                                ' Details'
+                                            )
+                                        ),
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'flex-1' },
+                                            _react2.default.createElement(
+                                                'strong',
+                                                null,
+                                                ' Image '
                                             )
                                         ),
                                         _react2.default.createElement(
@@ -74097,6 +74106,11 @@ var KitItem = exports.KitItem = function KitItem(_ref) {
                                                 'div',
                                                 { className: 'flex-1' },
                                                 type.details
+                                            ),
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'flex-1 item-image' },
+                                                type.image !== null && _react2.default.createElement('img', { className: 'img-responsive', src: '/uploads/' + type.image })
                                             ),
                                             _react2.default.createElement(
                                                 'div',
