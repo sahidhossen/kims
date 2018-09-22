@@ -15,6 +15,7 @@ use App\Unit;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
 use App\Role;
@@ -56,12 +57,13 @@ class UserController extends Controller
                 ->where('status', '!=', -1)->orderByRaw('item_type_id ASC')->get();
             $items = [];
             $itemResult = [];
+            $baseUrl = URL::asset('uploads');
             if (count($solderKit) > 0) {
                 foreach ($solderKit as $kit) {
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
                     $itemType = ItemType::find($kit->item_type_id);
                     $solderInformation->item_name = $itemType->type_name;
-                    $solderInformation->image = $itemType->image;
+                    $solderInformation->image = $itemType->image == null ? null : $baseUrl.'/'.$itemType->image ;
                     $solderInformation->problems = ($itemType->problems == null) ? [] : \GuzzleHttp\json_decode($itemType->problems);
                     $solderInformation->status = $kit->status;
                     $solderInformation->issue_date = $kit->issue_date;
@@ -267,10 +269,12 @@ class UserController extends Controller
                 ->where('status','!=',3)->get();
             $items = [];
             $itemResult = [];
+            $baseUrl = URL::asset('uploads');
             if (count($solderKit) > 0) {
                 foreach ($solderKit as $kit) {
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
                     $itemType = ItemType::find($kit->item_type_id);
+                    $solderInformation->image = $itemType->image == null ? null : $baseUrl.'/'.$itemType->image ;
                     $solderInformation->item_name = $itemType->type_name;
                     $solderInformation->problems = ($itemType->problems == null) ? [] : \GuzzleHttp\json_decode($itemType->problems);
                     $solderInformation->status = $kit->status;
@@ -313,10 +317,12 @@ class UserController extends Controller
             $solderKit = SolderKits::where('user_id',$currentUser->id )
                 ->where('status','!=',3)->get();
             $items = [];
+            $baseUrl = URL::asset('uploads');
             if (count($solderKit) > 0) {
                 foreach ($solderKit as $kit) {
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
                     $itemType = ItemType::find($kit->item_type_id);
+                    $solderInformation->image = $itemType->image == null ? null : $baseUrl.'/'.$itemType->image ;
                     $solderInformation->item_name = $itemType->type_name;
                     $solderInformation->problems = ($itemType->problems == null) ? [] : \GuzzleHttp\json_decode($itemType->problems);
                     $solderInformation->status = $kit->status;

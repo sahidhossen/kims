@@ -14,6 +14,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
+use Illuminate\Support\Facades\URL;
 
 class ItemRequestController extends Controller
 {
@@ -86,6 +87,7 @@ class ItemRequestController extends Controller
            //->whereIn('status', [0])
            $items = [];
            $result = [];
+           $baseUrl = URL::asset('uploads');
            if(count($allPendingRequest) > 0 ){
                foreach( $allPendingRequest as $p_item ){
                    $item = SolderKits::find( $p_item->solder_kit_id );
@@ -95,6 +97,7 @@ class ItemRequestController extends Controller
 
                    $item_property->id = $p_item->id;
                    $item_property->type_name = $itemType->type_name;
+                   $item_property->image = $itemType->image == null ? null : $baseUrl.'/'.$itemType->image ;
                    $item_property->kit_problem = $p_item->problem_list;
                    $item_property->user_name = User::getParams($p_item->user_id, 'name');
                    $item_property->user_device_id = User::getParams($p_item->user_id, 'device_id');
