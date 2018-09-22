@@ -316,7 +316,7 @@ class ItemRequestController extends Controller
             // Get all solder request that approve by company
             $allPendingRequest = SolderItemRequest::where([
                 'company_id'=>$company_term->company_id,
-                'status'=>1
+                'status'=>2
             ])->get();
 
             if(count($allPendingRequest) === 0 )
