@@ -73180,7 +73180,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
         if (roleType === 'unit') {
             user.role = 'unit';
             user.central_office_id = office.central_office_id;
-            user.district_office_id = office.formation_office_id;
+            user.district_office_id = office.district_office_id;
             user.quarter_master_id = office.quarter_master_id;
             user.unit_id = office.id;
             office_name = office.unit_name;
@@ -73188,7 +73188,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
         if (roleType === 'company') {
             user.role = 'company';
             user.central_office_id = office.central_office_id;
-            user.district_office_id = office.formation_office_id;
+            user.district_office_id = office.district_office_id;
             user.unit_id = office.unit_id;
             user.company_id = office.id;
             office_name = office.company_name;
