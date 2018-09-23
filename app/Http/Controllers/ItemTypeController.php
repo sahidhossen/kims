@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ItemType;
 use App\TermRelation;
+use Faker\Provider\Uuid;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -34,7 +35,7 @@ class ItemTypeController extends Controller
             $itemType->type_slug = strtolower(str_replace(' ','_',$request->input('type_name')));
             $itemType->details = $request->input('details');
             $itemType->status =  $request->input('status') ? $request->input('status') : 0;
-            $imagePath = $this->moveProductImage($request->file('file'), $itemType->type_slug, $centralInfo->central_name);
+            $imagePath = $this->moveProductImage($request->file('file'), $centralInfo->central_name);
             if($imagePath)
                 $itemType->image = $imagePath;
             $itemType->save();
@@ -50,11 +51,11 @@ class ItemTypeController extends Controller
      * @return boolean
      * @params FILE, code
      */
-    private function moveProductImage( $file, $type_name, $central_name ){
+    private function moveProductImage( $file, $central_name ){
         $image_name = $file->getClientOriginalName();
         $extension = explode('.', $image_name);
         $extension = end($extension);
-        $filter_name = str_replace(' ','_',strtolower($type_name)) . '.' . $extension;
+        $filter_name = Uuid::uuid(). '.' . $extension;
         $image_path = str_replace(' ','_',strtolower($central_name)).'/'.$filter_name;
         if(Storage::disk('uploads')->put($image_path, file_get_contents($file))) {
             return  $image_path;
