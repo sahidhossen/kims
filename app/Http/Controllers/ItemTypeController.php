@@ -35,7 +35,7 @@ class ItemTypeController extends Controller
             $itemType->type_slug = strtolower(str_replace(' ','_',$request->input('type_name')));
             $itemType->details = $request->input('details');
             $itemType->status =  $request->input('status') ? $request->input('status') : 0;
-            $imagePath = $this->moveProductImage($request->file('file'), $centralInfo->central_name);
+            $imagePath = $this->moveProductImage($request->file('file'));
             if($imagePath)
                 $itemType->image = $imagePath;
             $itemType->save();
@@ -51,14 +51,13 @@ class ItemTypeController extends Controller
      * @return boolean
      * @params FILE, code
      */
-    private function moveProductImage( $file, $central_name ){
+    private function moveProductImage( $file ){
         $image_name = $file->getClientOriginalName();
         $extension = explode('.', $image_name);
         $extension = end($extension);
         $filter_name = Uuid::uuid(). '.' . $extension;
-        $image_path = str_replace(' ','_',strtolower($central_name)).'/'.$filter_name;
-        if(Storage::disk('uploads')->put($image_path, file_get_contents($file))) {
-            return  $image_path;
+        if(Storage::disk('uploads')->put($filter_name, file_get_contents($file))) {
+            return  $filter_name;
         }
         return false;
     }
