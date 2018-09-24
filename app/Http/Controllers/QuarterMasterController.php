@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\QuarterMaster;
 use App\TermRelation;
+use App\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use League\Flysystem\Exception;
