@@ -68,7 +68,7 @@ Route::middleware('auth:api')->post('/quarter_master_office', 'QuarterMasterCont
 Route::middleware('auth:api')->post('/delete_quarter_master_office', 'QuarterMasterController@delete');
 Route::middleware('auth:api')->get('/quarter_master_offices', 'QuarterMasterController@getAllQuarterMasterOffice');
 Route::middleware('auth:api')->get('/quarter_master_office', 'QuarterMasterController@getQuarterMasterOfficeById');
-Route::middleware('auth:api')->get('/units_by_quarter_master','QuarterMasterController@getUnitByQuarterMaster');
+Route::middleware('auth:api')->get('/units_by_quarter_master','QuarterMasterController@getUnitsByQuarterMasterUserId');
 
 /*
  * UNIT API
