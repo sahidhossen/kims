@@ -239,7 +239,8 @@ class UserController extends Controller
                     }
                 }
             }
-
+            $baseUrl = URL::asset('uploads');
+            $currentUser->image = $currentUser->image == null ? null : $baseUrl.'/'.$currentUser->image ;
             return [
                 'success' => true,
                 'solders'=>$companySolders,
