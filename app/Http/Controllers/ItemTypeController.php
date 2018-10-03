@@ -29,7 +29,6 @@ class ItemTypeController extends Controller
                 }
                 throw new Exception(implode(' ',$validatorErrors));
             }
-            $centralInfo = TermRelation::getCentralInfoByUserId($centralUser->id);
             $itemType = new ItemType();
             $itemType->type_name = $request->input('type_name');
             $itemType->type_slug = strtolower(str_replace(' ','_',$request->input('type_name')));

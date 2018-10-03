@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
 use App\Role;
+use Faker\Provider\Uuid;
+use Illuminate\Support\Facades\Storage;
+
 
 class UserController extends Controller
 {
@@ -253,6 +256,65 @@ class UserController extends Controller
         }
 
     }
+
+    public function updateUserImage(Request $request){
+        try{
+            $currentUser = $request->user();
+            if ($currentUser->roles == null)
+                throw new Exception("User don't have any role");
+            if(!$request->file('image'))
+                throw new Exception("Sorry image not found");
+
+            $imagePath = $this->moveProductImage($request->file('image'));
+            if($currentUser->image != null ){
+                $this->deleteProductImage($currentUser->image);
+            }
+            if($imagePath)
+                $currentUser->image = $imagePath;
+            $currentUser->save();
+            $baseUrl = URL::asset('uploads');
+            $currentUser->image = $currentUser->image == null ? null : $baseUrl.'/'.$currentUser->image ;
+            return ['success'=>true, 'image'=>$currentUser->image];
+        }catch(Exception $e){
+            return ['success'=>false, 'message'=> $e->getMessage()];
+        }
+    }
+
+    /*
+     * Move uploaded product to products directory
+     * @return boolean
+     * @params FILE, code
+     */
+    private function moveProductImage( $file ){
+        $image_name = $file->getClientOriginalName();
+        $extension = explode('.', $image_name);
+        $extension = end($extension);
+        $filter_name = Uuid::uuid(). '.' . $extension;
+        if(Storage::disk('uploads')->put($filter_name, file_get_contents($file))) {
+            return  $filter_name;
+        }
+        return false;
+    }
+
+    /*
+     * Delete image if exists
+     *
+     */
+    /*
+      * Delete product image from folder after delete the product
+      */
+    private function deleteProductImage( $image_path ){
+
+        if( Storage::disk('uploads')->exists($image_path) == true )
+        {
+            if(Storage::disk('uploads')->delete($image_path));
+            return true;
+        }
+
+        return false;
+
+    }
+
 
 
     /*

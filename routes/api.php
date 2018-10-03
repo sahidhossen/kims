@@ -32,6 +32,7 @@ Route::middleware('auth:api')->get('/kit_users', 'UserController@getAllKitUser')
 Route::middleware('auth:api')->post('/kit_user_register', 'UserController@userRegister');
 Route::middleware('auth:api')->get('/kit_user_by_id', 'UserController@userById');
 Route::middleware('auth:api')->post('/kit_user_update', 'UserController@updateUser');
+Route::middleware('auth:api')->post('/upload_kit_user_image', 'UserController@updateUserImage');
 Route::middleware('auth:api')->post('/update_user_role', 'UserController@updateOrAddRole');
 Route::middleware('auth:api')->get('/kit_user_by_company','UserController@getKitUserByCompany'); //company_user_id (optional)
 
