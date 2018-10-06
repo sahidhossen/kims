@@ -7,11 +7,11 @@ use Illuminate\Http\Request;
 class ManageItemsController extends Controller
 {
     /*
-     * Manage company and unit items
+     * Manage company, unit and central items
      * Unit items for their companies
      * Company items for their soldiers
-     *
-     * Tables:  company_items, unit_items
+     * Central items for their Units
+     * Tables:  company_items, unit_items, central_items
      */
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CentralItems;
 use App\ItemType;
 use App\TermRelation;
 use Faker\Provider\Uuid;
@@ -13,8 +14,6 @@ use League\Flysystem\Exception;
 class ItemTypeController extends Controller
 {
     public function store(Request $request){
-        $centralUser = $request->user();
-
         try{
             $validator = Validator::make($request->all(), [
                 'type_name' => 'required|min:2|max:30',

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CompanyItems;
 use App\Condemnation;
 use App\ItemType;
 use App\KimNotification;
@@ -10,6 +11,7 @@ use App\KitItemRequest;
 use App\SolderItemRequest;
 use App\SolderKits;
 use App\TermRelation;
+use App\UnitItems;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -343,21 +345,22 @@ class ItemRequestController extends Controller
                 $item_types = ItemType::find($kitItem->item_type_id);
 
                 if(isset($collectedKitTypes[$item_types->type_name])){
-                    $collectedKitTypes[$item_types->type_name] +=1;
+                    $collectedKitTypes[$item_types->type_name]['items'] +=1;
                 }else {
-                    $collectedKitTypes[$item_types->type_name] = 1;
+                    $collectedKitTypes[$item_types->type_name]['items'] = 1;
+                    $collectedKitTypes[$item_types->type_name]['type_id'] = $kitItem->item_type_id;
                 }
 
                 $requestItems += 1;
                 $pendingRequest->status = 2;
                 $pendingRequest->save();
             }
+
             if(count($collectedKitTypes)>0){
-                foreach($collectedKitTypes as $type_name=>$quantity ){
-                    array_push($mainCollection, ['type_name'=>$type_name,'quantity'=>$quantity]);
+                foreach($collectedKitTypes as $type_name=>$kitType ){
+                    array_push($mainCollection, ['type_name'=>$type_name,'quantity'=>$kitType['items'], 'type_id'=>$kitType['type_id']]);
                 }
             }
-
 
             $companyUnitUser = TermRelation::getCompanyUnitUser($company_term->unit_id);
             if( count($requestJsonData) > 0 ) {
@@ -503,7 +506,7 @@ class ItemRequestController extends Controller
             $newRequest->kit_items = \GuzzleHttp\json_encode($districtLevelRequest);
             $newRequest->save();
             $newRequest->qa_device_id = $unitBoss->device_id;
-            return ['success'=> true, 'message'=>"Request send to formation level!", 'data'=>$pendingRequest];
+            return ['success'=> true, 'message'=>"Request send to quarter master!", 'data'=>$pendingRequest];
 
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
@@ -545,6 +548,39 @@ class ItemRequestController extends Controller
         }
     }
 
+    /*
+     * Distribute items to the company level
+     *
+     */
+    public function confirmCompanyRequestByUnit(Request $request){
+        try{
+            if(!$request->input('condemnation_id'))
+                throw new Exception("Condemnation Id required");
+            if(!$request->input('request_id'))
+                throw new Exception("Request Id required");
+            $unitUser = $request->user();
+            if(!$unitUser || !$unitUser->hasRole('unit'))
+                throw new Exception("Please try to login as unit user!");
+
+            $pendingRequest = KitItemRequest::where([
+                'id'=>$request->input('request_id'),
+                'stage'=>5
+            ])->first();
+            if( !$pendingRequest )
+                throw new Exception("Sorry could not found any pending request!");
+            $pendingRequest->kit_items = \GuzzleHttp\json_decode($pendingRequest->kit_items);
+            $companyOfficeId = TermRelation::getCompanyInfoByUserId($pendingRequest->company_user_id)->company_id;
+            foreach($pendingRequest->kit_items->kit_types as $items){
+                CompanyItems::updateUnitItems($items->type_id, $companyOfficeId, 1, $items->quantity);
+            }
+            $pendingRequest->kit_items = \GuzzleHttp\json_encode($pendingRequest->kit_items);
+            $pendingRequest->stage = 6;
+            $pendingRequest->save();
+            return ['success'=>true, "message"=>"Confirm company approval items!"];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
 
     /*
      * ==============
@@ -657,7 +693,10 @@ class ItemRequestController extends Controller
             $condemnation_id = 0;
             $requestItems = 0;
             foreach($pendingRequest as $key=>$pRequest){
+
                 $districtLevelRequest[$key]['unit_user_id'] = $pRequest->unit_user_id;
+                $districtLevelRequest[$key]['request_items'] = $pRequest->request_items;
+                $districtLevelRequest[$key]['request_id'] = $pRequest->id;
                 $districtLevelRequest[$key]['kit_items'] = \GuzzleHttp\json_decode($pRequest->kit_items);
                 $parentIds = $parentIds == '' ? $pRequest->id : $parentIds.','.$pRequest->id;
                 $pRequest->stage = 4;
@@ -784,7 +823,7 @@ class ItemRequestController extends Controller
             $requestItems = 0;
 
             foreach($pendingRequest as $key=>$pRequest){
-                $districtLevelRequest[$key]['unit_user_id'] = $pRequest->district_user_id;
+                $districtLevelRequest[$key]['quarter_master_user_id'] = $pRequest->quarter_master_user_id;
                 $districtLevelRequest[$key]['kit_items'] = \GuzzleHttp\json_decode($pRequest->kit_items);
                 $parentIds = $parentIds == '' ? $pRequest->id : $parentIds.','.$pRequest->id;
                 $pRequest->stage = 4;
@@ -851,12 +890,13 @@ class ItemRequestController extends Controller
             foreach( $pendingRequest as $pRequest){
                 $kitItems = \GuzzleHttp\json_decode($pRequest->kit_items);
                 if(count($kitItems) > 0 ){
-                    if(is_array($kitItems))
-                    foreach ($kitItems as $key=>$subKitItem){
-                        $kitItems[$key]->unit = TermRelation::getUnitInfoByUserId($subKitItem->unit_user_id);
-                        if(is_array($subKitItem->kit_items)){
-                            foreach($subKitItem->kit_items as $k=>$subSubKitItems){
-                                $kitItems[$key]->kit_items[$k]->company = TermRelation::getCompanyInfoByUserId($subSubKitItems->company_user_id);
+                    foreach ($kitItems as $key=>$subKitItem){ // quarter mast
+                        foreach($subKitItem->kit_items as $q=>$unitLevel) { //units
+                            $kitItems[$key]->kit_items[$q]->unit = TermRelation::getUnitInfoByUserId($unitLevel->unit_user_id);
+                            if (is_array($unitLevel->kit_items)) {
+                                foreach ($unitLevel->kit_items as $k => $companyLevel) { // company
+                                    $kitItems[$key]->kit_items[$q]->kit_items[$k]->company = TermRelation::getCompanyInfoByUserId($companyLevel->company_user_id);
+                                }
                             }
                         }
                     }
@@ -938,5 +978,50 @@ class ItemRequestController extends Controller
             return ['success'=>false, 'message'=>$e->getMessage()];
         }
     }
+
+    /*
+     * Unit request confirm from central
+     * request_id
+     * approve items number
+     */
+    public function confirmUnitRequestFromCentral(Request $request){
+        try{
+            if(!$request->input('request_id'))
+                throw new Exception("Must be need request Id");
+            if(!$request->input('approval_items'))
+                throw new Exception("Must be need number of approval items");
+
+            $approveItems = (int)$request->input('approval_items');
+            $getUnitRequest = KitItemRequest::find($request->input('request_id'));
+            if(!$getUnitRequest)
+                throw new Exception("Sorry could not found any request");
+            if($getUnitRequest->stage == 5 )
+                throw new Exception("Already approve this unit request!");
+
+            $getUnitRequest->kit_items = \GuzzleHttp\json_decode($getUnitRequest->kit_items);
+            if(count($getUnitRequest->kit_items) > 0 ){
+                $unit_user = $getUnitRequest->unit_user_id;
+                $unitOfficeId = TermRelation::getUnitInfoByUserId($unit_user)->unit_id;
+                foreach($getUnitRequest->kit_items as $companyLevelItems){
+                    foreach( $companyLevelItems->kit_items->kit_types as $kitTypes ){
+                        UnitItems::updateUnitItems($kitTypes->type_id, $unitOfficeId, 1, $kitTypes->quantity );
+                    }
+                }
+            }
+            $getUnitRequest->kit_items = \GuzzleHttp\json_encode($getUnitRequest->kit_items);
+            $getUnitRequest->approval_items = $approveItems;
+            $getUnitRequest->stage = 5;
+            $getUnitRequest->save();
+            return ['success'=>true,"message"=>"Confirm unit request from central!"];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
+
+    /*
+     * Complete unit requests
+     * After complete unit request a button will be trigger for done
+     */
+
 
 }

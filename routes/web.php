@@ -11,6 +11,8 @@
 |
 */
 
+Route::get('/update_central', 'KitItemController@updateCentralItems');
+
 Route::get('{reactRoutes}', function () {
     return view('home');
 })->where('reactRoutes', '^((?!api).)*$'); // except 'api', 'login' word

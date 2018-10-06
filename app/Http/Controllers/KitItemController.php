@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CentralItems;
 use App\CentralOffice;
 use App\ItemType;
 use App\KitItem;
@@ -44,11 +45,11 @@ class KitItemController extends Controller
 
             $kitItem = new KitItem();
             $kitItem->item_type_id = $request->input('item_type_id');
-//            $kitItem->condemnation_id = $request->input('condemnation_id');
             $kitItem->central_office_id = $request->input('central_office_id');
             $kitItem->status = 0;
             $result = new \stdClass();
             if($kitItem->save()){
+                CentralItems::updateCentralItems($kitItem->item_type_id, $kitItem->central_office_id, 1);
                 $result->kit_name = $kitItem->ItemType->type_name;
                 $result->central_office_name = $kitItem->centralOffice->central_name;
                 $result->status = $kitItem->status;
@@ -226,10 +227,35 @@ class KitItemController extends Controller
             $kitItem = KitItem::find( $request->input('item_id'));
             if(!$kitItem)
                 throw new Exception("Sorry item not found with this ID");
+            CentralItems::updateCentralItems($kitItem->item_type_id, $kitItem->central_office_id, 2);
             $kitItem->delete();
             return ['success'=>true, 'data'=>$kitItem, 'message'=>"Kit Item delete Success!" ];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
+
+    /*
+     * Update central item table
+     * Dummy function
+     */
+    public function updateCentralItems(){
+        $kitItems = KitItem::where(['status'=>0])->orderBy('created_at', 'desc')->get();
+        if(count($kitItems) > 0 ){
+            foreach($kitItems as $item){
+                $itemType = ItemType::find($item->item_type_id);
+                $centralItems = CentralItems::where(['item_slug'=>$itemType->type_slug])->first();
+                if($centralItems){
+                    $centralItems->items = $centralItems->items+1;
+                }else{
+                    $centralItems = new CentralItems();
+                    $centralItems->central_id = 1;
+                    $centralItems->item_slug = $itemType->type_slug;
+                    $centralItems->item_name = $itemType->type_name;
+                    $centralItems->items = 1;
+                }
+                $centralItems->save();
+            }
         }
     }
 }

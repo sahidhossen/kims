@@ -20,6 +20,7 @@ class CreateCompaniesItemTable extends Migration
             $table->string('item_name');
             $table->integer('items')->unsigned()->default(0);
             $table->integer('total_items')->unsigned()->default(0);
+            $table->string('comment')->nullable();
             $table->timestamps();
         });
     }

@@ -140,6 +140,7 @@ Route::middleware('auth:api')->get('/get_unit_level_request', 'ItemRequestContro
 Route::middleware('auth:api')->post('/company_request_approve', 'ItemRequestController@approveCompanyRequestByUnit');
 Route::middleware('auth:api')->post('/company_request_cancel', 'ItemRequestController@cancelCompanyRequestByUnit');
 Route::middleware('auth:api')->post('/request_unit_to_quarter_master', 'ItemRequestController@requestUnitToQuarterMaster');
+Route::middleware('auth:api')->post('/confirm_company_request_by_unit', 'ItemRequestController@confirmCompanyRequestByUnit');
 
 /*
  * ============ QUARTER MASTER ===========
@@ -164,6 +165,7 @@ Route::middleware('auth:api')->post('/quarter_master_request_approve', 'ItemRequ
 Route::middleware('auth:api')->get('/get_central_level_request', 'ItemRequestController@centralLevelPendingRequest');
 Route::middleware('auth:api')->get('/central_review_pending_request', 'ItemRequestController@reviewPendingRequestById');
 Route::middleware('auth:api')->post('/central_approve_request', 'ItemRequestController@acceptPendingRequestForDistrict');
+Route::middleware('auth:api')->post('/unit_request_confirm_from_central', 'ItemRequestController@confirmUnitRequestFromCentral');
 
 /*
  * Condemnation  API's

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUnitItemTable extends Migration
+class CreateCentralItemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateUnitItemTable extends Migration
      */
     public function up()
     {
-        Schema::create('unit_items', function (Blueprint $table) {
+        Schema::create('central_items', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('unit_id')->unsigned();
+            $table->integer("central_id")->unsigned();
             $table->string('item_slug');
-            $table->string('item_name');
+            $table->string("item_name");
             $table->integer('items')->unsigned()->default(0);
-            $table->integer('total_items')->unsigned()->default(0);
+            $table->integer("total_items")->unsigned()->default(0);
             $table->string('comment')->nullable();
             $table->timestamps();
         });
@@ -32,6 +32,6 @@ class CreateUnitItemTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('units_item');
+        Schema::dropIfExists('central_items');
     }
 }

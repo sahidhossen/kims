@@ -33102,7 +33102,8 @@ var addKitItem = exports.addKitItem = function addKitItem(data) {
     return function (dispatch, getState) {
         dispatch({ type: constants.FETCHING_KIT_ITEM });
         _axios2.default.post('/api/add_kit_item', data).then(function (response) {
-
+            console.log("item response: ", response);
+            return false;
             if (response.data.success === true) {
                 var store = getState();
                 var kitItems = store.kitItems.kitItems;
@@ -64458,8 +64459,8 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
                 central_office_id: central_id,
                 district_office_id: formation_id,
                 unit_id: unit_id,
-                role: 'solder' };
-            // console.log("add solder: ", user)
+                role: 'solder'
+            };
             props.dispatch((0, _userActions.addUser)(user));
         };
     },
