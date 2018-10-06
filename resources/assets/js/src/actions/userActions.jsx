@@ -187,3 +187,7 @@ export const retriveAuthUser = () => dispatch => {
         delete current_oauth.user
     }
 }
+
+export const centralDashboard = () => dispatch => {
+
+}

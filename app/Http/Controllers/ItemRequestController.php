@@ -258,6 +258,7 @@ class ItemRequestController extends Controller
                     $item_property = new \stdClass();
 
                     $item_property->id = $p_item->id;
+                    $item_property->type_id = $itemType->id;
                     $item_property->type_name = $itemType->type_name;
                     $item_property->kit_problem = $p_item->problem_list;
                     $item_property->user_name = User::getParams($p_item->user_id, 'name');
@@ -576,12 +577,26 @@ class ItemRequestController extends Controller
             $pendingRequest->kit_items = \GuzzleHttp\json_encode($pendingRequest->kit_items);
             $pendingRequest->stage = 6;
             $pendingRequest->save();
+            $this->updateCompanySolderPendingStatus($companyOfficeId);
             return ['success'=>true, "message"=>"Confirm company approval items!"];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }
     }
 
+    /*
+     * Update solder pending request status when unit confirm company items
+     * status = 4
+     */
+    private function updateCompanySolderPendingStatus($companyOfficeId){
+        $solderPendingRequest = SolderItemRequest::where(['company_id'=>$companyOfficeId,'status'=>2])->get();
+        if(count($solderPendingRequest)){
+            foreach($solderPendingRequest as $solderPending){
+                $solderPending->status = 4;
+                $solderPending->save();
+            }
+        }
+    }
     /*
      * ==============
      * QUARTER MASTER
@@ -848,20 +863,7 @@ class ItemRequestController extends Controller
         }
 
     }
-    /*
-     * After approve by central office distribute Items to the unit
-     */
-    public function distributeItemToUnit(Request $request){
-        try{
-//            $pendingRequest = KitItemRequest::where([
-//                'district_user_id'=>$formationUser->id,
-//                'stage'=>2,
-//                'status'=>2
-//            ])->get();
-        }catch (Exception $e){
-            return ['success'=>false, 'message'=>$e->getMessage()];
-        }
-    }
+
     /*
      * ==============
      * CENTRAL OFFICE
@@ -876,7 +878,6 @@ class ItemRequestController extends Controller
             $centralUser = $request->user();
             if(!$centralUser || !$centralUser->hasRole('central'))
                 throw new Exception("Please try to login as central user!");
-            $unitTerms = TermRelation::retrieveCentralDistrictTerms($centralUser->id);
 
             $pendingRequest = KitItemRequest::where([
                 'central_user_id'=>$centralUser->id,
@@ -884,13 +885,14 @@ class ItemRequestController extends Controller
             ])->whereIn('stage', array(1,2,3))->get();
 
             if(count($pendingRequest) == 0 ){
-                throw new Exception("Central have not any pending request");
+                return ['success'=>true,'data'=>[]];
             }
 
             foreach( $pendingRequest as $pRequest){
                 $kitItems = \GuzzleHttp\json_decode($pRequest->kit_items);
                 if(count($kitItems) > 0 ){
                     foreach ($kitItems as $key=>$subKitItem){ // quarter mast
+                        $kitItems[$key]->quarter_master = TermRelation::getQuarterMasterInfoByUserId($subKitItem->quarter_master_user_id);
                         foreach($subKitItem->kit_items as $q=>$unitLevel) { //units
                             $kitItems[$key]->kit_items[$q]->unit = TermRelation::getUnitInfoByUserId($unitLevel->unit_user_id);
                             if (is_array($unitLevel->kit_items)) {
@@ -903,7 +905,7 @@ class ItemRequestController extends Controller
                 }
                 $pRequest->kit_items = $kitItems;
             }
-            return ['success'=>true,'data'=>$pendingRequest, 'terms'=>$unitTerms];
+            return ['success'=>true,'data'=>$pendingRequest];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }
@@ -990,6 +992,7 @@ class ItemRequestController extends Controller
                 throw new Exception("Must be need request Id");
             if(!$request->input('approval_items'))
                 throw new Exception("Must be need number of approval items");
+            $centralUser = $request->user();
 
             $approveItems = (int)$request->input('approval_items');
             $getUnitRequest = KitItemRequest::find($request->input('request_id'));
@@ -998,30 +1001,96 @@ class ItemRequestController extends Controller
             if($getUnitRequest->stage == 5 )
                 throw new Exception("Already approve this unit request!");
 
-            $getUnitRequest->kit_items = \GuzzleHttp\json_decode($getUnitRequest->kit_items);
-            if(count($getUnitRequest->kit_items) > 0 ){
-                $unit_user = $getUnitRequest->unit_user_id;
-                $unitOfficeId = TermRelation::getUnitInfoByUserId($unit_user)->unit_id;
-                foreach($getUnitRequest->kit_items as $companyLevelItems){
-                    foreach( $companyLevelItems->kit_items->kit_types as $kitTypes ){
-                        UnitItems::updateUnitItems($kitTypes->type_id, $unitOfficeId, 1, $kitTypes->quantity );
+            // Get each unit pending request
+            $allUnitPendingRequest = KitItemRequest::whereIn('id', array($getUnitRequest->parent_ids))->get();
+            if(count($allUnitPendingRequest) > 0 ){
+                foreach($allUnitPendingRequest as $UPendingRequest ) {
+                    $UPendingRequest->kit_items = \GuzzleHttp\json_decode($UPendingRequest->kit_items);
+                    $unitOfficeId = TermRelation::getUnitInfoByUserId($UPendingRequest->unit_user_id)->unit_id;
+                    foreach ($UPendingRequest->kit_items->kit_types as $kitTypes) {
+                        UnitItems::updateUnitItems($kitTypes->type_id, $unitOfficeId, 1, $kitTypes->quantity);
                     }
+                    $UPendingRequest->approval_items = $approveItems;
+                    $UPendingRequest->stage = 5;
+                    $UPendingRequest->kit_items = \GuzzleHttp\json_encode($UPendingRequest->kit_items);
+                    $UPendingRequest->save();
                 }
             }
+
             $getUnitRequest->kit_items = \GuzzleHttp\json_encode($getUnitRequest->kit_items);
             $getUnitRequest->approval_items = $approveItems;
             $getUnitRequest->stage = 5;
             $getUnitRequest->save();
-            return ['success'=>true,"message"=>"Confirm unit request from central!"];
+            $updateRequestData = $this->updateCentralKitData($getUnitRequest->id, $centralUser->id);
+            return ['success'=>true,"message"=>"Confirm unit request from central!", 'data'=>$updateRequestData];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];
         }
     }
 
     /*
-     * Complete unit requests
-     * After complete unit request a button will be trigger for done
+     * Update unit level json data
+     * approve=true
      */
+    private function updateCentralKitData($request_id, $central_user_id){
+        $pendingRequest = KitItemRequest::where([
+            'central_user_id'=>$central_user_id,
+            'status'=> 4 //formation
+        ])->whereIn('stage', array(1,2,3))->get();
+        foreach( $pendingRequest as $index=>$pRequest){
+            $kitItems = \GuzzleHttp\json_decode($pRequest->kit_items);
+            if(count($kitItems) > 0 ){
+                foreach ($kitItems as $key=>$subKitItem){ // quarter mast
+                    $kitItems[$key]->quarter_master = TermRelation::getQuarterMasterInfoByUserId($subKitItem->quarter_master_user_id);
+                    foreach($subKitItem->kit_items as $q=>$unitLevel) { //units
+                        $kitItems[$key]->kit_items[$q]->unit = TermRelation::getUnitInfoByUserId($unitLevel->unit_user_id);
+                        if( $unitLevel->request_id == $request_id ) {
+                            $kitItems[$key]->kit_items[$q]->approve = true;
+                        }
+                    }
+                }
+            }
+            $pRequest->kit_items = \GuzzleHttp\json_encode($kitItems);
+            $pRequest->save();
+            $pRequest->kit_items = $kitItems;
+        }
+
+        return $pendingRequest;
+    }
+
+    /*
+     * Complete central pending task
+     */
+    public function completeCentralPendingTask(Request $request){
+        try{
+            $centralUser = $request->user();
+            if(!$centralUser || !$centralUser->hasRole('central'))
+                throw new Exception("Please logged in as a central level");
+            if(!$request->input('request_id'))
+                throw new Exception("Must be need request Id");
+            $pendingRequest = KitItemRequest::find($request->input('request_id'));
+            if(!$pendingRequest)
+                throw new Exception("Sorry pending request not found!");
+            $kitItems = \GuzzleHttp\json_decode($pendingRequest->kit_items);
+            $isHasTask = true;
+            if(count($kitItems) > 0 ){
+                foreach ($kitItems as $key=>$subKitItem){ // quarter mast
+                    foreach($subKitItem->kit_items as $q=>$unitLevel) { //units
+                        if(!isset($unitLevel->approve))
+                            $isHasTask=false;
+                    }
+                }
+            }
+            if($isHasTask == true ){
+                $pendingRequest->kit_items = \GuzzleHttp\json_encode($pendingRequest->kit_items);
+                $pendingRequest->stage = 6;
+                $pendingRequest->save();
+            }
+            return ['success'=>true, 'task_complete'=>$isHasTask ];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=>$e->getMessage()];
+        }
+    }
 
 
 }

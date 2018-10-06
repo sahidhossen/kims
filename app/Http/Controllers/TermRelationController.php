@@ -33,4 +33,12 @@ class TermRelationController extends Controller
             return $e;
         }
     }
+
+    /*
+     * Get central Users count
+     */
+    public function numberOfCentralUser($central_office_id){
+        $solders = self::where(['central_office_id'=>$central_office_id,'role'=>5,'term_type'=>0])->count();
+        return $solders;
+    }
 }

@@ -7,6 +7,7 @@ import kitControllers from './kitControllerReducer'
 import kitTypes from './kitTypesReducer'
 import kitItems from './kitItemReducer'
 import condemnations from './condemnationReducer'
+import pendingRequest from './pendingRequestReducer'
 
 export const makeRootReducer = asyncReducers => {
     return combineReducers({
@@ -15,6 +16,7 @@ export const makeRootReducer = asyncReducers => {
         kitItems,
         kitTypes,
         kitControllers,
+        pendingRequest,
         users,
         roles,
         oauth,

@@ -20,8 +20,6 @@ export const addKitItem = data => (dispatch, getState) => {
     dispatch({type: constants.FETCHING_KIT_ITEM })
     axios.post('/api/add_kit_item', data)
         .then(function (response) {
-            console.log("item response: ", response)
-            return false;
             if( response.data.success === true ) {
                 let store = getState()
                 let {kitItems: {kitItems}} = store

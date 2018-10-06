@@ -39,6 +39,7 @@ Route::middleware('auth:api')->get('/kit_user_by_company','UserController@getKit
 
 Route::middleware('auth:api')->get('/get_roles', 'UserController@getRoles');
 Route::middleware('auth:api')->get('/get_kit_controllers', 'KitController@getKitControllers');
+Route::middleware('auth:api')->get('/central_dashboard', 'UserController@centralDashboardData');
 
 /*
  * Central Office API
@@ -166,6 +167,7 @@ Route::middleware('auth:api')->get('/get_central_level_request', 'ItemRequestCon
 Route::middleware('auth:api')->get('/central_review_pending_request', 'ItemRequestController@reviewPendingRequestById');
 Route::middleware('auth:api')->post('/central_approve_request', 'ItemRequestController@acceptPendingRequestForDistrict');
 Route::middleware('auth:api')->post('/unit_request_confirm_from_central', 'ItemRequestController@confirmUnitRequestFromCentral');
+Route::middleware('auth:api')->post('/complete_central_pending_task', 'ItemRequestController@completeCentralPendingTask');
 
 /*
  * Condemnation  API's

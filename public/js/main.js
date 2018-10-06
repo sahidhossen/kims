@@ -6726,6 +6726,13 @@ var FETCHING_CONDEMNATION = exports.FETCHING_CONDEMNATION = 'FETCHING_CONDEMNATI
 var FETCH_CONDEMNATION = exports.FETCH_CONDEMNATION = 'FETCH_CONDEMNATION';
 var REJECT_CONDEMNATION = exports.REJECT_CONDEMNATION = 'REJECT_CONDEMNATION';
 
+var FETCHING_PENDING_REQUEST = exports.FETCHING_PENDING_REQUEST = 'FETCHING_PENDING_REQUEST';
+var FETCH_PENDING_REQUEST = exports.FETCH_PENDING_REQUEST = 'FETCH_PENDING_REQUEST';
+var REJECT_PENDING_REQUEST = exports.REJECT_PENDING_REQUEST = 'REJECT_PENDING_REQUEST';
+var FETCHING_TASK_COMPLETE = exports.FETCHING_TASK_COMPLETE = 'FETCHING_TASK_COMPLETE';
+var FETCH_TASK_COMPLETE = exports.FETCH_TASK_COMPLETE = 'FETCH_TASK_COMPLETE';
+var REMOVE_TASK_COMPLETE = exports.REMOVE_TASK_COMPLETE = 'REMOVE_TASK_COMPLETE';
+
 /***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -6909,7 +6916,7 @@ $exports.store = store;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.retriveAuthUser = exports.fetchAuthUser = exports.logout = exports.fetchOauthToken = exports.getUserRole = exports.getAssignedItems = exports.assignItemToSolder = exports.addUser = exports.fetchUserById = exports.fetchUserByCompany = exports.fetchUser = undefined;
+exports.centralDashboard = exports.retriveAuthUser = exports.fetchAuthUser = exports.logout = exports.fetchOauthToken = exports.getUserRole = exports.getAssignedItems = exports.assignItemToSolder = exports.addUser = exports.fetchUserById = exports.fetchUserByCompany = exports.fetchUser = undefined;
 
 var _extends2 = __webpack_require__(4);
 
@@ -7117,6 +7124,10 @@ var retriveAuthUser = exports.retriveAuthUser = function retriveAuthUser() {
             delete current_oauth.user;
         }
     };
+};
+
+var centralDashboard = exports.centralDashboard = function centralDashboard() {
+    return function (dispatch) {};
 };
 
 /***/ }),
@@ -8630,6 +8641,7 @@ var USERS = exports.USERS = '/dashboard/users';
 var USER_DETAILS = exports.USER_DETAILS = '/dashboard/user/:id';
 var CONTROLLER_DETAILS = exports.CONTROLLER_DETAILS = '/dashboard/:controller_type/:id';
 var CONTROLLER = exports.CONTROLLER = '/dashboard/controller';
+var PENDING_REQUEST = exports.PENDING_REQUEST = '/dashboard/pending_request';
 var KIT_ITEMS = exports.KIT_ITEMS = '/dashboard/kit_items';
 var ITEM_TYPES = exports.ITEM_TYPES = '/dashboard/item_types';
 var CONDEMNATION = exports.CONDEMNATION = '/dashboard/condemnations';
@@ -33102,8 +33114,6 @@ var addKitItem = exports.addKitItem = function addKitItem(data) {
     return function (dispatch, getState) {
         dispatch({ type: constants.FETCHING_KIT_ITEM });
         _axios2.default.post('/api/add_kit_item', data).then(function (response) {
-            console.log("item response: ", response);
-            return false;
             if (response.data.success === true) {
                 var store = getState();
                 var kitItems = store.kitItems.kitItems;
@@ -56834,6 +56844,10 @@ var _condemnationReducer = __webpack_require__(343);
 
 var _condemnationReducer2 = _interopRequireDefault(_condemnationReducer);
 
+var _pendingRequestReducer = __webpack_require__(510);
+
+var _pendingRequestReducer2 = _interopRequireDefault(_pendingRequestReducer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var makeRootReducer = exports.makeRootReducer = function makeRootReducer(asyncReducers) {
@@ -56843,6 +56857,7 @@ var makeRootReducer = exports.makeRootReducer = function makeRootReducer(asyncRe
         kitItems: _kitItemReducer2.default,
         kitTypes: _kitTypesReducer2.default,
         kitControllers: _kitControllerReducer2.default,
+        pendingRequest: _pendingRequestReducer2.default,
         users: _userReducer2.default,
         roles: _roleReducer2.default,
         oauth: _oauthReducer2.default,
@@ -57635,6 +57650,10 @@ var _ItemTypes = __webpack_require__(483);
 
 var _ItemTypes2 = _interopRequireDefault(_ItemTypes);
 
+var _CenrtalPendingRequest = __webpack_require__(506);
+
+var _CenrtalPendingRequest2 = _interopRequireDefault(_CenrtalPendingRequest);
+
 var _Condemnation = __webpack_require__(493);
 
 var _Condemnation2 = _interopRequireDefault(_Condemnation);
@@ -57659,6 +57678,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// import KitControllerDetails from './KitController/KitControllerDetails'
 var routes = [{
     component: _App2.default,
     routes: [{
@@ -57689,6 +57709,10 @@ var routes = [{
             path: route.CONTROLLER,
             exact: true,
             component: _KitController2.default
+        }, {
+            path: route.PENDING_REQUEST,
+            exact: true,
+            component: _CenrtalPendingRequest2.default
         }, {
             path: route.KIT_ITEMS,
             exact: true,
@@ -57724,7 +57748,7 @@ var routes = [{
         component: _NotFound2.default
     }]
 }];
-// import KitControllerDetails from './KitController/KitControllerDetails'
+
 exports.default = routes;
 
 /***/ }),
@@ -59910,6 +59934,15 @@ var Sidebar = exports.Sidebar = function Sidebar(_ref) {
                             _reactRouterDom.Link,
                             { className: location.pathname === _constants.ITEM_TYPES ? 'nav-link active' : 'nav-link', to: _constants.ITEM_TYPES },
                             ' Item Types '
+                        )
+                    ),
+                    oauth.user !== null && oauth.user.whoami === 'central' && _react2.default.createElement(
+                        'li',
+                        { className: 'nav-item' },
+                        _react2.default.createElement(
+                            _reactRouterDom.Link,
+                            { className: location.pathname === _constants.PENDING_REQUEST ? 'nav-link active' : 'nav-link', to: _constants.PENDING_REQUEST },
+                            ' Pending Request '
                         )
                     ),
                     oauth.user !== null && oauth.user.whoami === 'unit' && _react2.default.createElement(
@@ -76459,6 +76492,479 @@ var NotFound = exports.NotFound = function NotFound() {
 };
 
 exports.default = NotFound;
+
+/***/ }),
+/* 505 */,
+/* 506 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _CentralPendingRequest = __webpack_require__(507);
+
+var _CentralPendingRequest2 = _interopRequireDefault(_CentralPendingRequest);
+
+var _CentralPendingRequest3 = __webpack_require__(508);
+
+var _CentralPendingRequest4 = _interopRequireDefault(_CentralPendingRequest3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = (0, _CentralPendingRequest2.default)(_CentralPendingRequest4.default);
+
+/***/ }),
+/* 507 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _redux = __webpack_require__(5);
+
+var _recompose = __webpack_require__(7);
+
+var _reactRedux = __webpack_require__(6);
+
+var _services = __webpack_require__(10);
+
+var _actionType = __webpack_require__(9);
+
+var constants = _interopRequireWildcard(_actionType);
+
+var _pendingRequestActions = __webpack_require__(511);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) {
+    return {
+        oauth: store.oauth,
+        pendingRequest: store.pendingRequest
+    };
+}), _services.userIsAuthenticated, (0, _recompose.withState)('state', 'setState', {}), (0, _recompose.withHandlers)({
+    approveUnitRequest: function approveUnitRequest(props) {
+        return function (request_id, items) {
+            var data = { request_id: request_id, approval_items: items };
+            props.dispatch((0, _pendingRequestActions.approveUnitRequest)(data));
+        };
+    },
+    taskComplete: function taskComplete(props) {
+        return function (request_id, index) {
+            var data = { request_id: request_id, index: index };
+            props.dispatch((0, _pendingRequestActions.completeCentralTask)(data));
+        };
+    }
+}), (0, _recompose.lifecycle)({
+    componentDidMount: function componentDidMount() {
+        this.props.dispatch((0, _pendingRequestActions.getPendingRequest)());
+    },
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        var pendingRequest = nextProps.pendingRequest,
+            dispatch = nextProps.dispatch;
+
+        if (pendingRequest.task_message !== '') {
+            setTimeout(function () {
+                dispatch({ type: constants.REMOVE_TASK_COMPLETE });
+            }, 2500);
+        }
+    }
+}), _recompose.pure);
+
+/***/ }),
+/* 508 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.CentralPendingRequest = undefined;
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _QuarterMaster = __webpack_require__(512);
+
+var _QuarterMaster2 = _interopRequireDefault(_QuarterMaster);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var CentralPendingRequest = exports.CentralPendingRequest = function CentralPendingRequest(_ref) {
+    var pendingRequest = _ref.pendingRequest,
+        approveUnitRequest = _ref.approveUnitRequest,
+        taskComplete = _ref.taskComplete;
+    return _react2.default.createElement(
+        'div',
+        { className: 'Homepage' },
+        _react2.default.createElement(
+            'div',
+            { className: 'page-header page-header-light' },
+            _react2.default.createElement(
+                'div',
+                { className: 'page-header-content header-elements-md-inline' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'page-title d-flex' },
+                    _react2.default.createElement(
+                        'h4',
+                        null,
+                        _react2.default.createElement('i', { className: 'icon-arrow-left52 mr-2' }),
+                        ' ',
+                        _react2.default.createElement(
+                            'span',
+                            { className: 'font-weight-semibold' },
+                            'Pending Request'
+                        ),
+                        ' - Dashboard'
+                    ),
+                    _react2.default.createElement(
+                        'a',
+                        { href: '#', className: 'header-elements-toggle text-default d-md-none' },
+                        _react2.default.createElement('i', { className: 'icon-more' })
+                    )
+                )
+            )
+        ),
+        pendingRequest.pendingRequest.length === 0 && pendingRequest.fetched === true && _react2.default.createElement(
+            'div',
+            { className: 'row empty-pending-request m-0' },
+            _react2.default.createElement(
+                'h3',
+                { className: 'empty-title text-center' },
+                ' Pending request is empty now! '
+            )
+        ),
+        pendingRequest.pendingRequest.length > 0 && pendingRequest.pendingRequest.map(function (formationRequest, index) {
+            return _react2.default.createElement(
+                'div',
+                { className: 'row', key: index },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'content' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'card' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'card-body' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'row' },
+                                formationRequest.kit_items.length > 0 && formationRequest.kit_items.map(function (qmPending, qindex) {
+                                    return _react2.default.createElement(
+                                        'div',
+                                        { className: 'col-md-12 qa', key: qindex },
+                                        _react2.default.createElement(_QuarterMaster2.default, {
+                                            c_request_id: formationRequest.id,
+                                            approveRequest: approveUnitRequest,
+                                            quarterMaster: qmPending
+                                        })
+                                    );
+                                })
+                            ),
+                            pendingRequest.task_message !== '' && _react2.default.createElement(
+                                'p',
+                                { className: 'alert alert-success pull-left' },
+                                ' Sorry! Has more task to do!'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'btn btn-primary btn-md pull-right', onClick: function onClick() {
+                                        return taskComplete(formationRequest.id, index);
+                                    } },
+                                ' Task Complete '
+                            )
+                        )
+                    )
+                )
+            );
+        })
+    );
+};
+
+CentralPendingRequest.propTypes = {
+    pendingRequest: _propTypes2.default.object,
+    approveUnitRequest: _propTypes2.default.func,
+    taskComplete: _propTypes2.default.func
+};
+exports.default = CentralPendingRequest;
+
+/***/ }),
+/* 509 */,
+/* 510 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(4);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _actionType = __webpack_require__(9);
+
+var constants = _interopRequireWildcard(_actionType);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var pendingRequest = function reducer() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        pendingRequest: [],
+        fetching: false,
+        fetched: false,
+        fetch_task_complete: false,
+        fetched_task_complete: false,
+        task_message: '',
+        error: null
+    };
+    var action = arguments[1];
+
+    switch (action.type) {
+        case constants.FETCHING_PENDING_REQUEST:
+            {
+                return (0, _extends3.default)({}, state, {
+                    fetching: true,
+                    fetched: false
+                });
+            }
+        case constants.FETCHING_TASK_COMPLETE:
+            {
+                return (0, _extends3.default)({}, state, {
+                    fetch_task_complete: true,
+                    fetched_task_complete: false
+                });
+            }
+        case constants.FETCH_TASK_COMPLETE:
+            {
+                return (0, _extends3.default)({}, state, {
+                    fetch_task_complete: false,
+                    fetched_task_complete: true,
+                    task_message: action.payload
+                });
+            }
+        case constants.REMOVE_TASK_COMPLETE:
+            {
+                return (0, _extends3.default)({}, state, {
+                    task_message: ''
+                });
+            }
+        case constants.FETCH_PENDING_REQUEST:
+            {
+                return (0, _extends3.default)({}, state, {
+                    fetching: false,
+                    error: null,
+                    fetched: true,
+                    pendingRequest: action.payload
+                });
+            }
+    }
+    return state;
+};
+exports.default = pendingRequest;
+
+/***/ }),
+/* 511 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.completeCentralTask = exports.approveUnitRequest = exports.getPendingRequest = undefined;
+
+var _actionType = __webpack_require__(9);
+
+var constants = _interopRequireWildcard(_actionType);
+
+var _axios = __webpack_require__(16);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var getPendingRequest = exports.getPendingRequest = function getPendingRequest() {
+    return function (dispatch) {
+        dispatch({
+            type: constants.FETCHING_PENDING_REQUEST
+        });
+        _axios2.default.get('/api/get_central_level_request').then(function (response) {
+            console.log("central response: ", response.data);
+            if (response.data.success === true) dispatch({ type: constants.FETCH_PENDING_REQUEST, payload: response.data.data });else dispatch({ type: constants.REJECT_PENDING_REQUEST, payload: response.data.message });
+        }).catch(function (error) {
+            console.log("condemnation critical error: ", error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
+    };
+};
+
+var approveUnitRequest = exports.approveUnitRequest = function approveUnitRequest(data) {
+    return function (dispatch) {
+        // dispatch({type: constants.FETCHING_PENDING_REQUEST})
+        _axios2.default.post('/api/unit_request_confirm_from_central', data).then(function (response) {
+            if (response.data.success === true) dispatch({ type: constants.FETCH_PENDING_REQUEST, payload: response.data.data });else dispatch({ type: constants.REJECT_PENDING_REQUEST, payload: response.data.message });
+        }).catch(function (error) {
+            console.log("condemnation critical error: ", error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
+    };
+};
+
+var completeCentralTask = exports.completeCentralTask = function completeCentralTask(data) {
+    return function (dispatch, getState) {
+        _axios2.default.post('/api/complete_central_pending_task', data).then(function (response) {
+
+            if (response.data.success === true) {
+                var _data = response.data;
+                if (_data.task_complete === true) {
+                    var store = getState();
+                    var pendingRequest = store.pendingRequest.pendingRequest;
+
+                    pendingRequest.splice(_data.index, 1);
+                    dispatch({ type: constants.FETCH_PENDING_REQUEST, payload: pendingRequest });
+                } else {
+                    dispatch({ type: constants.FETCH_TASK_COMPLETE, payload: "Has more task" });
+                }
+            } else dispatch({ type: constants.REJECT_PENDING_REQUEST, payload: response.data.message });
+        }).catch(function (error) {
+            console.log("condemnation critical error: ", error);
+            // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
+        });
+    };
+};
+
+/***/ }),
+/* 512 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _quarterMaster = __webpack_require__(513);
+
+var _quarterMaster2 = _interopRequireDefault(_quarterMaster);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _quarterMaster2.default;
+
+/***/ }),
+/* 513 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.QuarterMaster = undefined;
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var QuarterMaster = exports.QuarterMaster = function QuarterMaster(_ref) {
+    var quarterMaster = _ref.quarterMaster,
+        approveRequest = _ref.approveRequest;
+    return _react2.default.createElement(
+        'div',
+        { className: 'pending-request-box' },
+        _react2.default.createElement(
+            'div',
+            { className: 'pending-request-header' },
+            _react2.default.createElement(
+                'h3',
+                { className: 'title' },
+                ' Quarter Master: ',
+                quarterMaster.quarter_master.quarter_name,
+                ' '
+            )
+        ),
+        _react2.default.createElement(
+            'div',
+            { className: 'pending-request-unit' },
+            quarterMaster.kit_items.length > 0 && quarterMaster.kit_items.map(function (items, index) {
+                if (typeof items.approve !== 'undefined') return null;
+                return _react2.default.createElement(
+                    'div',
+                    { className: 'quarter-unit-list row m-0', key: index },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'unit-name flex-1' },
+                        ' ',
+                        items.unit.unit_name,
+                        ' '
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'request-items' },
+                        ' ',
+                        _react2.default.createElement(
+                            'span',
+                            null,
+                            ' ',
+                            items.request_items,
+                            ' '
+                        ),
+                        ' '
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'approve-btn' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'btn btn-approve', onClick: function onClick(e) {
+                                    return approveRequest(items.request_id, items.request_items);
+                                } },
+                            ' Approve '
+                        )
+                    )
+                );
+            })
+        )
+    );
+};
+
+QuarterMaster.propTypes = {
+    quarterMaster: _propTypes2.default.object,
+    approveRequest: _propTypes2.default.func
+};
+exports.default = QuarterMaster;
 
 /***/ })
 /******/ ]);

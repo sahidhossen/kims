@@ -127,6 +127,7 @@ class UserController extends Controller
                 if (count($companyTerms) > 0) {
                     foreach ($companyTerms as $term) {
                         $solder = User::find($term->user_id);
+                        $solder->image = $solder->image == null ? null : $baseUrl.'/'.$solder->image ;
                         array_push($companySolders, $solder);
                     }
                 }
@@ -158,6 +159,7 @@ class UserController extends Controller
                             if($user->hasRole('company')) {
                                 $user->company_id = $term->company_id;
                                 $user->unit_id = $term->unit_id;
+                                $user->image = $user->image == null ? null : $baseUrl.'/'.$user->image ;
                                 $company = TermRelation::getCompanyInfoByUserId($user->id);
                                 $user->company_name = $company == null ? null : $company->company_name;
                                 array_push($unitCompanies, $user);
@@ -186,6 +188,7 @@ class UserController extends Controller
                         if($user->hasRole('unit')) {
                             $user->district_office_id = $term->district_office_id;
                             $user->unit_id = $term->unit_id;
+                            $user->image = $user->image == null ? null : $baseUrl.'/'.$user->image ;
                             $unit = TermRelation::getUnitInfoByUserId($user->id);
                             $user->unit_name = $unit->unit_name;
                             array_push($QuarterMasterUnits, $user);
@@ -213,6 +216,7 @@ class UserController extends Controller
                         if($user->hasRole('unit')) {
                             $user->district_office_id = $term->district_office_id;
                             $user->unit_id = $term->unit_id;
+                            $user->image = $user->image == null ? null : $baseUrl.'/'.$user->image ;
                             $unit = TermRelation::getUnitInfoByUserId($user->id);
                             $user->unit_name = $unit->unit_name;
                             array_push($districtUnits, $user);
@@ -233,13 +237,13 @@ class UserController extends Controller
                         if($user->hasRole('formation')) {
                             $user->central_office_id = $term->central_office_id;
                             $user->district_office_id = $term->district_office_id;
+                            $user->image = $user->image == null ? null : $baseUrl.'/'.$user->image ;
                             $user->unit_id = $term->unit_id;
                             array_push($centralFormations, $user);
                         }
                     }
                 }
             }
-            $baseUrl = URL::asset('uploads');
             $currentUser->image = $currentUser->image == null ? null : $baseUrl.'/'.$currentUser->image ;
             return [
                 'success' => true,
@@ -753,4 +757,23 @@ class UserController extends Controller
         }
     }
 
+
+    /*
+     *
+     * Fetch dashboard data
+     */
+    public function centralDashboardData(Request $request){
+        try{
+            $currentUser = $request->user();
+            if(!$currentUser || !$currentUser->hasRole('central'))
+                throw new Exception("You have to logged in as central level!");
+            $centralOfficeId = TermRelation::getCentralInfoByUserId($currentUser->id)->central_id;
+            $data = [
+                'central_office' => $centralOfficeId
+            ];
+            return ['success'=>true, 'data'=>$data];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=> $e->getMessage()];
+        }
+    }
 }

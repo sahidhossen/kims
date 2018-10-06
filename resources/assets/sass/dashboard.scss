@@ -493,3 +493,49 @@
     color: #ffffff;
   }
 }
+
+.pending-request-box {
+  .pending-request-header {
+    border-bottom: 1px solid #efefef;
+    margin-bottom: 10px;
+  }
+  .pending-request-unit {
+    background: #263238;
+    padding: 0;
+    color: #dedede;
+    border-radius: 3px;
+    .quarter-unit-list {
+      align-items: center;
+      font-size: 14px;
+      border-bottom: 2px solid #fff;
+      padding: 10px;
+        .request-items {
+          span {
+            display: inline-block;
+            padding:4px 5px;
+            background: rgb(70, 154, 64);
+            -webkit-border-radius:5px;
+            -moz-border-radius:5px;
+            border-radius:5px;
+            text-align: center;
+            vertical-align: middle;
+          }
+
+        }
+      .btn-approve {
+        margin-left:10px;
+        margin-right:10px;
+        background: #26a69a;
+      }
+    }
+  }
+}
+.empty-pending-request {
+  padding: 40px 0;
+  justify-content:center;
+  .empty-title {
+    font-size: 3em;
+    color: #a9a9a9;
+
+  }
+}

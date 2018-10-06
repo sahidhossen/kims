@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { USERS, DASHBOARD, CONTROLLER, KIT_ITEMS, ITEM_TYPES, CONDEMNATION,COMPANY_USERS, COMPANY_ADD_USERS } from '../../../constants'
+import { USERS, DASHBOARD, CONTROLLER, KIT_ITEMS, ITEM_TYPES, CONDEMNATION,COMPANY_USERS, COMPANY_ADD_USERS, PENDING_REQUEST } from '../../../constants'
 
 export const Sidebar = ({ location, oauth }) => (
     <div className="sidebar sidebar-dark sidebar-main sidebar-expand-md">
@@ -87,6 +87,11 @@ export const Sidebar = ({ location, oauth }) => (
                         <li className="nav-item">
                             <Link className={location.pathname === ITEM_TYPES ? 'nav-link active' : 'nav-link'} to={ITEM_TYPES}> Item Types </Link>
                         </li>
+                    }
+                    {oauth.user !== null &&  oauth.user.whoami === 'central' &&
+                    <li className="nav-item">
+                        <Link className={location.pathname === PENDING_REQUEST ? 'nav-link active' : 'nav-link'} to={PENDING_REQUEST}> Pending Request </Link>
+                    </li>
                     }
                     {oauth.user !== null &&  oauth.user.whoami === 'unit' &&
                         <li className="nav-item">

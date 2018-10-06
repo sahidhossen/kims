@@ -11,6 +11,7 @@ import KitController from './KitController'
 // import KitControllerDetails from './KitController/KitControllerDetails'
 import KitItems from './KitItems'
 import ItemTypes from './ItemTypes'
+import CentralPendingRequest from './CenrtalPendingRequest'
 import Condemnation from './Condemnation'
 import Login from './Login'
 import Register from './Register'
@@ -55,6 +56,11 @@ const routes = [{
                     path: route.CONTROLLER,
                     exact: true,
                     component: KitController
+                },
+                {
+                    path: route.PENDING_REQUEST,
+                    exact: true,
+                    component: CentralPendingRequest
                 },
 
                 {

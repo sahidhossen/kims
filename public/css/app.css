@@ -587,3 +587,51 @@
   color: #ffffff;
 }
 
+.pending-request-box .pending-request-header {
+  border-bottom: 1px solid #efefef;
+  margin-bottom: 10px;
+}
+
+.pending-request-box .pending-request-unit {
+  background: #263238;
+  padding: 0;
+  color: #dedede;
+  border-radius: 3px;
+}
+
+.pending-request-box .pending-request-unit .quarter-unit-list {
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-size: 14px;
+  border-bottom: 2px solid #fff;
+  padding: 10px;
+}
+
+.pending-request-box .pending-request-unit .quarter-unit-list .request-items span {
+  display: inline-block;
+  padding: 4px 5px;
+  background: #469a40;
+  border-radius: 5px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.pending-request-box .pending-request-unit .quarter-unit-list .btn-approve {
+  margin-left: 10px;
+  margin-right: 10px;
+  background: #26a69a;
+}
+
+.empty-pending-request {
+  padding: 40px 0;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.empty-pending-request .empty-title {
+  font-size: 3em;
+  color: #a9a9a9;
+}
+
