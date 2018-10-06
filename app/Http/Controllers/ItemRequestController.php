@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CentralItems;
 use App\CompanyItems;
 use App\Condemnation;
 use App\ItemType;
@@ -571,8 +572,10 @@ class ItemRequestController extends Controller
                 throw new Exception("Sorry could not found any pending request!");
             $pendingRequest->kit_items = \GuzzleHttp\json_decode($pendingRequest->kit_items);
             $companyOfficeId = TermRelation::getCompanyInfoByUserId($pendingRequest->company_user_id)->company_id;
+            $unitOfficeId = TermRelation::getUnitInfoByUserId($pendingRequest->unit_user_id)->unit_id;
             foreach($pendingRequest->kit_items->kit_types as $items){
                 CompanyItems::updateUnitItems($items->type_id, $companyOfficeId, 1, $items->quantity);
+                UnitItems::updateUnitItems($items->type_id, $unitOfficeId, 2, $items->quantity );
             }
             $pendingRequest->kit_items = \GuzzleHttp\json_encode($pendingRequest->kit_items);
             $pendingRequest->stage = 6;
@@ -1001,6 +1004,7 @@ class ItemRequestController extends Controller
             if($getUnitRequest->stage == 5 )
                 throw new Exception("Already approve this unit request!");
 
+            $centralOfficeId = TermRelation::getCentralInfoByUserId($centralUser->id)->central_office_id;
             // Get each unit pending request
             $allUnitPendingRequest = KitItemRequest::whereIn('id', array($getUnitRequest->parent_ids))->get();
             if(count($allUnitPendingRequest) > 0 ){
@@ -1009,6 +1013,7 @@ class ItemRequestController extends Controller
                     $unitOfficeId = TermRelation::getUnitInfoByUserId($UPendingRequest->unit_user_id)->unit_id;
                     foreach ($UPendingRequest->kit_items->kit_types as $kitTypes) {
                         UnitItems::updateUnitItems($kitTypes->type_id, $unitOfficeId, 1, $kitTypes->quantity);
+                        CentralItems::updateCentralItems($kitTypes->type_id, $centralOfficeId, 2, $kitTypes->quantity);
                     }
                     $UPendingRequest->approval_items = $approveItems;
                     $UPendingRequest->stage = 5;
@@ -1082,7 +1087,6 @@ class ItemRequestController extends Controller
                 }
             }
             if($isHasTask == true ){
-                $pendingRequest->kit_items = \GuzzleHttp\json_encode($pendingRequest->kit_items);
                 $pendingRequest->stage = 6;
                 $pendingRequest->save();
             }

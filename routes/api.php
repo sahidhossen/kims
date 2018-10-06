@@ -116,6 +116,7 @@ Route::middleware('auth:api')->post('/delete_kit_item', 'KitItemController@delet
 
 
 Route::middleware('auth:api')->post('/assign_kit_item', 'UserController@assignKitItemToSolder');
+Route::middleware('auth:api')->post('/assign_pending_solder_kit_item', 'UserController@assignPendingRequestItemsToSolder');
 
 /*
  * Request API's

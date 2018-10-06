@@ -43,7 +43,7 @@ class UnitItems extends Model
         if( $action == 2 ){
             $centralItems = self::where(['item_slug'=>$itemType->type_slug, 'unit_id'=>$unit_id])->first();
             if($centralItems) {
-                $centralItems->items = $centralItems->items - $items;
+                $centralItems->items = abs($centralItems->items - $items);
                 $centralItems->save();
                 return true;
             }

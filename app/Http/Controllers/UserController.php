@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\CentralOffice;
 use App\Company;
+use App\CompanyItems;
 use App\DistrictOffice;
 use App\ItemType;
 use App\KitItem;
 use App\KitItemRequest;
 use App\QuarterMaster;
+use App\SolderItemRequest;
 use App\SolderKits;
 use App\TermRelation;
 use App\Unit;
@@ -704,6 +706,69 @@ class UserController extends Controller
             $solderInformation->expire_date = $solderKit->expire_date;
 
             return ['success'=>true, 'data'=> $solderInformation ,'message'=>'Item assigned success'];
+        }catch (Exception $e){
+            return ['success'=>false, 'message'=> $e->getMessage()];
+        }
+    }
+
+    /*
+     * Assign pending items to the solder which approval throw units and cental
+     */
+    public function assignPendingRequestItemsToSolder(Request $request){
+        try{
+            $companyUser = $request->user();
+            if(!$companyUser || !$companyUser->hasRole('company'))
+                throw new Exception("Must be send by company");
+            if(!$request->input('type_id'))
+                throw new Exception("Must be need item type id");
+            if(!$request->input('solder_request_id'))
+                throw new Exception("Must be need solder request Id");
+
+            $itemType = ItemType::find($request->input('type_id'));
+            if(!$itemType)
+                throw new Exception("Invalid type Id provided");
+            $companyItems = CompanyItems::where(['item_slug'=>$itemType->type_slug])->first();
+            if($companyItems->items < 0 || $companyItems->items == 0)
+                throw new Exception("Company has no ".$itemType->type_name);
+
+            $companyTerms = TermRelation::where(['user_id'=>$companyUser->id,'role'=>4,'term_type'=>0])->first();
+
+            $singleItem = KitItem::where([
+                    'central_office_id'=>$companyTerms->central_office_id,
+                    'item_type_id'=>$request->input('type_id'),
+                    'status'=>0
+            ])->first();
+
+            if(!$singleItem)
+                throw new Exception("Sorry no item found in central database");
+
+            $solderRequestData = SolderItemRequest::find($request->input('solder_request_id'));
+
+            $solderKit = new SolderKits();
+            $solderKit->user_id = $solderRequestData->user_id;
+            $solderKit->item_id = $singleItem->id;
+            $solderKit->item_type_id = $itemType->id;
+            $solderKit->issue_date = date('Y-m-d h:m:s');
+            $effectiveDate = date('Y-m-d h:m:s', strtotime('+3 month'));
+            $solderKit->expire_date = $effectiveDate;
+            $solderKit->save();
+
+            $singleItem->status = 1;
+            $singleItem->save();
+            $baseUrl = URL::asset('uploads');
+
+            $companyItems->items = $companyItems->items-1;
+            $companyItems->save();
+
+            $solderKit->image = $itemType->image == null ? null : $baseUrl.'/'.$itemType->image ;
+
+            $solderRequestData->status = 6;
+            $solderRequestData->save();
+            $solderOldKits = SolderKits::find($solderRequestData->solder_kit_id);
+            $solderOldKits->status = 4;
+            $solderOldKits->save();
+
+            return ['success'=>true, 'message'=>"Assign successful!", 'data'=>$solderKit];
         }catch (Exception $e){
             return ['success'=>false, 'message'=> $e->getMessage()];
         }
