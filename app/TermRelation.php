@@ -299,6 +299,24 @@ class TermRelation extends Model
             ->first();
         return $CentralUser;
     }
+
+    /*
+    * Get District/formation Units Terms
+    */
+    public static function retrieveDistrictQMsTerms($user_id){
+        if(!$user_id)
+            return null;
+        $unitTerms = self::where('user_id',$user_id)->first();
+        $unitSolderTerms = self::where(
+            [
+                'district_office_id'=>$unitTerms->district_office_id,
+                'term_type'=>0,
+                'role'=> 6
+            ]
+        )->where('user_id','!=',$user_id)->get();
+        return $unitSolderTerms;
+    }
+
     /*
     * Get District/formation Units Terms
     */

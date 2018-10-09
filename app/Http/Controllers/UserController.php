@@ -211,16 +211,17 @@ class UserController extends Controller
                     $currentUser->central_user_name = $central_info->name;
                     $currentUser->central_device_id = $central_info->device_id;
                 }
-                $unitTerms = TermRelation::retrieveDistrictUnitsTerms( $currentUser->id );
+                $unitTerms = TermRelation::retrieveDistrictQMsTerms( $currentUser->id );
+
                 if( count( $unitTerms) > 0 ){
                     foreach( $unitTerms as $term ){
                         $user = User::find( $term->user_id );
-                        if($user->hasRole('unit')) {
+                        if($user->hasRole('quarter_master')) {
                             $user->district_office_id = $term->district_office_id;
-                            $user->unit_id = $term->unit_id;
+                            $user->quarter_master_id = $term->quarter_master_id;
                             $user->image = $user->image == null ? null : $baseUrl.'/'.$user->image ;
-                            $unit = TermRelation::getUnitInfoByUserId($user->id);
-                            $user->unit_name = $unit->unit_name;
+                            $unit = TermRelation::getQuarterMasterInfoByUserId($user->id);
+                            $user->quarter_name = $unit->quarter_name;
                             array_push($districtUnits, $user);
                         }
                     }
@@ -252,7 +253,7 @@ class UserController extends Controller
                 'solders'=>$companySolders,
                 'unit_companies'=>$unitCompanies,
                 'quarter_master_units'=>$QuarterMasterUnits,
-                'formation_units'=>$districtUnits,
+                'formation_qms'=>$districtUnits,
                 'central_formations'=>$centralFormations,
                 'items' => $itemResult,
                 'data'=>$currentUser,
