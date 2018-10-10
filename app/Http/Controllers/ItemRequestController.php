@@ -1021,8 +1021,6 @@ class ItemRequestController extends Controller
                     $UPendingRequest->save();
                 }
             }
-
-            $getUnitRequest->kit_items = \GuzzleHttp\json_encode($getUnitRequest->kit_items);
             $getUnitRequest->approval_items = $approveItems;
             $getUnitRequest->stage = 5;
             $getUnitRequest->save();
