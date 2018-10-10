@@ -266,7 +266,7 @@ class TermRelation extends Model
         $unitTerms = self::where('user_id',$user_id)->first();
         $unitSolderTerms = self::where(
             [
-                'quarter_master_id'=>$unitTerms->district_office_id,
+                'quarter_master_id'=>$unitTerms->quarter_master_id,
                 'term_type'=>0,
                 'role'=> 3
             ]

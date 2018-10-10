@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\QuarterMaster;
 use App\TermRelation;
 use App\User;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use League\Flysystem\Exception;
@@ -144,6 +145,7 @@ class QuarterMasterController extends Controller
                 throw new Exception("Sorry quarter master user not found!");
             if(!$unitUser->hasRole('quarter_master'))
                 throw new Exception("You provide wrong id");
+
             $unitTerms = TermRelation::retrieveQuarterMasterUnitsTerms( $unitUser->id );
             $unitCompanies = [];
             if( count( $unitTerms) > 0 ){
@@ -156,6 +158,7 @@ class QuarterMasterController extends Controller
                         $user->unit_id = $term->unit_id;
                         $company = TermRelation::getUnitInfoByUserId($user->id);
                         $user->unit_name = $company == null ? null : $company->unit_name;
+                        $user->image = $user->image == null ? null : URL::asset('uploads').'/'.$user->image ;
                         array_push($unitCompanies, $user);
                     }
                 }
