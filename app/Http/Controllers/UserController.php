@@ -63,6 +63,7 @@ class UserController extends Controller
             $items = [];
             $itemResult = [];
             $baseUrl = URL::asset('uploads');
+            $currentUser->image = $currentUser->image == null ? null : $baseUrl.'/'.$currentUser->image ;
             if (count($solderKit) > 0) {
                 foreach ($solderKit as $kit) {
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
@@ -339,12 +340,12 @@ class UserController extends Controller
                 ->where('status','!=',3)->get();
             $items = [];
             $itemResult = [];
-            $baseUrl = URL::asset('uploads');
+
             if (count($solderKit) > 0) {
                 foreach ($solderKit as $kit) {
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
                     $itemType = ItemType::find($kit->item_type_id);
-                    $solderInformation->image = $itemType->image == null ? null : $baseUrl.'/'.$itemType->image ;
+                    $solderInformation->image = $itemType->image == null ? null : URL::asset('uploads').'/'.$itemType->image ;
                     $solderInformation->item_name = $itemType->type_name;
                     $solderInformation->problems = ($itemType->problems == null) ? [] : \GuzzleHttp\json_decode($itemType->problems);
                     $solderInformation->status = $kit->status;
@@ -484,7 +485,7 @@ class UserController extends Controller
             $termRelation = TermRelation::retrieveSolderTerms($user->id);
             if(!$termRelation)
                 throw new Exception("User haven't any relation with central office ");
-
+            $user->image = $user->image == null ? null : URL::asset('uploads').'/'.$user->image ;
             $user->terms = $termRelation;
 
             return ['success'=>true, 'data'=>$user, 'message'=>"User found!"];
@@ -795,6 +796,7 @@ class UserController extends Controller
                     $solder = User::find($term->user_id);
                     if(!$solder)
                         continue;
+                    $solder->image = $solder->image == null ? null : URL::asset('uploads').'/'.$solder->image ;
                     array_push($companySolders, $solder);
                 }
             }

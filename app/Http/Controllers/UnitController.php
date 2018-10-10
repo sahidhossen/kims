@@ -6,6 +6,7 @@ use App\TermRelation;
 use App\Unit;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
 
@@ -151,6 +152,7 @@ class UnitController extends Controller
                     if($user->hasRole('company')) {
                         $user->company_id = $term->company_id;
                         $user->unit_id = $term->unit_id;
+                        $user->image = $user->image == null ? null : URL::asset('uploads').'/'.$user->image ;
                         $company = TermRelation::getCompanyInfoByUserId($user->id);
                         $user->company_name = $company == null ? null : $company->company_name;
                         array_push($unitCompanies, $user);
