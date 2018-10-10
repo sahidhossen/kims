@@ -63,7 +63,6 @@ class UserController extends Controller
             $items = [];
             $itemResult = [];
             $baseUrl = URL::asset('uploads');
-            $currentUser->image = $currentUser->image == null ? null : $baseUrl.'/'.$currentUser->image ;
             if (count($solderKit) > 0) {
                 foreach ($solderKit as $kit) {
                     $solderInformation = TermRelation::retrieveSolderTerms($kit->user_id);
