@@ -6,6 +6,7 @@ const kitControllers = function reducer(
         formation_offices: [],
         units: [],
         companies: [],
+        items:0,
         quarters: [],
         fetching: false,
         fetched: false,
@@ -22,15 +23,16 @@ const kitControllers = function reducer(
             }
         }
         case constants.FETCH_KIT_CONTROLLER: {
-            let { central_offices, formation_offices, units, companies, quarters } = action.payload
+            let { central_offices, formation_offices, units, companies, quarters, items } = action.payload
             return {
                 ...state,
-                fetching: true,
+                fetching: false,
                 error: null,
                 fetched: true,
                 central_offices: central_offices,
                 formation_offices: formation_offices,
                 units: units,
+                items: items,
                 companies: companies,
                 quarters: quarters
 

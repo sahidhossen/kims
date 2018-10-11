@@ -71,7 +71,10 @@ class CentralItems extends Model
     }
 
     /*
-     * Delete items when delete type form item type
+     * count all central items
      */
+    public static function centralItems($central_id){
+        return self::where(['central_id'=>$central_id])->sum('items');
+    }
 
 }

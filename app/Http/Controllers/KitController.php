@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CentralItems;
 use App\CentralOffice;
 use App\Company;
 use App\DistrictOffice;
@@ -24,7 +25,8 @@ class KitController extends Controller
             $kitController->formation_offices =  DistrictOffice::getOfficesWithAdmin();
             $kitController->units = Unit::getOfficesWithAdmin();
             $kitController->quarters = QuarterMaster::getOfficeWithAdmin();
-
+            $centralOffice = TermRelation::getCentralInfoByUserId($currentUser->id);
+            $kitController->items = CentralItems::centralItems($centralOffice->central_office_id);
             return ['success'=>true ,'message'=>"Get all kit controllers ", 'data'=> $kitController ];
 
         }catch (Exception $e){

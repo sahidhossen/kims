@@ -22,8 +22,11 @@ export const CentralPendingRequest = ({pendingRequest, approveUnitRequest, taskC
                 <div className="row" key={index}>
                     <div className="content">
                         <div className="card">
+                            <div className="formation-title card-header bg-teal-400">
+                                <h3 className="title"> Formation : {formationRequest.formation.district_name}</h3>
+                            </div>
                             <div className="card-body">
-                                <div className="row">
+                                <div className="row quarter_holder">
                                     {formationRequest.kit_items.length > 0 &&
                                         formationRequest.kit_items.map( (qmPending, qindex) => {
                                             return (

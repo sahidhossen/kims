@@ -3,12 +3,15 @@ import axios from 'axios'
 
 
 export const getKitController = () => dispatch => {
+
     dispatch({
         type: constants.FETCHING_KIT_CONTROLLER
     })
     axios.get('/api/get_kit_controllers')
         .then(function (response) {
-            dispatch({ type: constants.FETCH_KIT_CONTROLLER, payload:response.data.data });
+            if(response.data.success === true ) {
+                dispatch({type: constants.FETCH_KIT_CONTROLLER, payload: response.data.data});
+            }
         })
         .catch(function (error) {
             console.log("kit controller error: ",error);
@@ -47,6 +50,7 @@ export const saveKitController = (state, actionType ) => (dispatch, getState) =>
     }
     axios.post('/api/'+endPoint, data )
         .then(function (response) {
+
             if( response.success === false )
                 return false
             let store = getState()
@@ -68,6 +72,7 @@ export const saveKitController = (state, actionType ) => (dispatch, getState) =>
             if( actionType === 'company' ) {
                 kitControllers.companies.push(result)
             }
+
             dispatch({ type: constants.FETCH_KIT_CONTROLLER, payload: kitControllers });
         })
         .catch(function (error) {

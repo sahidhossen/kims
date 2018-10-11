@@ -7564,11 +7564,14 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 var getKitController = exports.getKitController = function getKitController() {
     return function (dispatch) {
+
         dispatch({
             type: constants.FETCHING_KIT_CONTROLLER
         });
         _axios2.default.get('/api/get_kit_controllers').then(function (response) {
-            dispatch({ type: constants.FETCH_KIT_CONTROLLER, payload: response.data.data });
+            if (response.data.success === true) {
+                dispatch({ type: constants.FETCH_KIT_CONTROLLER, payload: response.data.data });
+            }
         }).catch(function (error) {
             console.log("kit controller error: ", error);
             // dispatch({ type: constants.FETCH_OAUTH_REJECTED, payload: error })
@@ -7607,6 +7610,7 @@ var saveKitController = exports.saveKitController = function saveKitController(s
             data = state.company;
         }
         _axios2.default.post('/api/' + endPoint, data).then(function (response) {
+
             if (response.success === false) return false;
             var store = getState();
             var result = response.data.data;
@@ -7627,6 +7631,7 @@ var saveKitController = exports.saveKitController = function saveKitController(s
             if (actionType === 'company') {
                 kitControllers.companies.push(result);
             }
+
             dispatch({ type: constants.FETCH_KIT_CONTROLLER, payload: kitControllers });
         }).catch(function (error) {
             console.log("kit controller error: ", error);
@@ -33101,7 +33106,7 @@ var getKitItems = exports.getKitItems = function getKitItems() {
             type: constants.FETCHING_KIT_ITEM
         });
         _axios2.default.get('/api/active_kit_items').then(function (response) {
-            console.log("res: ", response.data);
+            // console.log("res: ", response.data);
             dispatch({ type: constants.FETCH_KIT_ITEM, payload: response.data.data });
         }).catch(function (error) {
             console.log("kit item error: ", error);
@@ -57343,6 +57348,7 @@ var kitControllers = function reducer() {
         formation_offices: [],
         units: [],
         companies: [],
+        items: 0,
         quarters: [],
         fetching: false,
         fetched: false,
@@ -57365,15 +57371,17 @@ var kitControllers = function reducer() {
                     formation_offices = _action$payload.formation_offices,
                     units = _action$payload.units,
                     companies = _action$payload.companies,
-                    quarters = _action$payload.quarters;
+                    quarters = _action$payload.quarters,
+                    items = _action$payload.items;
 
                 return (0, _extends3.default)({}, state, {
-                    fetching: true,
+                    fetching: false,
                     error: null,
                     fetched: true,
                     central_offices: central_offices,
                     formation_offices: formation_offices,
                     units: units,
+                    items: items,
                     companies: companies,
                     quarters: quarters
 
@@ -60171,11 +60179,16 @@ var _Default = __webpack_require__(405);
 
 var _Default2 = _interopRequireDefault(_Default);
 
+var _Central = __webpack_require__(513);
+
+var _Central2 = _interopRequireDefault(_Central);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Home = exports.Home = function Home(_ref) {
     var users = _ref.users,
-        oauth = _ref.oauth;
+        oauth = _ref.oauth,
+        kitControllers = _ref.kitControllers;
     return _react2.default.createElement(
         'div',
         { className: 'Homepage' },
@@ -60260,12 +60273,14 @@ var Home = exports.Home = function Home(_ref) {
             )
         ),
         oauth.user !== null && oauth.user.whoami === 'company' && _react2.default.createElement(_Company2.default, { users: users.users }),
-        oauth.user !== null && oauth.user.whoami !== 'company' && _react2.default.createElement(_Default2.default, null)
+        oauth.user !== null && oauth.user.whoami === 'central' && _react2.default.createElement(_Central2.default, { kitControllers: kitControllers }),
+        oauth.user !== null && oauth.user.whoami === 'unit' && _react2.default.createElement(_Default2.default, null)
     );
 };
 
 Home.propTypes = {
     users: _propTypes2.default.object,
+    kitControllers: _propTypes2.default.object,
     oauth: _propTypes2.default.object
 };
 exports.default = Home;
@@ -60661,27 +60676,44 @@ var _services = __webpack_require__(9);
 
 var _userActions = __webpack_require__(14);
 
+var _kitControllerActions = __webpack_require__(30);
+
 exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) {
-    return { oauth: store.oauth, users: store.users };
+    return {
+        oauth: store.oauth,
+        users: store.users,
+        kitControllers: store.kitControllers
+    };
 }), _services.userIsAuthenticated, (0, _recompose.withState)('state', 'setState', {}), (0, _recompose.lifecycle)({
     componentDidMount: function componentDidMount() {
         var _props = this.props,
             users = _props.users,
-            oauth = _props.oauth;
+            oauth = _props.oauth,
+            kitControllers = _props.kitControllers;
 
         if (users.users.length === 0 && oauth.user !== null) {
             if (users.fetched === false && users.users.length === 0 && oauth.user.whoami === 'company') {
                 this.props.dispatch((0, _userActions.fetchUserByCompany)());
             }
         }
+
+        if (oauth.user !== null && kitControllers.central_offices.length === 0 && oauth.user.whoami === 'central') {
+            this.props.dispatch((0, _kitControllerActions.getKitController)());
+        }
     },
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
         var users = nextProps.users,
-            oauth = nextProps.oauth;
+            oauth = nextProps.oauth,
+            kitControllers = nextProps.kitControllers;
 
         if (users.users.length === 0 && oauth.user !== null) {
             if (users.fetched === false && users.users.length === 0 && oauth.user.whoami === 'company') {
                 this.props.dispatch((0, _userActions.fetchUserByCompany)());
+            }
+        }
+        if (oauth.user !== null) {
+            if (kitControllers.fetched === false && kitControllers.fetching === false && kitControllers.central_offices.length === 0 && oauth.user.whoami === 'central') {
+                this.props.dispatch((0, _kitControllerActions.getKitController)());
             }
         }
     }
@@ -73414,7 +73446,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
 
 }), (0, _recompose.lifecycle)({
     componentDidMount: function componentDidMount() {
-        this.props.dispatch((0, _kitControllerActions.getKitController)());
+        if (this.props.kitControllers.central_offices.length === 0) this.props.dispatch((0, _kitControllerActions.getKitController)());
     },
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
         // console.log("next: ", nextProps)
@@ -75803,10 +75835,20 @@ var CentralPendingRequest = exports.CentralPendingRequest = function CentralPend
                         { className: 'card' },
                         _react2.default.createElement(
                             'div',
+                            { className: 'formation-title card-header bg-teal-400' },
+                            _react2.default.createElement(
+                                'h3',
+                                { className: 'title' },
+                                ' Formation : ',
+                                formationRequest.formation.district_name
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
                             { className: 'card-body' },
                             _react2.default.createElement(
                                 'div',
-                                { className: 'row' },
+                                { className: 'row quarter_holder' },
                                 formationRequest.kit_items.length > 0 && formationRequest.kit_items.map(function (qmPending, qindex) {
                                     return _react2.default.createElement(
                                         'div',
@@ -75897,7 +75939,7 @@ var QuarterMaster = exports.QuarterMaster = function QuarterMaster(_ref) {
             'div',
             { className: 'pending-request-header' },
             _react2.default.createElement(
-                'h3',
+                'h4',
                 { className: 'title' },
                 ' Quarter Master: ',
                 quarterMaster.quarter_master.quarter_name,
@@ -76964,6 +77006,225 @@ var NotFound = exports.NotFound = function NotFound() {
 };
 
 exports.default = NotFound;
+
+/***/ }),
+/* 512 */,
+/* 513 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Central = undefined;
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Created by sahidhossen on 11/10/18.
+ */
+var Central = exports.Central = function Central(_ref) {
+    var kitControllers = _ref.kitControllers;
+    return _react2.default.createElement(
+        'div',
+        { className: 'content' },
+        _react2.default.createElement(
+            'div',
+            { className: 'row m-0' },
+            _react2.default.createElement(
+                'div',
+                { className: 'col-6' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'token-box row align-items-center bg-red-light' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'token-front  text-center' },
+                        _react2.default.createElement(
+                            'span',
+                            null,
+                            _react2.default.createElement('i', { className: 'icon-users' })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'token-data flex-1 align-items-center bg-white' },
+                        _react2.default.createElement(
+                            'p',
+                            { className: 'token-sub-title' },
+                            ' Formation '
+                        ),
+                        _react2.default.createElement(
+                            'h3',
+                            { className: 'token-title' },
+                            ' ',
+                            kitControllers.formation_offices.length,
+                            ' '
+                        )
+                    )
+                )
+            ),
+            _react2.default.createElement(
+                'div',
+                { className: 'col-5 offset-1' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'token-box row align-items-center bg-red-light' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'token-front  text-center' },
+                        _react2.default.createElement(
+                            'span',
+                            null,
+                            _react2.default.createElement('i', { className: 'icon-list-unordered' })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'token-data flex-1 align-items-center bg-white' },
+                        _react2.default.createElement(
+                            'p',
+                            { className: 'token-sub-title' },
+                            ' Quarters '
+                        ),
+                        _react2.default.createElement(
+                            'h3',
+                            { className: 'token-title' },
+                            ' ',
+                            kitControllers.quarters.length,
+                            ' '
+                        )
+                    )
+                )
+            )
+        ),
+        _react2.default.createElement('br', null),
+        _react2.default.createElement(
+            'div',
+            { className: 'row m-0' },
+            _react2.default.createElement(
+                'div',
+                { className: 'col-6' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'token-box row align-items-center bg-red-light' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'token-front  text-center' },
+                        _react2.default.createElement(
+                            'span',
+                            null,
+                            _react2.default.createElement('i', { className: 'icon-users' })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'token-data flex-1 align-items-center bg-white' },
+                        _react2.default.createElement(
+                            'p',
+                            { className: 'token-sub-title' },
+                            ' Units '
+                        ),
+                        _react2.default.createElement(
+                            'h3',
+                            { className: 'token-title' },
+                            ' ',
+                            kitControllers.units.length,
+                            ' '
+                        )
+                    )
+                )
+            ),
+            _react2.default.createElement(
+                'div',
+                { className: 'col-5 offset-1' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'token-box row align-items-center bg-red-light' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'token-front  text-center' },
+                        _react2.default.createElement(
+                            'span',
+                            null,
+                            _react2.default.createElement('i', { className: 'icon-list-unordered' })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'token-data flex-1 align-items-center bg-white' },
+                        _react2.default.createElement(
+                            'p',
+                            { className: 'token-sub-title' },
+                            ' Company '
+                        ),
+                        _react2.default.createElement(
+                            'h3',
+                            { className: 'token-title' },
+                            ' ',
+                            kitControllers.companies.length,
+                            ' '
+                        )
+                    )
+                )
+            )
+        ),
+        _react2.default.createElement('br', null),
+        _react2.default.createElement(
+            'div',
+            { className: 'row m-0' },
+            _react2.default.createElement(
+                'div',
+                { className: 'col-6' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'token-box row align-items-center bg-red-light' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'token-front  text-center' },
+                        _react2.default.createElement(
+                            'span',
+                            null,
+                            _react2.default.createElement('i', { className: 'icon-list-unordered' })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'token-data flex-1 align-items-center bg-white' },
+                        _react2.default.createElement(
+                            'p',
+                            { className: 'token-sub-title' },
+                            ' Total Kit Items '
+                        ),
+                        _react2.default.createElement(
+                            'h3',
+                            { className: 'token-title' },
+                            ' ',
+                            kitControllers.items,
+                            ' '
+                        )
+                    )
+                )
+            )
+        )
+    );
+};
+
+Central.propTypes = {
+    kitControllers: _propTypes2.default.object
+};
+
+exports.default = Central;
 
 /***/ })
 /******/ ]);

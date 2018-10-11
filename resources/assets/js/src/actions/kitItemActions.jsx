@@ -7,7 +7,7 @@ export const getKitItems = () => dispatch => {
     })
     axios.get('/api/active_kit_items')
         .then(function (response) {
-            console.log("res: ", response.data);
+            // console.log("res: ", response.data);
             dispatch({ type: constants.FETCH_KIT_ITEM, payload:response.data.data });
         })
         .catch(function (error) {

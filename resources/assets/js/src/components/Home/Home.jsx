@@ -2,8 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Company from './components/Company'
 import DefaultDashboard from './components/Default'
+import Central from './components/Central'
 
-export const Home = ({users, oauth}) => (
+export const Home = ({users, oauth, kitControllers}) => (
     <div className="Homepage">
         <div className="page-header page-header-light">
             <div className="page-header-content header-elements-md-inline">
@@ -23,13 +24,15 @@ export const Home = ({users, oauth}) => (
             </div>
         </div>
         {oauth.user !== null && oauth.user.whoami === 'company' && <Company users={users.users}/> }
-        {oauth.user !== null && oauth.user.whoami !== 'company' && <DefaultDashboard/> }
+        {oauth.user !== null && oauth.user.whoami === 'central' && <Central kitControllers={kitControllers} /> }
+        {oauth.user !== null && oauth.user.whoami === 'unit' && <DefaultDashboard/> }
 
     </div>
 )
 
 Home.propTypes = {
     users: PropTypes.object,
+    kitControllers: PropTypes.object,
     oauth: PropTypes.object
 }
 export default Home

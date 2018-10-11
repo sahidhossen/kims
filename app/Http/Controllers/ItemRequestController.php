@@ -907,7 +907,9 @@ class ItemRequestController extends Controller
                     }
                 }
                 $pRequest->kit_items = $kitItems;
+                $pRequest->formation = TermRelation::getFormationInfoByUserId($pRequest->district_user_id);
             }
+
             return ['success'=>true,'data'=>$pendingRequest];
         }catch (Exception $e){
             return ['success'=>false, 'message'=>$e->getMessage()];

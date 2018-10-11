@@ -47,7 +47,8 @@ export default compose(
     }),
     lifecycle({
         componentDidMount() {
-            this.props.dispatch(getKitController())
+            if(this.props.kitControllers.central_offices.length === 0 )
+                this.props.dispatch(getKitController())
         },
         componentWillReceiveProps(nextProps){
             // console.log("next: ", nextProps)

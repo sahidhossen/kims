@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 export const QuarterMaster = ({quarterMaster, approveRequest}) => (
     <div className="pending-request-box">
         <div className="pending-request-header">
-            <h3 className="title"> Quarter Master: {quarterMaster.quarter_master.quarter_name} </h3>
+            <h4 className="title"> Quarter Master: {quarterMaster.quarter_master.quarter_name} </h4>
         </div>
         <div className="pending-request-unit">
             {quarterMaster.kit_items.length > 0 && quarterMaster.kit_items.map((items, index)=> {
