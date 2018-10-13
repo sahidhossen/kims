@@ -23,7 +23,7 @@ export const CentralPendingRequest = ({pendingRequest, approveUnitRequest, taskC
                     <div className="content">
                         <div className="card">
                             <div className="formation-title card-header bg-teal-400">
-                                <h3 className="title"> Formation : {formationRequest.formation.district_name}</h3>
+                                <h3 className="title"> Formation : { typeof formationRequest.formation !== 'undefined' && formationRequest.formation.district_name}</h3>
                             </div>
                             <div className="card-body">
                                 <div className="row quarter_holder">

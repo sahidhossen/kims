@@ -23,7 +23,7 @@ export const approveUnitRequest = data => dispatch => {
     // dispatch({type: constants.FETCHING_PENDING_REQUEST})
     axios.post('/api/unit_request_confirm_from_central', data)
         .then(function (response) {
-            // console.log("s", response)
+            console.log("s", response)
             if(response.data.success === true )
                 dispatch({ type: constants.FETCH_PENDING_REQUEST, payload:response.data.data });
             else

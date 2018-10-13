@@ -75982,7 +75982,7 @@ var approveUnitRequest = exports.approveUnitRequest = function approveUnitReques
     return function (dispatch) {
         // dispatch({type: constants.FETCHING_PENDING_REQUEST})
         _axios2.default.post('/api/unit_request_confirm_from_central', data).then(function (response) {
-            // console.log("s", response)
+            console.log("s", response);
             if (response.data.success === true) dispatch({ type: constants.FETCH_PENDING_REQUEST, payload: response.data.data });else dispatch({ type: constants.REJECT_PENDING_REQUEST, payload: response.data.message });
         }).catch(function (error) {
             console.log("condemnation critical error: ", error);
@@ -76102,7 +76102,7 @@ var CentralPendingRequest = exports.CentralPendingRequest = function CentralPend
                                 'h3',
                                 { className: 'title' },
                                 ' Formation : ',
-                                formationRequest.formation.district_name
+                                typeof formationRequest.formation !== 'undefined' && formationRequest.formation.district_name
                             )
                         ),
                         _react2.default.createElement(
@@ -76317,11 +76317,11 @@ var Company = exports.Company = function Company(_ref) {
     var companies = _ref.companies;
     return _react2.default.createElement(
         'div',
-        { className: 'row m-0 flex-column company-list-container' },
+        { className: 'company-list-container' },
         companies.map(function (Company, index) {
             return _react2.default.createElement(
                 'div',
-                { key: index, className: 'company-list row m-0 flex-column' },
+                { key: index, className: 'company-list' },
                 _react2.default.createElement(
                     'div',
                     { className: 'company-head' },
@@ -76345,21 +76345,21 @@ var Company = exports.Company = function Company(_ref) {
                             { key: i, className: 'company-product-list row m-0 flex-row justify-content-between' },
                             _react2.default.createElement(
                                 'div',
-                                { className: 'product-name' },
+                                { className: 'product-name flex-1' },
                                 ' ',
                                 item.type_name,
                                 ' '
                             ),
                             _react2.default.createElement(
                                 'div',
-                                { className: 'product-problems' },
+                                { className: 'product-problems flex-1' },
                                 ' ',
-                                item.type_slug === 'বুট_ডিএমএস_সাইজ' ? "Size: 24" : null,
+                                item.type_slug === 'বুট_ডিএমএস_সাইজ' ? "Size: 10" : null,
                                 '  '
                             ),
                             _react2.default.createElement(
                                 'div',
-                                { className: 'product-problems' },
+                                { className: 'product-problems flex-1' },
                                 ' Problems: ',
                                 item.problem_list === null ? '---' : item.problem_list,
                                 ' '

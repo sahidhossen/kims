@@ -1013,15 +1013,15 @@ class ItemRequestController extends Controller
             $allUnitPendingRequest = KitItemRequest::whereIn('id', array($getUnitRequest->parent_ids))->get();
             if(count($allUnitPendingRequest) > 0 ){
                 foreach($allUnitPendingRequest as $UPendingRequest ) {
-                    $UPendingRequest->kit_items = \GuzzleHttp\json_decode($UPendingRequest->kit_items);
+                    $kit_items = \GuzzleHttp\json_decode($UPendingRequest->kit_items);
                     $unitOfficeId = TermRelation::getUnitInfoByUserId($UPendingRequest->unit_user_id)->unit_id;
-                    foreach ($UPendingRequest->kit_items->kit_types as $kitTypes) {
+                    foreach ($kit_items->kit_types as $kitTypes) {
                         UnitItems::updateUnitItems($kitTypes->type_id, $unitOfficeId, 1, $kitTypes->quantity);
                         CentralItems::updateCentralItems($kitTypes->type_id, $centralOfficeId, 2, $kitTypes->quantity);
                     }
                     $UPendingRequest->approval_items = $approveItems;
                     $UPendingRequest->stage = 5;
-                    $UPendingRequest->kit_items = \GuzzleHttp\json_encode($UPendingRequest->kit_items);
+//                    $UPendingRequest->kit_items = \GuzzleHttp\json_encode($UPendingRequest->kit_items);
                     $UPendingRequest->save();
                 }
             }
@@ -1046,6 +1046,7 @@ class ItemRequestController extends Controller
         ])->whereIn('stage', array(1,2,3))->get();
         foreach( $pendingRequest as $index=>$pRequest){
             $kitItems = \GuzzleHttp\json_decode($pRequest->kit_items);
+            $saveKitItems = \GuzzleHttp\json_decode($pRequest->kit_items);
             if(count($kitItems) > 0 ){
                 foreach ($kitItems as $key=>$subKitItem){ // quarter mast
                     $kitItems[$key]->quarter_master = TermRelation::getQuarterMasterInfoByUserId($subKitItem->quarter_master_user_id);
@@ -1053,11 +1054,20 @@ class ItemRequestController extends Controller
                         $kitItems[$key]->kit_items[$q]->unit = TermRelation::getUnitInfoByUserId($unitLevel->unit_user_id);
                         if( $unitLevel->request_id == $request_id ) {
                             $kitItems[$key]->kit_items[$q]->approve = true;
+                            $saveKitItems[$key]->kit_items[$q]->approve = true;
                         }
+
+                        if (is_array($unitLevel->kit_items)) {
+                            foreach ($unitLevel->kit_items as $k => $companyLevel) { // company
+                                $kitItems[$key]->kit_items[$q]->kit_items[$k]->company = TermRelation::getCompanyInfoByUserId($companyLevel->company_user_id);
+                                $kitItems[$key]->kit_items[$q]->kit_items[$k]->items = KitItem::getKitItemsByIds(explode(',',$companyLevel->kit_items->kit_ids));
+                            }
+                        }
+
                     }
                 }
             }
-            $pRequest->kit_items = \GuzzleHttp\json_encode($kitItems);
+            $pRequest->kit_items = \GuzzleHttp\json_encode($saveKitItems);
             $pRequest->save();
             $pRequest->kit_items = $kitItems;
         }
