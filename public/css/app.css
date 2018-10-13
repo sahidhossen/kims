@@ -716,3 +716,38 @@
   background: #f5f5f5f2;
 }
 
+.office_name {
+  position: relative;
+}
+
+.office_name .form-control {
+  width: auto;
+  min-width: 300px;
+}
+
+.office_name .office_text {
+  position: relative;
+  display: inline-block;
+}
+
+.office_name .office_edit_icon {
+  position: absolute;
+  vertical-align: middle;
+  top: 4px;
+  -webkit-transform: translateX(10px);
+          transform: translateX(10px);
+  cursor: pointer;
+  color: #d8d8d8;
+  -webkit-transition: all 0.2s linear 0s;
+  transition: all 0.2s linear 0s;
+  display: none;
+}
+
+.office_name .office_edit_icon:hover {
+  color: #ffffff;
+}
+
+.office_name:hover .office_edit_icon {
+  display: inline-block;
+}
+

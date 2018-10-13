@@ -598,3 +598,36 @@
   margin-bottom: 10px;
   background: #f5f5f5f2;
 }
+.office_name {
+  position: relative;
+    .form-control {
+      width:auto;
+      min-width: 300px;
+    }
+    .office_text {
+      position: relative;
+      display: inline-block;
+    }
+  .office_edit_icon {
+    position: absolute;
+    vertical-align: middle;
+    top: 4px;
+    transform: translateX(10px);
+    cursor: pointer;
+    color: #d8d8d8;
+    -webkit-transition: all 0.2s linear 0s;
+    -moz-transition: all 0.2s linear 0s;
+    -ms-transition: all 0.2s linear 0s;
+    -o-transition: all 0.2s linear 0s;
+    transition: all 0.2s linear 0s;
+      &:hover {
+        color: #ffffff;
+      }
+    display: none;
+  }
+  &:hover {
+    .office_edit_icon {
+      display: inline-block;
+    }
+  }
+}

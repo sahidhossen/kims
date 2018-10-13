@@ -12,6 +12,8 @@ export const KitController = ({
         hideRoleModal,
         deleteController,
         goNext,
+        onChangeOfficeName,
+        enableEditMode,
         state
     }) => (
     <div className="Homepage">
@@ -71,8 +73,10 @@ export const KitController = ({
                                 {kitControllers.formation_offices.length > 0 && kitControllers.formation_offices.map( (office, index) => (
                                     <div className="bg-slate py-2 px-3 rounded-top  border-top-1 " key={index}>
                                         <div className="flex-row d-flex align-items-center">
-                                            <div className="flex-1">
-                                                {office.district_name}
+                                            <div className="flex-1 office_name">
+                                                {state.needUpdate.formation === null && <span className="office_text">{office.district_name}</span> }
+                                                {state.needUpdate.formation === index && <input type="text" onChange={(e)=>onChangeOfficeName(e, office, index, 'formation_offices')} name="district_name" className="form-control" value={office.district_name}/>}
+                                                {/*<span className="fa fa-edit office_edit_icon" onClick={(e)=>{enableEditMode('formation', index)}}/>*/}
                                             </div>
                                             <div className="operation-area">
                                                 {office.head === null && <div className="btn btn-danger" onClick={(e)=>{deleteController('formation',office, index)}}> Delete </div>}
@@ -208,6 +212,8 @@ KitController.propTypes = {
     toggleRoleModal: PropTypes.func,
     goNext: PropTypes.func,
     deleteController: PropTypes.func,
+    onChangeOfficeName: PropTypes.func,
+    enableEditMode: PropTypes.func,
     state: PropTypes.object
 }
 

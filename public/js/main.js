@@ -71799,6 +71799,8 @@ var KitController = exports.KitController = function KitController(_ref) {
         hideRoleModal = _ref.hideRoleModal,
         deleteController = _ref.deleteController,
         goNext = _ref.goNext,
+        onChangeOfficeName = _ref.onChangeOfficeName,
+        enableEditMode = _ref.enableEditMode,
         state = _ref.state;
     return _react2.default.createElement(
         'div',
@@ -71957,8 +71959,15 @@ var KitController = exports.KitController = function KitController(_ref) {
                                             { className: 'flex-row d-flex align-items-center' },
                                             _react2.default.createElement(
                                                 'div',
-                                                { className: 'flex-1' },
-                                                office.district_name
+                                                { className: 'flex-1 office_name' },
+                                                state.needUpdate.formation === null && _react2.default.createElement(
+                                                    'span',
+                                                    { className: 'office_text' },
+                                                    office.district_name
+                                                ),
+                                                state.needUpdate.formation === index && _react2.default.createElement('input', { type: 'text', onChange: function onChange(e) {
+                                                        return onChangeOfficeName(e, office, index, 'formation_offices');
+                                                    }, name: 'district_name', className: 'form-control', value: office.district_name })
                                             ),
                                             _react2.default.createElement(
                                                 'div',
@@ -72245,6 +72254,8 @@ KitController.propTypes = {
     toggleRoleModal: _propTypes2.default.func,
     goNext: _propTypes2.default.func,
     deleteController: _propTypes2.default.func,
+    onChangeOfficeName: _propTypes2.default.func,
+    enableEditMode: _propTypes2.default.func,
     state: _propTypes2.default.object
 };
 
@@ -73612,7 +73623,14 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
     isModalOn: false,
     isRoleModalOn: false,
     roleType: null,
-    office: null
+    office: null,
+    needUpdate: {
+        formation: null,
+        unit: null,
+        quarter: null,
+        company: null,
+        central: null
+    }
 }), (0, _recompose.withHandlers)({
     addKitController: function addKitController(props) {
         return function (type) {
@@ -73660,6 +73678,31 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
         return function (type, office, index) {
             props.dispatch((0, _kitControllerActions.deleteKitController)(type, office, index));
         };
+    },
+    onChangeOfficeName: function onChangeOfficeName(props) {
+        return function (e, office, index, office_type) {
+            var kitControllers = props.kitControllers;
+
+            var name = e.target.name;
+            var value = e.target.value;
+            var current_office = kitControllers[office_type][index];
+            current_office[name] = value;
+            kitControllers[office_type][index] = current_office;
+        };
+    },
+    enableEditMode: function enableEditMode(props) {
+        return function (office_type, index) {
+            var state = props.state,
+                setState = props.setState;
+            var needUpdate = state.needUpdate;
+
+            if (office_type === 'formation') needUpdate.formation = index;
+            if (office_type === 'unit') needUpdate.unit = index;
+            if (office_type === 'quarter') needUpdate.quarter = index;
+            if (office_type === 'company') needUpdate.company = index;
+            if (office_type === 'central') needUpdate.central = index;
+            setState((0, _extends3.default)({}, state, { needUpdate: needUpdate }));
+        };
     }
 
 }), (0, _recompose.lifecycle)({
@@ -73667,7 +73710,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
         if (this.props.kitControllers.central_offices.length === 0) this.props.dispatch((0, _kitControllerActions.getKitController)());
     },
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-        // console.log("next: ", nextProps)
+        console.log("next: ", nextProps.kitControllers);
     }
 }), _recompose.pure);
 

@@ -14,7 +14,14 @@ export default compose(
         isModalOn: false,
         isRoleModalOn: false,
         roleType:null,
-        office: null
+        office: null,
+        needUpdate: {
+            formation: null,
+            unit: null,
+            quarter: null,
+            company: null,
+            central: null,
+        }
     }),
     withHandlers({
         addKitController: props => type => {
@@ -42,6 +49,29 @@ export default compose(
         },
         deleteController: props => (type, office, index)=>{
             props.dispatch(deleteKitController(type, office, index))
+        },
+        onChangeOfficeName: props => (e, office, index, office_type)=> {
+            let { kitControllers } = props
+            let name = e.target.name
+            let value = e.target.value
+            let current_office = kitControllers[office_type][index]
+            current_office[name] = value
+            kitControllers[office_type][index] = current_office;
+        },
+        enableEditMode: props => (office_type, index) => {
+            let { state, setState } = props
+            let { needUpdate } = state
+            if( office_type === 'formation')
+                needUpdate.formation = index
+            if( office_type === 'unit')
+                needUpdate.unit = index
+            if( office_type === 'quarter')
+                needUpdate.quarter = index
+            if( office_type === 'company')
+                needUpdate.company = index
+            if( office_type === 'central')
+                needUpdate.central = index
+            setState({...state, needUpdate})
         }
 
     }),
@@ -51,7 +81,7 @@ export default compose(
                 this.props.dispatch(getKitController())
         },
         componentWillReceiveProps(nextProps){
-            // console.log("next: ", nextProps)
+            console.log("next: ", nextProps.kitControllers)
         }
 
     }),

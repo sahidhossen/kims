@@ -146,10 +146,16 @@ class UserController extends Controller
                 $currentUser->formation_id = $UserTerm->district_office_id;
                 $currentUser->qa_id = $UserTerm->quarter_master_id;
                 $quarter_master_info = TermRelation::retrieveUnitQuarterMaster($UserTerm->quarter_master_id);
+                $formation_info = TermRelation::retrieveUnitDistrict($UserTerm->district_office_id);
                 if($quarter_master_info){
                     $currentUser->qa_name = $quarter_master_info->quarter_name;
                     $currentUser->qa_master_user_name = $quarter_master_info->name;
                     $currentUser->qa_device_id = $quarter_master_info->device_id;
+                }
+                if($formation_info){
+                    $currentUser->formation_name = $formation_info->district_name;
+                    $currentUser->formation_user_name = $formation_info->name;
+                    $currentUser->formation_device_id = $formation_info->device_id;
                 }
                 $unitTerms = TermRelation::retrieveUnitCompaniesTerms( $currentUser->id );
                 if( count( $unitTerms) > 0 ){
