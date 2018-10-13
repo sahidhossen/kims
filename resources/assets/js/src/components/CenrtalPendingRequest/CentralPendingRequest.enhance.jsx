@@ -36,6 +36,7 @@ export default compose(
                 }, 2500 )
 
             }
+            console.log("pending request: ", nextProps.pendingRequest)
         }
 
     }),

@@ -496,8 +496,10 @@
 
 .pending-request-box {
   .pending-request-header {
-    border-bottom: 1px solid #efefef;
     margin-bottom: 10px;
+      .title {
+        margin:0;
+      }
   }
   .pending-request-unit {
     background: #263238;
@@ -507,9 +509,15 @@
     .quarter-unit-list {
       align-items: center;
       font-size: 14px;
-      border-bottom: 2px solid #fff;
+      border-bottom: 5px solid #fff;
       padding: 10px;
+      .unit-name {
+        font-size:18px;
+      }
         .request-items {
+          display: flex;
+          justify-content: center;
+          align-items: center;
           span {
             display: inline-block;
             padding:4px 5px;
@@ -527,6 +535,49 @@
         margin-right:10px;
         background: #26a69a;
       }
+      .company-list-container {
+        margin-top: 10px !important;
+          .company-list {
+            border-bottom: 1px solid #263238;
+            margin-bottom: 10px !important;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            .company-head {
+              padding: 6px;
+              border-bottom: 1px solid #263238;
+              font-size: 16px;
+              background: #4a778e;
+              position: relative;
+                .items {
+                  position: absolute;
+                  right: 10px;
+                  top: 7px;
+                  display: inline-block;
+                  border-radius: 3px;
+                  background: #263238;
+                  color: #ffffff;
+                  padding: 0 3px;
+                  font-size: 13px;
+                }
+            }
+            .company-product-list-container {
+              padding: 0 5px;
+                .company-product-list {
+                  padding-bottom: 5px;
+                  padding-top: 5px;
+                  border-bottom: 1px solid #26323891;
+                  font-size: 12px;
+                  &:last-child {
+                    border-bottom: none;
+                  }
+                }
+            }
+            &:last-child {
+              margin-bottom:0 !important;
+            }
+          }
+      }
     }
   }
 }
@@ -543,7 +594,7 @@
 }
 .quarter_holder {
   border: 1px solid #ececec;
-  padding: 10px;
+  padding:10px 0;
   margin-bottom: 10px;
   background: #f5f5f5f2;
 }

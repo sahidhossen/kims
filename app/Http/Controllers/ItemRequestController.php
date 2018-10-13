@@ -15,6 +15,7 @@ use App\TermRelation;
 use App\UnitItems;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use League\Flysystem\Exception;
 use Illuminate\Support\Facades\URL;
@@ -36,6 +37,7 @@ class ItemRequestController extends Controller
      *
      * @fields(solder_kit_id, request_type, comments, kit_problem)
      */
+
    public function SolderRequest(Request $request){
        try{
            $validator = Validator::make($request->all(), [
@@ -839,7 +841,6 @@ class ItemRequestController extends Controller
             $parentIds = '';
             $condemnation_id = 0;
             $requestItems = 0;
-
             foreach($pendingRequest as $key=>$pRequest){
                 $districtLevelRequest[$key]['quarter_master_user_id'] = $pRequest->quarter_master_user_id;
                 $districtLevelRequest[$key]['kit_items'] = \GuzzleHttp\json_decode($pRequest->kit_items);
@@ -901,6 +902,7 @@ class ItemRequestController extends Controller
                             if (is_array($unitLevel->kit_items)) {
                                 foreach ($unitLevel->kit_items as $k => $companyLevel) { // company
                                     $kitItems[$key]->kit_items[$q]->kit_items[$k]->company = TermRelation::getCompanyInfoByUserId($companyLevel->company_user_id);
+                                    $kitItems[$key]->kit_items[$q]->kit_items[$k]->items = KitItem::getKitItemsByIds(explode(',',$companyLevel->kit_items->kit_ids));
                                 }
                             }
                         }

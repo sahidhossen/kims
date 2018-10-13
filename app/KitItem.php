@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class KitItem extends Model
 {
@@ -49,6 +50,16 @@ class KitItem extends Model
     public static function getFreeItemNumberByCentralOffice($central_id){
         $kiteItems = self::where(['central_office_id'=>$central_id,'status'=>0])->count();
         return $kiteItems;
+    }
+
+
+    public static function getKitItemsByIds($ids){
+        $items = DB::table('kit_items')
+                ->leftJoin('item_types','kit_items.item_type_id','=','item_types.id')
+                ->whereIn('kit_items.id',$ids)
+                ->select('kit_items.*','item_types.type_name','item_types.type_slug')
+                ->get();
+        return $items;
     }
 
 }
