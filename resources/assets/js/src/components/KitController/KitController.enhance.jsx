@@ -81,7 +81,7 @@ export default compose(
                 this.props.dispatch(getKitController())
         },
         componentWillReceiveProps(nextProps){
-            console.log("next: ", nextProps.kitControllers)
+            // console.log("next: ", nextProps.kitControllers)
         }
 
     }),

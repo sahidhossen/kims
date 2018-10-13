@@ -1,6 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+let size =24;
+
 export const Company = ({companies}) => (
     <div className="row m-0 flex-column company-list-container">
         {companies.map((Company, index) => {
@@ -13,7 +15,8 @@ export const Company = ({companies}) => (
                             return (
                                 <div key={i} className="company-product-list row m-0 flex-row justify-content-between">
                                     <div className="product-name"> {item.type_name} </div>
-                                    <div className="product-problems"> Chan not working </div>
+                                    <div className="product-problems"> {item.type_slug === 'বুট_ডিএমএস_সাইজ' ? "Size: 24" : null }  </div>
+                                    <div className="product-problems"> Problems: {item.problem_list === null ? '---' : item.problem_list} </div>
                                 </div>
                             )
                         })}

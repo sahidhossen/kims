@@ -56,8 +56,14 @@ class KitItem extends Model
     public static function getKitItemsByIds($ids){
         $items = DB::table('kit_items')
                 ->leftJoin('item_types','kit_items.item_type_id','=','item_types.id')
+                ->leftJoin('solder_kits','kit_items.id','=','solder_kits.item_id')
+                ->leftJoin('solder_item_request','solder_kits.id','=','solder_item_request.solder_kit_id')
                 ->whereIn('kit_items.id',$ids)
-                ->select('kit_items.*','item_types.type_name','item_types.type_slug')
+                ->select(
+                    'solder_item_request.problem_list',
+                    'item_types.type_name',
+                    'item_types.type_slug'
+                )
                 ->get();
         return $items;
     }

@@ -596,10 +596,8 @@
 }
 
 .pending-request-box .pending-request-unit {
-  background: #263238;
   padding: 0;
   color: #dedede;
-  border-radius: 3px;
 }
 
 .pending-request-box .pending-request-unit .quarter-unit-list {
@@ -607,8 +605,10 @@
       -ms-flex-align: center;
           align-items: center;
   font-size: 14px;
-  border-bottom: 5px solid #fff;
+  margin-bottom: 5px;
   padding: 10px;
+  background: #263238;
+  border-radius: 3px;
 }
 
 .pending-request-box .pending-request-unit .quarter-unit-list .unit-name {

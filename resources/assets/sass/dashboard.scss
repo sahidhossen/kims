@@ -502,15 +502,16 @@
       }
   }
   .pending-request-unit {
-    background: #263238;
+
     padding: 0;
     color: #dedede;
-    border-radius: 3px;
     .quarter-unit-list {
       align-items: center;
       font-size: 14px;
-      border-bottom: 5px solid #fff;
+      margin-bottom: 5px;
       padding: 10px;
+      background: #263238;
+      border-radius: 3px;
       .unit-name {
         font-size:18px;
       }

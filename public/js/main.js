@@ -73710,7 +73710,7 @@ exports.default = (0, _redux.compose)((0, _reactRedux.connect)(function (store) 
         if (this.props.kitControllers.central_offices.length === 0) this.props.dispatch((0, _kitControllerActions.getKitController)());
     },
     componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-        console.log("next: ", nextProps.kitControllers);
+        // console.log("next: ", nextProps.kitControllers)
     }
 }), _recompose.pure);
 
@@ -76311,6 +76311,8 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var size = 24;
+
 var Company = exports.Company = function Company(_ref) {
     var companies = _ref.companies;
     return _react2.default.createElement(
@@ -76351,7 +76353,16 @@ var Company = exports.Company = function Company(_ref) {
                             _react2.default.createElement(
                                 'div',
                                 { className: 'product-problems' },
-                                ' Chan not working '
+                                ' ',
+                                item.type_slug === 'বুট_ডিএমএস_সাইজ' ? "Size: 24" : null,
+                                '  '
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'product-problems' },
+                                ' Problems: ',
+                                item.problem_list === null ? '---' : item.problem_list,
+                                ' '
                             )
                         );
                     })
