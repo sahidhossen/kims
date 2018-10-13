@@ -75982,7 +75982,7 @@ var approveUnitRequest = exports.approveUnitRequest = function approveUnitReques
     return function (dispatch) {
         // dispatch({type: constants.FETCHING_PENDING_REQUEST})
         _axios2.default.post('/api/unit_request_confirm_from_central', data).then(function (response) {
-            console.log("s", response);
+            // console.log("s", response)
             if (response.data.success === true) dispatch({ type: constants.FETCH_PENDING_REQUEST, payload: response.data.data });else dispatch({ type: constants.REJECT_PENDING_REQUEST, payload: response.data.message });
         }).catch(function (error) {
             console.log("condemnation critical error: ", error);
