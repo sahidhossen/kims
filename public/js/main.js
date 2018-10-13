@@ -76339,10 +76339,16 @@ var Company = exports.Company = function Company(_ref) {
                     'div',
                     { className: 'company-product-list-container' },
                     Company.items.length > 0 && Company.items.map(function (item, i) {
-
                         return _react2.default.createElement(
                             'div',
                             { key: i, className: 'company-product-list row m-0 flex-row justify-content-between' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'user-name flex-1' },
+                                ' ',
+                                item.name,
+                                ' '
+                            ),
                             _react2.default.createElement(
                                 'div',
                                 { className: 'product-name flex-1' },

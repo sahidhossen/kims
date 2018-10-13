@@ -58,8 +58,10 @@ class KitItem extends Model
                 ->leftJoin('item_types','kit_items.item_type_id','=','item_types.id')
                 ->leftJoin('solder_kits','kit_items.id','=','solder_kits.item_id')
                 ->leftJoin('solder_item_request','solder_kits.id','=','solder_item_request.solder_kit_id')
+                ->leftJoin('users','solder_kits.user_id','=','users.id')
                 ->whereIn('kit_items.id',$ids)
                 ->select(
+                    'users.name',
                     'solder_item_request.problem_list',
                     'item_types.type_name',
                     'item_types.type_slug'

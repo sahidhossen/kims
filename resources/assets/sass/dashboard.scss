@@ -565,12 +565,17 @@
             .company-product-list-container {
               padding: 0 5px;
                 .company-product-list {
-                  padding-bottom: 5px;
-                  padding-top: 5px;
+                  padding-bottom: 8px;
+                  padding-top: 8px;
                   border-bottom: 1px solid #26323891;
                   font-size: 12px;
                   &:last-child {
                     border-bottom: none;
+                  }
+                  .user-name {
+                    width: 180px;
+                    padding-right:10px;
+                    overflow: hidden;
                   }
                 }
             }

@@ -679,14 +679,20 @@
 }
 
 .pending-request-box .pending-request-unit .quarter-unit-list .company-list-container .company-list .company-product-list-container .company-product-list {
-  padding-bottom: 5px;
-  padding-top: 5px;
+  padding-bottom: 8px;
+  padding-top: 8px;
   border-bottom: 1px solid #26323891;
   font-size: 12px;
 }
 
 .pending-request-box .pending-request-unit .quarter-unit-list .company-list-container .company-list .company-product-list-container .company-product-list:last-child {
   border-bottom: none;
+}
+
+.pending-request-box .pending-request-unit .quarter-unit-list .company-list-container .company-list .company-product-list-container .company-product-list .user-name {
+  width: 180px;
+  padding-right: 10px;
+  overflow: hidden;
 }
 
 .pending-request-box .pending-request-unit .quarter-unit-list .company-list-container .company-list:last-child {
