@@ -47,6 +47,7 @@ class DistrictOffice extends Model
             foreach($offices as $office){
                 $where = ['district_office_id'=>$office->id,'role'=>2];
                 $office->head = TermRelation::findMyAdmin($where);
+                $office->office_name = $office->district_name;
             }
         }
         return $offices;

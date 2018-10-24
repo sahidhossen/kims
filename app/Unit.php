@@ -48,6 +48,7 @@ class Unit extends Model
             foreach($offices as $office){
                 $where = ['unit_id'=>$office->id,'role'=>3];
                 $office->head = TermRelation::findMyAdmin($where);
+                $office->office_name = $office->unit_name;
             }
         }
         return $offices;

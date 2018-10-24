@@ -24,6 +24,7 @@ class QuarterMaster extends Model
             foreach($offices as $office){
                 $where = ['quarter_master_id'=>$office->id,'role'=>6];
                 $office->head = TermRelation::findMyAdmin($where);
+                $office->office_name = $office->quarter_name;
             }
         }
         return $offices;

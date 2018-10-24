@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 
 import Modal from './Modal'
 import KitControllerDetails from './KitControllerDetails'
+import SubControllerModal from './SubControllerModal'
 
 export const KitController = ({
         kitControllers,
@@ -13,7 +14,9 @@ export const KitController = ({
         deleteController,
         goNext,
         onChangeOfficeName,
+        hideSubModal,
         enableEditMode,
+        showSubModal,
         state
     }) => (
     <div className="Homepage">
@@ -48,6 +51,7 @@ export const KitController = ({
                                                &nbsp;
                                                <div className="btn btn-info" onClick={(e)=>{toggleRoleModal('central',office)}}> {office.head === null  ? "Add Admin" : " Update Admin"} </div>
                                                &nbsp;
+                                               <div className="btn btn-info" onClick={(e)=>{showSubModal('central_offices','formation_offices',office, index)}}> Formations </div>
                                            </div>
                                        </div>
                                    </div>
@@ -83,6 +87,7 @@ export const KitController = ({
                                                 &nbsp;
                                                 <div className="btn btn-info" onClick={(e)=>{toggleRoleModal('formation',office)}}> {office.head === null  ? "Add Admin" : "View Admin"} </div>
                                                 &nbsp;
+                                                <div className="btn btn-info" onClick={(e)=>{showSubModal('formation_offices','quarters',office, index)}}> Quarters </div>
                                             </div>
                                         </div>
                                     </div>
@@ -115,6 +120,7 @@ export const KitController = ({
                                                 &nbsp;
                                                 <div className="btn btn-info" onClick={(e)=>{toggleRoleModal('quarter_master',office)}}> {office.head === null  ? "Add Admin" : "View Admin"} </div>
                                                 &nbsp;
+                                                <div className="btn btn-info" onClick={(e)=>{showSubModal('quarters','units',office, index)}}> Units </div>
                                             </div>
                                         </div>
                                     </div>
@@ -147,6 +153,7 @@ export const KitController = ({
                                                 &nbsp;
                                                 <div className="btn btn-info" onClick={(e)=>{toggleRoleModal('unit',office)}}> {office.head === null  ? "Add Admin" : "View Admin"} </div>
                                                 &nbsp;
+                                                <div className="btn btn-info" onClick={(e)=>{showSubModal('units','companies',office, index)}}> Companies </div>
                                             </div>
                                         </div>
                                     </div>
@@ -201,6 +208,11 @@ export const KitController = ({
                 closeModal={() => {toggleModal()}}
                 actionType={state.actionType}
             /> }
+        { state.isSubModal &&
+        <SubControllerModal
+            closeModal={() => {hideSubModal()}}
+            subOffice={state.subOffice}
+        /> }
     </div>
 )
 
@@ -210,6 +222,8 @@ KitController.propTypes = {
     toggleModal: PropTypes.func,
     hideRoleModal: PropTypes.func,
     toggleRoleModal: PropTypes.func,
+    showSubModal: PropTypes.func,
+    hideSubModal: PropTypes.func,
     goNext: PropTypes.func,
     deleteController: PropTypes.func,
     onChangeOfficeName: PropTypes.func,

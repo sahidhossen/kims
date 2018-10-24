@@ -38,6 +38,7 @@ class CentralOffice extends Model
             foreach($offices as $office){
                 $where = ['central_office_id'=>$office->id,'role'=>1];
                 $office->head = TermRelation::findMyAdmin($where);
+                $office->office_name = $office->central_name;
             }
         }
         return $offices;

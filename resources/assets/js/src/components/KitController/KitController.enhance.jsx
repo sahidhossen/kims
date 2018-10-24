@@ -15,13 +15,17 @@ export default compose(
         isRoleModalOn: false,
         roleType:null,
         office: null,
+
         needUpdate: {
             formation: null,
             unit: null,
             quarter: null,
             company: null,
             central: null,
-        }
+        },
+
+        isSubModal: false,
+        subOffice: null,
     }),
     withHandlers({
         addKitController: props => type => {
@@ -72,6 +76,20 @@ export default compose(
             if( office_type === 'central')
                 needUpdate.central = index
             setState({...state, needUpdate})
+        },
+        showSubModal: props => (office_type, search_office, office, index) => {
+            let { state, setState } = props
+            let subOffice = {
+                office_type,
+                search_office,
+                office,
+                index
+            }
+            setState({ ...state, subOffice, isSubModal: true })
+        },
+        hideSubModal: props => () => {
+            let { state, setState } = props
+            setState({...state, isSubModal: false })
         }
 
     }),

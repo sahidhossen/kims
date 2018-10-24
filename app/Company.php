@@ -49,6 +49,7 @@ class Company extends Model
             foreach($offices as $office){
                 $where = ['company_id'=>$office->id,'role'=>4];
                 $office->head = TermRelation::findMyAdmin($where);
+                $office->office_name = $office->company_name;
             }
         }
         return $offices;

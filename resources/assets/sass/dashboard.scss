@@ -42,7 +42,6 @@
   z-index:999;
   border-radius: 4px;
   transition: all .5s;
-
   span.close-modal i{
     display: inline-block;
     cursor: pointer;
@@ -64,6 +63,34 @@
         margin-left: 10px;
         margin-top: 10px;
       }
+    }
+  }
+  &.sub-controller-modal-box {
+    width: 900px;
+    .modal-header {
+      padding: 10px 0;
+      padding-bottom:15px;
+        .go-back {
+          display: inline-block;
+          width: 40px;
+          text-align: center;
+          background: #ff3b6f;
+          cursor: pointer;
+          color: #fff;
+          border-radius: 3px;
+          margin-right: 10px;
+          padding: 0;
+            i {
+              font-size: 18px;
+              top:-2px;
+            }
+        }
+    }
+    .modal-body {
+      padding:0;
+      min-height:400px;
+      padding-top: 1px;
+      background: rgba(0,0,0,.05);
     }
   }
 }
@@ -636,4 +663,96 @@
       display: inline-block;
     }
   }
+}
+
+.sub_office_list {
+  max-height: 600px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  width:100%;
+  display: flex;
+  margin-top: 15px;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -ms-flex-pack: justify;
+  justify-content: flex-start;
+    .office_list {
+      width: 31.2%;
+      background: #ffffff;
+      -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+      margin-bottom: 15px;
+      border-radius: 3px;
+      margin-right: 5px;
+      margin-left: 10px;
+      overflow: hidden;
+        .office_inner_list {
+          display: -ms-flexbox;
+          display: flex;
+          height: 100%;
+          -ms-flex-direction: column;
+          flex-direction: column;
+          position: relative;
+            .office_admin_avatar {
+              position: relative;
+                img {
+                  width: 100%;
+                }
+            }
+          .admin_details {
+            font-size: 14px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding: 5px 8px;
+              .row {
+                  &:last-child {
+                    margin-bottom: 0;
+                  }
+                span:first-child {
+                  padding-right: 10px;
+                  font-weight:bold;
+                }
+              }
+          }
+          .office_name {
+            padding: 10px 8px;
+            color: #ffffff;
+            background: #0096ab;
+            position: relative;
+            .office_name_title {
+              margin: 0;
+              font-size: 14px;
+                .go-details {
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  top:0;
+                  justify-content: center;
+                  position: absolute;
+                  right:0;
+                  height:100%;
+                  width: 30px;
+                  background: #ff3f71;
+                  color: #ffffff;
+                  vertical-align: center;
+                  text-align: center;
+                    i {
+                      font-size:22px;
+                    }
+                }
+            }
+          }
+        }
+    }
+}
+.office_not_found {
+  display: flex;
+  justify-content:center;
+  align-items:center;
+  width:100%;
+    .empty-title {
+      color: #666666;
+      text-align: center;
+      font-size: 3em;
+    }
 }
